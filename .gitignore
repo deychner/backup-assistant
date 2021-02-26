@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Mac files
+*.DS_Store
+
 # User-specific files
 *.rsuser
 *.suo
@@ -246,6 +249,7 @@ Generated_Code/
 # because we have git ;-)
 _UpgradeReport_Files/
 Backup*/
+!Backup Assistant*/
 UpgradeLog*.XML
 UpgradeLog*.htm
 ServiceFabricBackup/
