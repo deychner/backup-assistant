@@ -6,4 +6,10 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Update="Core\BackupAgent.*.cs">
+      <DependentUpon>BackupAgent.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>
