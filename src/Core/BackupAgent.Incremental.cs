@@ -1,6 +1,6 @@
 ﻿namespace BackupAssistant.Core
 {
-    internal partial class BackupAgent
+    public partial class BackupAgent
     {
     }
 }

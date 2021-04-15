@@ -2,7 +2,7 @@
 
 namespace BackupAssistant.Core
 {
-    internal interface IBackupStarter
+    public interface IBackupStarter
     {
         string SourcePath { get; }
 

@@ -2,7 +2,7 @@
 
 namespace BackupAssistant.Core
 {
-    internal enum BackupAction : byte
+    public enum BackupAction : byte
     {
         None,
         Copy,
@@ -10,7 +10,7 @@ namespace BackupAssistant.Core
         Overwrite
     }
 
-    internal class FileListing
+    public class FileListing
     {
         public bool IsInSource { get; set; }
         public bool IsInDestination { get; set; }

@@ -3,7 +3,7 @@ using System.IO;
 
 namespace BackupAssistant.Core
 {
-    internal partial class BackupAgent
+    public partial class BackupAgent
     {
         private IBackupStarter _caller = null;
         private bool _cancelOperation = false;
