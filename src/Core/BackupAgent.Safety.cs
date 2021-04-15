@@ -5,7 +5,7 @@ namespace BackupAssistant.Core
 {
     public partial class BackupAgent
     {
-        FileInfo SafeGetFileInfo(string file)
+        public FileInfo SafeGetFileInfo(string file)
         {
             try
             {
@@ -19,7 +19,7 @@ namespace BackupAssistant.Core
             }
         }
 
-        ReadOnlyCollection<string> SafeGetFiles(string directory)
+        public ReadOnlyCollection<string> SafeGetFiles(string directory)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace BackupAssistant.Core
             }
         }
 
-        ReadOnlyCollection<string> SafeGetDirectories(string directory)
+        public ReadOnlyCollection<string> SafeGetDirectories(string directory)
         {
             try
             {
@@ -49,12 +49,12 @@ namespace BackupAssistant.Core
             }
         }
 
-        void SafeCopyFile(string sourceFileName, string destinationFileName)
+        public void SafeCopyFile(string sourceFileName, string destinationFileName)
         {
             SafeCopyFile(sourceFileName, destinationFileName, false);
         }
 
-        void SafeCopyFile(string sourceFileName, string destinationFileName, bool overwrite)
+        public void SafeCopyFile(string sourceFileName, string destinationFileName, bool overwrite)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace BackupAssistant.Core
             }
         }
 
-        void SafeDeleteFile(string file)
+        public void SafeDeleteFile(string file)
         {
             try
             {
