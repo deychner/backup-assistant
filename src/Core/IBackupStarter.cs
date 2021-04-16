@@ -12,7 +12,7 @@ namespace BackupAssistant.Core
 
         void PreProcess();
 
-        void PostPorcess();
+        void PostProcess();
 
         void ReportProgress(int progress);
 
