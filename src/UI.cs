@@ -18,18 +18,12 @@ namespace BackupAssistant
         }
 
         private BackupAgent _backupAgent = null;
-        private StringBuilder _logMessage = null;
 
         private List<string> _filterList = null;
         public ReadOnlyCollection<string> Filters
         {
             get { return _filterList.AsReadOnly(); }
         }
-
-        private delegate void UpdateProcessCallback(int progress);
-        private delegate void UpdateStatusCallback(string status);
-        private delegate void PreProcessCallback();
-        private delegate void PostProcessCallback();
 
         public UI()
         {
@@ -84,58 +78,5 @@ namespace BackupAssistant
 
             UpdateFilterIcon();
         }
-
-        private void UpdateFilterIcon()
-        {
-            if (Settings.Default.Filters.Count > 0)
-            {
-                this.UI_Button_Filter.Image = Resources.filter;
-            }
-            else
-            {
-                this.UI_Button_Filter.Image = Resources.filter_apply;
-            }
-        }
-
-        public string SourcePath => throw new System.NotImplementedException();
-
-        public string DestinationPath => throw new System.NotImplementedException();
-
-        public void AddToLogEntry(string message)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void PostProcess()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void PreProcess()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ReportProgress(int progress)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ReportStatus(string status)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        private void HandleException(Exception e)
-        {
-            MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        //private async void button1_Click(object sender, System.EventArgs e)
-        //{
-        //    button1.Enabled = false;
-        //    await Task.Run(() => BackupAgent.RunFullBackup());
-        //    button1.Enabled = true;
-        //}
     }
 }

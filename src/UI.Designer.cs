@@ -299,12 +299,9 @@ namespace BackupAssistant
         private System.Windows.Forms.MenuStrip UI_MenuStrip;
         private System.Windows.Forms.ToolStripMenuItem UI_MenuStrip_Exit;
         private System.Windows.Forms.ToolStripMenuItem UI_MenuStrip_About;
-        private System.Windows.Forms.StatusStrip UI_StatusStrip;
         private System.Windows.Forms.ToolStripStatusLabel UI_ToolStripStatusLabel_Progress;
         private System.Windows.Forms.ToolStripProgressBar UI_ToolStripProgressBar;
         private System.Windows.Forms.ToolStripStatusLabel UI_ToolStripStatus;
-        private System.Windows.Forms.GroupBox UI_GroupBox_Backup;
-        private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TextBox UI_TextBox_Source;
         private System.Windows.Forms.TextBox UI_TextBox_Destination;
         private System.Windows.Forms.ComboBox UI_ComboBox_Type;
