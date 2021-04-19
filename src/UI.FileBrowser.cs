@@ -1,6 +1,8 @@
 ﻿using BackupAssistant.Core;
+using BackupAssistant.Modals;
 using BackupAssistant.Properties;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
@@ -32,7 +34,20 @@ namespace BackupAssistant
 
         private void UI_Button_Filter_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            using (FilterSelection dialog = new FilterSelection(this))
+            {
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Update internal collection
+                    _filterList = (List<string>)dialog.GetFilterList();
+
+                    // Update settings
+                    Settings.Default.Filters.Clear();
+                    Settings.Default.Filters.AddRange(_filterList.ToArray());
+                }
+            }
+
+            UpdateFilterIcon();
         }
 
         private void UI_TextBox_Source_TextChanged(object sender, EventArgs e)
