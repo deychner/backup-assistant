@@ -4,7 +4,7 @@ namespace BackupAssistant.Core
 {
     public partial class BackupAgent
     {
-        public static void RunIncrementalBackup()
+        public void RunIncrementalBackup()
         {
             Thread.Sleep(10000);
         }

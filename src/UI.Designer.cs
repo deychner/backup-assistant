@@ -165,6 +165,7 @@ namespace BackupAssistant
             // 
             // UI_Button_Cancel
             // 
+            this.UI_Button_Cancel.Enabled = false;
             this.UI_Button_Cancel.Location = new System.Drawing.Point(355, 106);
             this.UI_Button_Cancel.Name = "UI_Button_Cancel";
             this.UI_Button_Cancel.Size = new System.Drawing.Size(75, 23);

@@ -11,13 +11,7 @@ namespace BackupAssistant
 {
     public partial class UI : Form, IBackupStarter
     {
-        private enum BackupType : int
-        {
-            Incremental = 0,
-            Full
-        }
-
-        private BackupAgent _backupAgent = null;
+        
 
         private List<string> _filterList = null;
         public ReadOnlyCollection<string> Filters

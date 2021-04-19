@@ -8,6 +8,14 @@ namespace BackupAssistant
 {
     public partial class UI : Form, IBackupStarter
     {
+        private enum BackupType : int
+        {
+            Incremental = 0,
+            Full
+        }
+
+        private BackupAgent _backupAgent = null;
+
         public string SourcePath
         {
             get { return Settings.Default.Source; }
@@ -28,6 +36,7 @@ namespace BackupAssistant
             _logMessage.Clear();
 
             this.UI_Button_Backup.Enabled = false;
+            this.UI_Button_Cancel.Enabled = true;
 
             try
             {
@@ -35,11 +44,11 @@ namespace BackupAssistant
                 {
                     case BackupType.Incremental:
                         this.UI_Button_Backup.Enabled = false;
-                        await Task.Run(() => BackupAgent.RunIncrementalBackup());
+                        await Task.Run(() => _backupAgent.RunIncrementalBackup());
                         break;
                     case BackupType.Full:
                         this.UI_Button_Backup.Enabled = false;
-                        await Task.Run(() => BackupAgent.RunFullBackup());
+                        await Task.Run(() => _backupAgent.RunFullBackup());
                         break;
                     default:
                         // Do nothing
@@ -60,6 +69,7 @@ namespace BackupAssistant
             }
 
             this.UI_Button_Backup.Enabled = true;
+            this.UI_Button_Cancel.Enabled = false;
         }
 
         private void UI_Button_Cancel_Click(object sender, EventArgs e)
