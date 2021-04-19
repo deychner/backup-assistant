@@ -1,4 +1,5 @@
 ﻿using BackupAssistant.Core;
+using BackupAssistant.Modals;
 using BackupAssistant.Properties;
 using System;
 using System.Windows.Forms;
@@ -14,7 +15,8 @@ namespace BackupAssistant
 
         private void UI_MenuStrip_About_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            using Form about = new About();
+            about.ShowDialog();
         }
 
         private void Exit(object sender, EventArgs e)

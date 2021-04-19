@@ -287,6 +287,7 @@ namespace BackupAssistant
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.UI_MenuStrip;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(697, 500);
             this.MinimumSize = new System.Drawing.Size(531, 202);
             this.Name = "UI";
