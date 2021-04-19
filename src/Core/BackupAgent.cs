@@ -18,11 +18,11 @@ namespace BackupAssistant.Core
             _cancelOperation = true;
         }
 
-        private void ValidateBackup()
+        public void ValidateBackup()
         {
             if (string.IsNullOrEmpty(_caller.SourcePath))
             {
-                throw new ArgumentException("You must specify a backup source");
+                throw new ArgumentException("You must specify a backup source.");
             }
 
             if (!Directory.Exists(_caller.SourcePath))
@@ -32,7 +32,7 @@ namespace BackupAssistant.Core
 
             if (string.IsNullOrEmpty(_caller.DestinationPath))
             {
-                throw new ArgumentException("You must specify a backup destination");
+                throw new ArgumentException("You must specify a backup destination.");
             }
 
             if (!Directory.Exists(_caller.DestinationPath))
