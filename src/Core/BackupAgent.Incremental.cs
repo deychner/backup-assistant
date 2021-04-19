@@ -76,7 +76,7 @@ namespace BackupAssistant.Core
             _caller.PostProcess();
         }
 
-        private IDictionary<string, FileListing> GetCombinedFileList(string sourceDirectory, string destinationDirectory)
+        public IDictionary<string, FileListing> GetCombinedFileList(string sourceDirectory, string destinationDirectory)
         {
             Dictionary<string, FileListing> files = new Dictionary<string, FileListing>();
 

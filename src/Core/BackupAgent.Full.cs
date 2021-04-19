@@ -52,7 +52,7 @@ namespace BackupAssistant.Core
             _caller.PostProcess();
         }
 
-        private ICollection<string> GetFileList(string rootDirectory)
+        public ICollection<string> GetFileList(string rootDirectory)
         {
             List<string> files = new List<string>();
 
