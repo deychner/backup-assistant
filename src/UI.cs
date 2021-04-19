@@ -2,7 +2,6 @@
 using BackupAssistant.Properties;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
@@ -11,14 +10,6 @@ namespace BackupAssistant
 {
     public partial class UI : Form, IBackupStarter
     {
-        
-
-        private List<string> _filterList = null;
-        public ReadOnlyCollection<string> Filters
-        {
-            get { return _filterList.AsReadOnly(); }
-        }
-
         public UI()
         {
             InitializeComponent();

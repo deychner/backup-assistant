@@ -3,6 +3,7 @@ using BackupAssistant.Modals;
 using BackupAssistant.Properties;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Forms;
 
@@ -10,6 +11,12 @@ namespace BackupAssistant
 {
     public partial class UI : Form, IBackupStarter
     {
+        private List<string> _filterList = null;
+        public ReadOnlyCollection<string> Filters
+        {
+            get { return _filterList.AsReadOnly(); }
+        }
+
         private void UI_Button_Source_Click(object sender, EventArgs e)
         {
             string directory = GetFolderFromUser();
