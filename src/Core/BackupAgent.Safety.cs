@@ -23,7 +23,7 @@ namespace BackupAssistant.Core
         {
             try
             {
-                var files = Directory.GetFiles(directory);
+                var files = _fileSystem.Directory.GetFiles(directory);
                 return new ReadOnlyCollection<string>(files);
             }
             catch
@@ -38,7 +38,7 @@ namespace BackupAssistant.Core
         {
             try
             {
-                var directories = Directory.GetDirectories(directory);
+                var directories = _fileSystem.Directory.GetDirectories(directory);
                 return new ReadOnlyCollection<string>(directories);
             }
             catch
@@ -58,7 +58,7 @@ namespace BackupAssistant.Core
         {
             try
             {
-                File.Copy(sourceFileName, destinationFileName, overwrite);
+                _fileSystem.File.Copy(sourceFileName, destinationFileName, overwrite);
             }
             catch
             {
@@ -70,7 +70,7 @@ namespace BackupAssistant.Core
         {
             try
             {
-                File.Delete(file);
+                _fileSystem.File.Delete(file);
             }
             catch
             {

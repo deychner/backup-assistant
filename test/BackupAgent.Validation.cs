@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
+using System.IO.Abstractions.TestingHelpers;
 
 namespace BackupAssistant.Tests.BackupAgent
 {
@@ -16,7 +17,10 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock = new Mock<IBackupStarter>(MockBehavior.Strict);
 
-            _backupAgent = new Core.BackupAgent(_mock.Object);
+            MockFileSystem fileSystem = new MockFileSystem();
+            fileSystem.AddDirectory(@"C:\test");
+
+            _backupAgent = new Core.BackupAgent(_mock.Object, fileSystem);
         }
 
         [TestMethod]
@@ -27,9 +31,17 @@ namespace BackupAssistant.Tests.BackupAgent
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void FileSystemNull()
+        {
+            _backupAgent = new Core.BackupAgent(_mock.Object, null);
+        }
+
+        [TestMethod]
         public void SourcePathNull()
         {
             _mock.Setup(s => s.SourcePath).Returns(string.Empty);
+            _mock.Setup(s => s.DestinationPath).Returns(@"C:\test");
 
             var e = Assert.ThrowsException<ArgumentException>(() => _backupAgent.ValidateBackup());
             Assert.IsTrue(e.Message.Contains("You must specify a backup source."));
@@ -39,6 +51,7 @@ namespace BackupAssistant.Tests.BackupAgent
         public void SourcePathInvalid()
         {
             _mock.Setup(s => s.SourcePath).Returns(Guid.NewGuid().ToString());
+            _mock.Setup(s => s.DestinationPath).Returns(@"C:\test");
 
             var e = Assert.ThrowsException<ArgumentException>(() => _backupAgent.ValidateBackup());
             Assert.IsTrue(e.Message.Contains("The specified source directory could not be found."));
@@ -47,6 +60,7 @@ namespace BackupAssistant.Tests.BackupAgent
         [TestMethod]
         public void DestinationPathNull()
         {
+            _mock.Setup(s => s.SourcePath).Returns(@"C:\test");
             _mock.Setup(s => s.DestinationPath).Returns(string.Empty);
 
             var e = Assert.ThrowsException<ArgumentException>(() => _backupAgent.ValidateBackup());
@@ -54,10 +68,10 @@ namespace BackupAssistant.Tests.BackupAgent
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void DestinationPathInvalid()
         {
-            _mock.Setup(s => s.DestinationPath).Returns(string.Empty);
+            _mock.Setup(s => s.SourcePath).Returns(@"C:\test");
+            _mock.Setup(s => s.DestinationPath).Returns(Guid.NewGuid().ToString());
 
             var e = Assert.ThrowsException<ArgumentException>(() => _backupAgent.ValidateBackup());
             Assert.IsTrue(e.Message.Contains("The specified destination directory could not be found."));
