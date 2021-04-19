@@ -77,6 +77,7 @@ namespace BackupAssistant
             this.UI_MenuStrip_Exit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.D4)));
             this.UI_MenuStrip_Exit.Size = new System.Drawing.Size(129, 22);
             this.UI_MenuStrip_Exit.Text = "Exit";
+            this.UI_MenuStrip_Exit.Click += new System.EventHandler(this.UI_MenuStrip_Exit_Click);
             // 
             // UI_MenuStrip_Help
             // 
@@ -93,6 +94,7 @@ namespace BackupAssistant
             this.UI_MenuStrip_About.ShortcutKeys = System.Windows.Forms.Keys.F1;
             this.UI_MenuStrip_About.Size = new System.Drawing.Size(130, 26);
             this.UI_MenuStrip_About.Text = "About";
+            this.UI_MenuStrip_About.Click += new System.EventHandler(this.UI_MenuStrip_About_Click);
             // 
             // UI_StatusStrip
             // 
@@ -159,6 +161,7 @@ namespace BackupAssistant
             this.UI_Button_Backup.TabIndex = 10;
             this.UI_Button_Backup.Text = "Backup";
             this.UI_Button_Backup.UseVisualStyleBackColor = true;
+            this.UI_Button_Backup.Click += new System.EventHandler(this.UI_Button_Backup_Click);
             // 
             // UI_Button_Cancel
             // 
@@ -168,6 +171,7 @@ namespace BackupAssistant
             this.UI_Button_Cancel.TabIndex = 9;
             this.UI_Button_Cancel.Text = "Cancel";
             this.UI_Button_Cancel.UseVisualStyleBackColor = true;
+            this.UI_Button_Cancel.Click += new System.EventHandler(this.UI_Button_Cancel_Click);
             // 
             // UI_Button_Destination
             // 
@@ -178,6 +182,7 @@ namespace BackupAssistant
             this.UI_Button_Destination.Size = new System.Drawing.Size(23, 23);
             this.UI_Button_Destination.TabIndex = 8;
             this.UI_Button_Destination.UseVisualStyleBackColor = true;
+            this.UI_Button_Destination.Click += new System.EventHandler(this.UI_Button_Destination_Click);
             // 
             // UI_Button_Source
             // 
@@ -188,6 +193,7 @@ namespace BackupAssistant
             this.UI_Button_Source.Size = new System.Drawing.Size(23, 23);
             this.UI_Button_Source.TabIndex = 7;
             this.UI_Button_Source.UseVisualStyleBackColor = true;
+            this.UI_Button_Source.Click += new System.EventHandler(this.UI_Button_Source_Click);
             // 
             // UI_Button_Filter
             // 
@@ -198,6 +204,7 @@ namespace BackupAssistant
             this.UI_Button_Filter.Size = new System.Drawing.Size(23, 52);
             this.UI_Button_Filter.TabIndex = 6;
             this.UI_Button_Filter.UseVisualStyleBackColor = true;
+            this.UI_Button_Filter.Click += new System.EventHandler(this.UI_Button_Filter_Click);
             // 
             // UI_ComboBox_Type
             // 
@@ -210,6 +217,7 @@ namespace BackupAssistant
             this.UI_ComboBox_Type.Name = "UI_ComboBox_Type";
             this.UI_ComboBox_Type.Size = new System.Drawing.Size(348, 23);
             this.UI_ComboBox_Type.TabIndex = 5;
+            this.UI_ComboBox_Type.SelectedIndexChanged += new System.EventHandler(this.UI_ComboBox_Type_SelectedIndexChanged);
             // 
             // UI_Label_Type
             // 
@@ -252,6 +260,7 @@ namespace BackupAssistant
             this.UI_TextBox_Source.Name = "UI_TextBox_Source";
             this.UI_TextBox_Source.Size = new System.Drawing.Size(348, 23);
             this.UI_TextBox_Source.TabIndex = 0;
+            this.UI_TextBox_Source.TextChanged += new System.EventHandler(this.UI_TextBox_Source_TextChanged);
             // 
             // UI_MenuStrip
             // 

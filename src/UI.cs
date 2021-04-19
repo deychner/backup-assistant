@@ -29,10 +29,12 @@ namespace BackupAssistant
         {
             InitializeComponent();
 
+            Application.ApplicationExit += new EventHandler(this.Exit);
+
             if (!EventLog.SourceExists("Backup Assistant"))
             {
                 HandleException(new NotSupportedException("You must establish an event log for this application."));
-                Environment.Exit(1);
+                Exit(1);
             }
 
             _backupAgent = new BackupAgent(this);
