@@ -24,7 +24,6 @@ namespace BackupAssistant.Tests.BackupAgent
         public void CallerNull()
         {
             _backupAgent = new Core.BackupAgent(null);
-            _backupAgent.ValidateBackup();
         }
 
         [TestMethod]
