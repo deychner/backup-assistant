@@ -60,6 +60,12 @@ namespace BackupAssistant
         private void UI_TextBox_Source_TextChanged(object sender, EventArgs e)
         {
             this.UI_Button_Filter.Enabled = !string.IsNullOrEmpty(this.UI_TextBox_Source.Text);
+
+            // Clear filter list, since it's required that the filters exist under the source's root directory
+            _filterList.Clear();
+            Settings.Default.Filters.Clear();
+
+            UpdateFilterIcon();
         }
 
         private void UpdateFilterIcon()
