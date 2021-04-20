@@ -26,7 +26,7 @@ namespace BackupAssistant.Core
 
             // Copy files
             _caller.ReportStatus("Copying files...");
-            for (int i = 0; i < sourceFiles.Count - 1; i++)
+            for (int i = 0; i < sourceFiles.Count; i++)
             {
                 // Check for cancellation
                 if (_cancelOperation)
