@@ -11,6 +11,7 @@ namespace BackupAssistant.Tests.BackupAgent
     public class FullBackup
     {
         private Mock<IBackupStarter> _mock;
+        private MockFileSystem _mockFileSystem;
         private Core.BackupAgent _backupAgent;
 
         [TestInitialize]
@@ -26,7 +27,7 @@ namespace BackupAssistant.Tests.BackupAgent
 
             // Create mock source files
             MockFileData mockFileData = new MockFileData("Sample data");
-            MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+            _mockFileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
                 { @"c:\Single\file1.txt", mockFileData },
                 { @"c:\Single\file2.txt", mockFileData },
@@ -37,13 +38,13 @@ namespace BackupAssistant.Tests.BackupAgent
             });
 
             // Create mock destination directory
-            fileSystem.AddDirectory(@"c:\Backup");
+            _mockFileSystem.AddDirectory(@"c:\Backup");
 
-            _backupAgent = new Core.BackupAgent(_mock.Object, fileSystem);
+            _backupAgent = new Core.BackupAgent(_mock.Object, _mockFileSystem);
         }
 
         [TestMethod]
-        public void FileList_SingleLevel()
+        public void GetFileList_SingleLevel()
         {
             _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
 
@@ -52,6 +53,61 @@ namespace BackupAssistant.Tests.BackupAgent
             Assert.AreEqual(2, fileList.Count, "Incorrect number of files returned.");
             Assert.IsTrue(fileList.Contains(@"c:\Single\file1.txt"), "File 1 not found.");
             Assert.IsTrue(fileList.Contains(@"c:\Single\file2.txt"), "File 2 not found.");
+        }
+
+        [TestMethod]
+        public void GetFileList_MultiLevel()
+        {
+            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+
+            List<string> fileList = (List<string>)_backupAgent.GetFileList(@"c:\Multi");
+
+            Assert.AreEqual(4, fileList.Count, "Incorrect number of files returned.");
+            Assert.IsTrue(fileList.Contains(@"c:\Multi\file1.txt"), "File 1 not found.");
+            Assert.IsTrue(fileList.Contains(@"c:\Multi\L1F1\file2.txt"), "File 2 not found.");
+            Assert.IsTrue(fileList.Contains(@"c:\Multi\L1F2\file3.txt"), "File 3 not found.");
+            Assert.IsTrue(fileList.Contains(@"c:\Multi\L1F1\L2F1\file4.txt"), "File 4 not found.");
+        }
+
+        [TestMethod]
+        public void GetFileList_MultiLevel_Filters()
+        {
+            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { @"...\L1F1" }));
+
+            List<string> fileList = (List<string>)_backupAgent.GetFileList(@"c:\Multi");
+
+            Assert.AreEqual(3, fileList.Count, "Incorrect number of files returned.");
+            Assert.IsTrue(fileList.Contains(@"c:\Multi\file1.txt"), "File 1 not found.");
+            Assert.IsTrue(fileList.Contains(@"c:\Multi\L1F1\file2.txt"), "File 2 not found.");
+            Assert.IsTrue(fileList.Contains(@"c:\Multi\L1F1\L2F1\file4.txt"), "File 4 not found.");
+        }
+
+        [TestMethod]
+        public void RunFullBackup_SingleLevel()
+        {
+            _mock.Setup(s => s.SourcePath).Returns(@"c:\Single");
+            _mock.Setup(d => d.DestinationPath).Returns(@"c:\Backup");
+            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+
+            _backupAgent.RunFullBackup();
+
+            Assert.IsTrue(_mockFileSystem.File.Exists(@"c:\Backup\file1.txt"), "File 1 not found.");
+            Assert.IsTrue(_mockFileSystem.File.Exists(@"c:\Backup\file2.txt"), "File 2 not found.");
+        }
+
+        [TestMethod]
+        public void RunFullBackup_MultiLevel()
+        {
+            _mock.Setup(s => s.SourcePath).Returns(@"c:\Multi");
+            _mock.Setup(d => d.DestinationPath).Returns(@"c:\Backup");
+            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+
+            _backupAgent.RunFullBackup();
+
+            Assert.IsTrue(_mockFileSystem.File.Exists(@"c:\Backup\file1.txt"), "File 1 not found.");
+            Assert.IsTrue(_mockFileSystem.File.Exists(@"c:\Backup\L1F1\file2.txt"), "File 2 not found.");
+            Assert.IsTrue(_mockFileSystem.File.Exists(@"c:\Backup\L1F2\file3.txt"), "File 3 not found.");
+            Assert.IsTrue(_mockFileSystem.File.Exists(@"c:\Backup\L1F1\L2F1\file4.txt"), "File 4 not found.");
         }
     }
 }
