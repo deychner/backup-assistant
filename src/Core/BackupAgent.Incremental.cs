@@ -26,8 +26,8 @@ namespace BackupAssistant.Core
             long processed = 0L;
             long totalSize =
                 (from FileListing f in files.Values
-                where f.GetBackupAction() != BackupAction.None
-                select f.Size).Sum();
+                 where f.GetBackupAction() != BackupAction.None
+                 select f.Size).Sum();
 
             foreach (string key in files.Keys)
             {

@@ -46,7 +46,7 @@ namespace BackupAssistant.Tests.BackupAgent
         public void FileList_SingleLevel()
         {
             _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
-            
+
             List<string> fileList = (List<string>)_backupAgent.GetFileList(@"c:\Single");
 
             Assert.AreEqual(2, fileList.Count, "Incorrect number of files returned.");

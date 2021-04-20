@@ -56,9 +56,9 @@ namespace BackupAssistant.Tests.BackupAgent
             Dictionary<string, Core.FileListing> fileList = (Dictionary<string, Core.FileListing>)_backupAgent.GetCombinedFileList(@"c:\Single", @"c:\Single_Backup");
 
             Assert.AreEqual(3, fileList.Count, "Incorrect number of files found.");
-            Assert.IsTrue(fileList.ContainsKey("...\file1.txt"), "File 1 not found.");
-            Assert.IsTrue(fileList["...\file1.txt"].IsInSource, "File 1 not properly marked as being in the source location.");
-            Assert.IsFalse(fileList["...\file1.txt"].IsInDestination, "File 1 not properly marked as not being in the destination location.");
+            Assert.IsTrue(fileList.ContainsKey(@"...\file1.txt"), "File 1 not found.");
+            Assert.IsTrue(fileList[@"...\file1.txt"].IsInSource, "File 1 not properly marked as being in the source location.");
+            Assert.IsFalse(fileList[@"...\file1.txt"].IsInDestination, "File 1 not properly marked as not being in the destination location.");
         }
     }
 }
