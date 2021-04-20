@@ -49,6 +49,26 @@ namespace BackupAssistant.Core
             }
         }
 
+        public void EnsureDirectoryPathExists(string fileName)
+        {
+            string[] directories = fileName.Split('\\');
+            string bottom = string.Join('\\', directories, 0, directories.Length - 1);
+
+            // If the destination's directory structure does not exist, create it
+            if (!_fileSystem.Directory.Exists(bottom))
+            {
+                for (int i = 1; i < directories.Length; i++)
+                {
+                    string path = string.Join('\\', directories, 0, i);
+
+                    if (!_fileSystem.Directory.Exists(path))
+                    {
+                        _fileSystem.Directory.CreateDirectory(path);
+                    }
+                }
+            }
+        }
+
         public void SafeCopyFile(string sourceFileName, string destinationFileName)
         {
             SafeCopyFile(sourceFileName, destinationFileName, false);
@@ -58,6 +78,8 @@ namespace BackupAssistant.Core
         {
             try
             {
+                EnsureDirectoryPathExists(destinationFileName);
+
                 _fileSystem.File.Copy(sourceFileName, destinationFileName, overwrite);
             }
             catch

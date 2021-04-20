@@ -4,6 +4,7 @@ using Moq;
 using System;
 using System.Collections.ObjectModel;
 using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
 
 namespace BackupAssistant.Tests.BackupAgent
 {
@@ -76,6 +77,27 @@ namespace BackupAssistant.Tests.BackupAgent
         }
 
         [TestMethod]
+        public void EnsureDirectoryPathExists()
+        {
+            MockFileSystem fileSystem = new MockFileSystem();
+            fileSystem.AddDirectory(@"c:\");
+
+            _backupAgent = new Core.BackupAgent(_mock.Object, fileSystem);
+
+            try
+            {
+                _backupAgent.EnsureDirectoryPathExists(@"c:\level1\level2\file.txt");
+            }
+            catch (Exception e)
+            {
+                Assert.Fail($"Expected no exception to be thrown. Message: {e.Message}");
+            }
+
+            Assert.IsTrue(fileSystem.Directory.Exists(@"c:\level1"), "Top level directory was not created.");
+            Assert.IsTrue(fileSystem.Directory.Exists(@"c:\level1\level2"), "Top level directory was not created.");
+        }
+
+        [TestMethod]
         public void SafeCopyFile()
         {
             try
@@ -88,13 +110,12 @@ namespace BackupAssistant.Tests.BackupAgent
             }
         }
 
-
         [TestMethod]
         public void SafeDeleteFile()
         {
             try
             {
-                _backupAgent.SafeDeleteFile(Guid.NewGuid().ToString());
+                _backupAgent.SafeDeleteFile(null);
             }
             catch (Exception e)
             {
