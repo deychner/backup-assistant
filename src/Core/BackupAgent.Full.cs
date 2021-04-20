@@ -2,7 +2,7 @@
 
 namespace BackupAssistant.Core
 {
-    public partial class BackupAgent
+    internal partial class BackupAgent
     {
         public void RunFullBackup()
         {

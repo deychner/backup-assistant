@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace BackupAssistant.Core
 {
-    public partial class BackupAgent
+    internal partial class BackupAgent
     {
         public void RunIncrementalBackup()
         {

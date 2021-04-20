@@ -1,6 +1,6 @@
 ﻿namespace BackupAssistant.Core
 {
-    public partial class BackupAgent
+    internal partial class BackupAgent
     {
         string ShrinkSourceFileName(string fileName)
         {

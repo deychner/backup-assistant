@@ -3,7 +3,7 @@ using System.IO.Abstractions;
 
 namespace BackupAssistant.Core
 {
-    public partial class BackupAgent
+    internal partial class BackupAgent
     {
         public IFileInfo SafeGetFileInfo(string file)
         {
