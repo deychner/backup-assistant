@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.ObjectModel;
-using System.IO;
+using System.IO.Abstractions;
 
 namespace BackupAssistant.Tests.BackupAgent
 {
@@ -25,7 +25,7 @@ namespace BackupAssistant.Tests.BackupAgent
         [TestMethod]
         public void SafeGetFileInfo()
         {
-            FileInfo fileInfo = null;
+            IFileInfo fileInfo = null;
 
             try
             {

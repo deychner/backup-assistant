@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 
 namespace BackupAssistant.Core
@@ -133,7 +133,7 @@ namespace BackupAssistant.Core
             foreach (string f in SafeGetFiles(directory))
             {
                 string fileName = ShrinkSourceFileName(f);
-                FileInfo info = SafeGetFileInfo(f);
+                IFileInfo info = SafeGetFileInfo(f);
 
                 if (info != null)
                 {
@@ -172,7 +172,7 @@ namespace BackupAssistant.Core
             foreach (string f in SafeGetFiles(directory))
             {
                 string fileName = ShrinkDestinationFileName(f);
-                FileInfo info = SafeGetFileInfo(f);
+                IFileInfo info = SafeGetFileInfo(f);
 
                 if (info != null)
                 {

@@ -1,15 +1,15 @@
 ﻿using System.Collections.ObjectModel;
-using System.IO;
+using System.IO.Abstractions;
 
 namespace BackupAssistant.Core
 {
     public partial class BackupAgent
     {
-        public FileInfo SafeGetFileInfo(string file)
+        public IFileInfo SafeGetFileInfo(string file)
         {
             try
             {
-                return new FileInfo(file);
+                return _fileSystem.FileInfo.FromFileName(file);
             }
             catch
             {
