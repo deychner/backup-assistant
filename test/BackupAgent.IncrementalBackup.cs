@@ -204,7 +204,7 @@ namespace BackupAssistant.Tests.BackupAgent
             DateTime sourceLastModified = _mockFileSystem.FileInfo.FromFileName(@"c:\Single\file2.txt").LastWriteTime;
             DateTime destinationLastModified = _mockFileSystem.FileInfo.FromFileName(@"c:\Single_Backup\file2.txt").LastWriteTime;
 
-            if (sourceLastModified < destinationLastModified)
+            if (sourceLastModified <= destinationLastModified)
             {
                 Assert.Inconclusive("The test did not make a source file that is newer than the destination file.");
             }
