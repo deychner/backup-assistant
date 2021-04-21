@@ -31,13 +31,13 @@ namespace BackupAssistant.Tests.BackupAgent
             _mockFileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
                 { @"c:\Single\file1.txt", mockFileData },
-                { @"c:\Single\file2.txt", mockFileData },
+                { @"c:\Single\file2.txt", new MockFileData("Sample data") { LastWriteTime = DateTimeOffset.Now } },
                 { @"c:\Multi\file1.txt", mockFileData },
                 { @"c:\Multi\L1F1\file2.txt", mockFileData },
                 { @"c:\Multi\L1F2\file3.txt", mockFileData },
                 { @"c:\Multi\L1F1\L2F1\file4.txt", mockFileData },
 
-                { @"c:\Single_Backup\file2.txt", mockFileData },
+                { @"c:\Single_Backup\file2.txt", new MockFileData("Sample data") { LastWriteTime = DateTimeOffset.Now.AddDays(-1) } },
                 { @"c:\Single_Backup\file3.txt", mockFileData },
                 { @"c:\Multi_Backup\file1.txt", mockFileData },
                 { @"c:\Multi_Backup\L1F2\file3.txt", mockFileData },
@@ -196,9 +196,6 @@ namespace BackupAssistant.Tests.BackupAgent
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Single");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Single_Backup");
             _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
-
-            // Touch file2.txt in source to make it more recent
-            _mockFileSystem.File.WriteAllText(@"c:\Single\file2.txt", "New content");
 
             // Check dates
             DateTime sourceLastModified = _mockFileSystem.FileInfo.FromFileName(@"c:\Single\file2.txt").LastWriteTime;

@@ -30,14 +30,14 @@ namespace BackupAssistant.Tests.BackupAgent
 
             try
             {
-                fileInfo = _backupAgent.SafeGetFileInfo(Guid.NewGuid().ToString());
+                fileInfo = _backupAgent.SafeGetFileInfo(null);
             }
             catch (Exception e)
             {
                 Assert.Fail($"Expected no exception to be thrown. Message: {e.Message}");
             }
 
-            Assert.IsNotNull(fileInfo, "The file info was null.");
+            Assert.IsNull(fileInfo, "The file info was not null.");
         }
 
         [TestMethod]
