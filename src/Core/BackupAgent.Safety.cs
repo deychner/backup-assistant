@@ -49,23 +49,13 @@ namespace BackupAssistant.Core
             }
         }
 
-        public void EnsureDirectoryPathExists(string fileName)
+        public void EnsureDirectoryPathExists(string path)
         {
-            string[] directories = fileName.Split('\\');
-            string bottom = string.Join('\\', directories, 0, directories.Length - 1);
+            string directory = _fileSystem.Path.GetDirectoryName(path);
 
-            // If the destination's directory structure does not exist, create it
-            if (!_fileSystem.Directory.Exists(bottom))
+            if (!_fileSystem.Directory.Exists(directory))
             {
-                for (int i = 1; i < directories.Length; i++)
-                {
-                    string path = string.Join('\\', directories, 0, i);
-
-                    if (!_fileSystem.Directory.Exists(path))
-                    {
-                        _fileSystem.Directory.CreateDirectory(path);
-                    }
-                }
+                _fileSystem.Directory.CreateDirectory(directory);
             }
         }
 
