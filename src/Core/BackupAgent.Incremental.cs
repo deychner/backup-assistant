@@ -48,20 +48,30 @@ namespace BackupAssistant.Core
                         break;
                     case BackupAction.Copy:
                         SafeCopyFile(sourceFile, destinationFile, false);
+                        processed += listing.Size;
                         break;
                     case BackupAction.Overwrite:
                         SafeCopyFile(sourceFile, destinationFile, true);
+                        processed += listing.Size;
                         break;
                     case BackupAction.Delete:
                         SafeDeleteFile(destinationFile);
+                        processed += listing.Size;
                         break;
                     default:
                         // Do nothing
                         break;
                 }
 
-                processed += listing.Size;
-                _caller.ReportProgress((int)(100L * (processed / totalSize)));
+                // Handle edge case where all files eligible for backup are empty
+                if (totalSize > 0)
+                {
+                    _caller.ReportProgress((int)(100L * (processed / totalSize)));
+                }
+                else
+                {
+                    _caller.ReportProgress(100);
+                }
             }
 
             if (_cancelOperation)
