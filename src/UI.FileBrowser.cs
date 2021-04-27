@@ -84,7 +84,7 @@ namespace BackupAssistant
         {
             using FolderBrowserDialog dialog = new FolderBrowserDialog
             {
-                SelectedPath = "C:\\",
+                SelectedPath = @"C:\",
                 ShowNewFolderButton = false
             };
 

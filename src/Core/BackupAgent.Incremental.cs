@@ -17,7 +17,7 @@ namespace BackupAssistant.Core
 
             // Get file list
             _caller.ReportStatus("Getting file information...");
-            Dictionary<string, FileListing> files = (Dictionary<string, FileListing>)GetCombinedFileList(_caller.SourcePath, _caller.DestinationPath);
+            IDictionary<string, FileListing> files = GetCombinedFileList(_caller.SourcePath, _caller.DestinationPath);
 
             // Process files
             _caller.ReportStatus("Processing files...");
