@@ -1,13 +1,21 @@
 ﻿using BackupAssistant.Core;
 using System.Collections.Generic;
-using System.IO;
+using System.IO.Abstractions;
 using System.Windows.Forms;
 
 namespace BackupAssistant.Modals
 {
     public partial class FilterSelection : Form
     {
-        public FilterSelection(IBackupStarter caller)
+        public FilterSelection(IBackupStarter caller) : this(
+            caller: caller,
+            fileSystem: new FileSystem() // Use System.IO implementation
+            )
+        {
+
+        }
+
+        public FilterSelection(IBackupStarter caller, IFileSystem fileSystem)
         {
             InitializeComponent();
 
@@ -18,7 +26,7 @@ namespace BackupAssistant.Modals
 
                 try
                 {
-                    directoriesToFilter = Directory.GetDirectories(caller.SourcePath);
+                    directoriesToFilter = fileSystem.Directory.GetDirectories(caller.SourcePath);
                 }
                 catch
                 {

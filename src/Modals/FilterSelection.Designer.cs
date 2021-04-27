@@ -89,7 +89,7 @@ namespace BackupAssistant.Modals
 
         #endregion
 
-        private System.Windows.Forms.CheckedListBox FilterSelection_CheckedListBox_Filters;
+        internal System.Windows.Forms.CheckedListBox FilterSelection_CheckedListBox_Filters;
         private System.Windows.Forms.Button FilterSelection_Button_Cancel;
         private System.Windows.Forms.Button FilterSelection_Button_Apply;
     }
