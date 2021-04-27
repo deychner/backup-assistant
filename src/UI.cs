@@ -33,6 +33,18 @@ namespace BackupAssistant
 
         private void LoadSettings()
         {
+            // Initialize filters
+            Settings.Default.Filters ??= new System.Collections.Specialized.StringCollection();
+
+            // Load filters
+            foreach (string f in Settings.Default.Filters)
+            {
+                _filterList.Add(f);
+            }
+
+            // Finalize filters
+            UpdateFilterIcon();
+
             if (string.IsNullOrEmpty(Settings.Default.Source))
             {
                 // Default source
@@ -53,17 +65,6 @@ namespace BackupAssistant
 
             // Load backup type
             this.UI_ComboBox_Type.SelectedIndex = Settings.Default.BackupType;
-
-            // Initialize filters
-            Settings.Default.Filters ??= new System.Collections.Specialized.StringCollection();
-
-            // Load filters
-            foreach (string f in Settings.Default.Filters)
-            {
-                _filterList.Add(f);
-            }
-
-            UpdateFilterIcon();
         }
     }
 }
