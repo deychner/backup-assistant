@@ -14,7 +14,7 @@ namespace BackupAssistant
             Full
         }
 
-        private BackupAgent _backupAgent = null;
+        private readonly BackupAgent _backupAgent = null;
 
         public string SourcePath
         {

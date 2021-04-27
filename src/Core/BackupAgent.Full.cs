@@ -15,7 +15,7 @@ namespace BackupAssistant.Core
 
             // Get file list
             _caller.ReportStatus("Getting source file list...");
-            List<string> sourceFiles = (List<string>)GetFileList(_caller.SourcePath);
+            IList<string> sourceFiles = GetFileList(_caller.SourcePath);
 
             // Delete destination directory
             _caller.ReportStatus("Deleting destination directory...");
@@ -52,7 +52,7 @@ namespace BackupAssistant.Core
             _caller.PostProcess();
         }
 
-        public ICollection<string> GetFileList(string rootDirectory)
+        public IList<string> GetFileList(string rootDirectory)
         {
             List<string> files = new List<string>();
 
@@ -76,7 +76,7 @@ namespace BackupAssistant.Core
             return files;
         }
 
-        private void DirectorySearch(string directory, ICollection<string> fileList)
+        private void DirectorySearch(string directory, IList<string> fileList)
         {
             GetFilesInDirectory(directory, fileList);
 
@@ -86,7 +86,7 @@ namespace BackupAssistant.Core
             }
         }
 
-        private void GetFilesInDirectory(string directory, ICollection<string> fileList)
+        private void GetFilesInDirectory(string directory, IList<string> fileList)
         {
             foreach (string f in SafeGetFiles(directory))
             {

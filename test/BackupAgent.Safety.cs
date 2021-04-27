@@ -2,7 +2,7 @@ using BackupAssistant.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 
@@ -43,7 +43,7 @@ namespace BackupAssistant.Tests.BackupAgent
         [TestMethod]
         public void SafeGetFiles()
         {
-            ReadOnlyCollection<string> files = null;
+            IReadOnlyCollection<string> files = null;
 
             try
             {
@@ -61,7 +61,7 @@ namespace BackupAssistant.Tests.BackupAgent
         [TestMethod]
         public void SafeGetDirectories()
         {
-            ReadOnlyCollection<string> directories = null;
+            IReadOnlyCollection<string> directories = null;
 
             try
             {

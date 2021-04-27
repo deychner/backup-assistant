@@ -3,7 +3,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO.Abstractions.TestingHelpers;
 
 namespace BackupAssistant.Tests.BackupAgent
@@ -53,9 +52,9 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Single");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Single_Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
-            Dictionary<string, Core.FileListing> fileList = (Dictionary<string, Core.FileListing>)_backupAgent.GetCombinedFileList(@"c:\Single", @"c:\Single_Backup");
+            IDictionary<string, Core.FileListing> fileList = _backupAgent.GetCombinedFileList(@"c:\Single", @"c:\Single_Backup");
 
             Assert.AreEqual(3, fileList.Count, "Incorrect number of files found.");
             Assert.IsTrue(fileList.ContainsKey(@"...\file1.txt"), "File 1 not found.");
@@ -68,9 +67,9 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Single");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Single_Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
-            Dictionary<string, Core.FileListing> fileList = (Dictionary<string, Core.FileListing>)_backupAgent.GetCombinedFileList(@"c:\Single", @"c:\Single_Backup");
+            IDictionary<string, Core.FileListing> fileList = _backupAgent.GetCombinedFileList(@"c:\Single", @"c:\Single_Backup");
 
             Assert.AreEqual(3, fileList.Count, "Incorrect number of files found.");
             Assert.IsTrue(fileList.ContainsKey(@"...\file2.txt"), "File 2 not found.");
@@ -83,9 +82,9 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Single");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Single_Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
-            Dictionary<string, Core.FileListing> fileList = (Dictionary<string, Core.FileListing>)_backupAgent.GetCombinedFileList(@"c:\Single", @"c:\Single_Backup");
+            IDictionary<string, Core.FileListing> fileList = _backupAgent.GetCombinedFileList(@"c:\Single", @"c:\Single_Backup");
 
             Assert.AreEqual(3, fileList.Count, "Incorrect number of files found.");
             Assert.IsTrue(fileList.ContainsKey(@"...\file3.txt"), "File 3 not found.");
@@ -98,9 +97,9 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Multi");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Multi_Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
-            Dictionary<string, Core.FileListing> fileList = (Dictionary<string, Core.FileListing>)_backupAgent.GetCombinedFileList(@"c:\Multi", @"c:\Multi_Backup");
+            IDictionary<string, Core.FileListing> fileList = _backupAgent.GetCombinedFileList(@"c:\Multi", @"c:\Multi_Backup");
 
             Assert.AreEqual(5, fileList.Count, "Incorrect number of files found.");
             Assert.IsTrue(fileList.ContainsKey(@"...\L1F1\file2.txt"), "File 2 not found.");
@@ -113,9 +112,9 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Multi");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Multi_Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
-            Dictionary<string, Core.FileListing> fileList = (Dictionary<string, Core.FileListing>)_backupAgent.GetCombinedFileList(@"c:\Multi", @"c:\Multi_Backup");
+            IDictionary<string, Core.FileListing> fileList = _backupAgent.GetCombinedFileList(@"c:\Multi", @"c:\Multi_Backup");
 
             Assert.AreEqual(5, fileList.Count, "Incorrect number of files found.");
             Assert.IsTrue(fileList.ContainsKey(@"...\L1F2\file3.txt"), "File 3 not found.");
@@ -128,9 +127,9 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Multi");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Multi_Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
-            Dictionary<string, Core.FileListing> fileList = (Dictionary<string, Core.FileListing>)_backupAgent.GetCombinedFileList(@"c:\Multi", @"c:\Multi_Backup");
+            IDictionary<string, Core.FileListing> fileList = _backupAgent.GetCombinedFileList(@"c:\Multi", @"c:\Multi_Backup");
 
             Assert.AreEqual(5, fileList.Count, "Incorrect number of files found.");
             Assert.IsTrue(fileList.ContainsKey(@"...\L1F1\file5.txt"), "File 5 not found.");
@@ -143,9 +142,9 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Multi");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Multi_Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { @"...\L1F1" }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { @"...\L1F1" }));
 
-            Dictionary<string, Core.FileListing> fileList = (Dictionary<string, Core.FileListing>)_backupAgent.GetCombinedFileList(@"c:\Multi", @"c:\Multi_Backup");
+            IDictionary<string, Core.FileListing> fileList = _backupAgent.GetCombinedFileList(@"c:\Multi", @"c:\Multi_Backup");
 
             Assert.AreEqual(4, fileList.Count, "Incorrect number of files returned.");
             Assert.IsTrue(fileList.ContainsKey(@"...\file1.txt"), "File 1 not found.");
@@ -159,7 +158,7 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Single");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Single_Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
             _backupAgent.RunIncrementalBackup();
 
@@ -171,7 +170,7 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Single");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Single_Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
             _backupAgent.RunIncrementalBackup();
 
@@ -183,7 +182,7 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Single");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Single_Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
             _backupAgent.RunIncrementalBackup();
 
@@ -195,7 +194,7 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Single");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Single_Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
             // Check dates
             DateTime sourceLastModified = _mockFileSystem.FileInfo.FromFileName(@"c:\Single\file2.txt").LastWriteTime;
@@ -221,7 +220,7 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Multi");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Multi_Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
             _backupAgent.RunIncrementalBackup();
 
@@ -233,7 +232,7 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Multi");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Multi_Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
             _backupAgent.RunIncrementalBackup();
 
@@ -245,7 +244,7 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Multi");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Multi_Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
             _backupAgent.RunIncrementalBackup();
 
@@ -257,7 +256,7 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Multi");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Multi_Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
             // Touch file3.txt in source to make it more recent
             _mockFileSystem.File.WriteAllText(@"c:\Multi\L1F2\file3.txt", "New content");

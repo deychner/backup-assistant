@@ -2,7 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO.Abstractions.TestingHelpers;
 
 namespace BackupAssistant.Tests.BackupAgent
@@ -46,9 +45,9 @@ namespace BackupAssistant.Tests.BackupAgent
         [TestMethod]
         public void GetFileList_SingleLevel()
         {
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
-            List<string> fileList = (List<string>)_backupAgent.GetFileList(@"c:\Single");
+            IList<string> fileList = _backupAgent.GetFileList(@"c:\Single");
 
             Assert.AreEqual(2, fileList.Count, "Incorrect number of files returned.");
             Assert.IsTrue(fileList.Contains(@"c:\Single\file1.txt"), "File 1 not found.");
@@ -58,9 +57,9 @@ namespace BackupAssistant.Tests.BackupAgent
         [TestMethod]
         public void GetFileList_MultiLevel()
         {
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
-            List<string> fileList = (List<string>)_backupAgent.GetFileList(@"c:\Multi");
+            IList<string> fileList = _backupAgent.GetFileList(@"c:\Multi");
 
             Assert.AreEqual(4, fileList.Count, "Incorrect number of files returned.");
             Assert.IsTrue(fileList.Contains(@"c:\Multi\file1.txt"), "File 1 not found.");
@@ -72,9 +71,9 @@ namespace BackupAssistant.Tests.BackupAgent
         [TestMethod]
         public void GetFileList_MultiLevel_Filters()
         {
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { @"...\L1F1" }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { @"...\L1F1" }));
 
-            List<string> fileList = (List<string>)_backupAgent.GetFileList(@"c:\Multi");
+            IList<string> fileList = _backupAgent.GetFileList(@"c:\Multi");
 
             Assert.AreEqual(3, fileList.Count, "Incorrect number of files returned.");
             Assert.IsTrue(fileList.Contains(@"c:\Multi\file1.txt"), "File 1 not found.");
@@ -87,7 +86,7 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Single");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
             _backupAgent.RunFullBackup();
 
@@ -100,7 +99,7 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Multi");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
             _backupAgent.RunFullBackup();
 

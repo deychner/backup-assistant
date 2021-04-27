@@ -3,7 +3,6 @@ using BackupAssistant.Modals;
 using BackupAssistant.Properties;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Forms;
 
@@ -12,7 +11,7 @@ namespace BackupAssistant
     public partial class UI : Form, IBackupStarter
     {
         private List<string> _filterList = null;
-        public ReadOnlyCollection<string> Filters
+        public IList<string> Filters
         {
             get { return _filterList.AsReadOnly(); }
         }
@@ -84,7 +83,7 @@ namespace BackupAssistant
         {
             using FolderBrowserDialog dialog = new FolderBrowserDialog
             {
-                SelectedPath = "C:\\",
+                SelectedPath = @"C:\",
                 ShowNewFolderButton = false
             };
 
