@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 
 namespace BackupAssistant.Core
 {
@@ -8,7 +8,7 @@ namespace BackupAssistant.Core
 
         string DestinationPath { get; }
 
-        ReadOnlyCollection<string> Filters { get; }
+        IList<string> Filters { get; }
 
         void PreProcess();
 

@@ -2,7 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO.Abstractions.TestingHelpers;
 
 namespace BackupAssistant.Tests.BackupAgent
@@ -46,7 +45,7 @@ namespace BackupAssistant.Tests.BackupAgent
         [TestMethod]
         public void GetFileList_SingleLevel()
         {
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
             IList<string> fileList = _backupAgent.GetFileList(@"c:\Single");
 
@@ -58,7 +57,7 @@ namespace BackupAssistant.Tests.BackupAgent
         [TestMethod]
         public void GetFileList_MultiLevel()
         {
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
             IList<string> fileList = _backupAgent.GetFileList(@"c:\Multi");
 
@@ -72,7 +71,7 @@ namespace BackupAssistant.Tests.BackupAgent
         [TestMethod]
         public void GetFileList_MultiLevel_Filters()
         {
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { @"...\L1F1" }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { @"...\L1F1" }));
 
             IList<string> fileList = _backupAgent.GetFileList(@"c:\Multi");
 
@@ -87,7 +86,7 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Single");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
             _backupAgent.RunFullBackup();
 
@@ -100,7 +99,7 @@ namespace BackupAssistant.Tests.BackupAgent
         {
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Multi");
             _mock.Setup(d => d.DestinationPath).Returns(@"c:\Backup");
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
 
             _backupAgent.RunFullBackup();
 

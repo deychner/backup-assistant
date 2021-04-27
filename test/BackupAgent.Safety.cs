@@ -3,7 +3,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 

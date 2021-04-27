@@ -1,7 +1,7 @@
 ﻿using BackupAssistant.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
 
 namespace BackupAssistant.Tests
@@ -24,11 +24,11 @@ namespace BackupAssistant.Tests
             _mock = new Mock<IBackupStarter>(MockBehavior.Strict);
             _mock.Setup(s => s.SourcePath).Returns(@"c:\Source");
         }
-        
+
         [TestMethod]
         public void Initialize_NoFilters()
         {
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
             var form = new Modals.FilterSelection(_mock.Object, _mockFileSystem);
 
             // Check filter presence
@@ -40,7 +40,7 @@ namespace BackupAssistant.Tests
         [TestMethod]
         public void Initialize_CheckState_NoFilters()
         {
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { }));
             var form = new Modals.FilterSelection(_mock.Object, _mockFileSystem);
 
             // Validate check state
@@ -50,7 +50,7 @@ namespace BackupAssistant.Tests
         [TestMethod]
         public void Initialize_CheckState_Filters()
         {
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { @"...\dir1" }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { @"...\dir1" }));
             var form = new Modals.FilterSelection(_mock.Object, _mockFileSystem);
 
             // Validate check state
@@ -61,7 +61,7 @@ namespace BackupAssistant.Tests
         [TestMethod]
         public void GetFilterList()
         {
-            _mock.Setup(f => f.Filters).Returns(new ReadOnlyCollection<string>(new string[] { @"...\dir1" }));
+            _mock.Setup(f => f.Filters).Returns(new List<string>(new string[] { @"...\dir1" }));
             var form = new Modals.FilterSelection(_mock.Object, _mockFileSystem);
 
             var items = form.GetFilterList();
