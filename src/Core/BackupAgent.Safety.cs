@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+
 using System.IO.Abstractions;
 
 namespace BackupAssistant.Core
@@ -36,6 +37,7 @@ namespace BackupAssistant.Core
         }
 
         public IReadOnlyCollection<string> SafeGetDirectories(string directory)
+
         {
             try
             {

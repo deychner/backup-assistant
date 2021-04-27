@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 
+
 namespace BackupAssistant.Core
 {
     public interface IBackupStarter
