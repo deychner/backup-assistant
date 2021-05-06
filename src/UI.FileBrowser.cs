@@ -4,6 +4,7 @@ using BackupAssistant.Properties;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace BackupAssistant
@@ -60,11 +61,18 @@ namespace BackupAssistant
         {
             this.UI_Button_Filter.Enabled = !string.IsNullOrEmpty(this.UI_TextBox_Source.Text);
 
-            // Clear filter list, since it's required that the filters exist under the source's root directory
-            _filterList.Clear();
-            Settings.Default.Filters.Clear();
+            bool filtersInvalid = (from string f in _filterList
+                                   where !Directory.Exists(f.Replace("...", this.UI_TextBox_Source.Text))
+                                   select f).Any();
 
-            UpdateFilterIcon();
+            if (filtersInvalid)
+            {
+                // Clear filter list, since it's required that the filters exist under the source's root directory
+                _filterList.Clear();
+                Settings.Default.Filters.Clear();
+
+                UpdateFilterIcon();
+            }
         }
 
         private void UpdateFilterIcon()
