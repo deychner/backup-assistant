@@ -37,7 +37,11 @@
                     <MenuItem Header="Exit" />
                 </MenuItem>
                 <MenuItem Header="Help">
-                    <MenuItem Header="About" />
+                    <MenuItem Header="About">
+                        <MenuItem.Icon>
+                            <Image Source="/assets/help.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
             </Menu>
         </DockPanel>
