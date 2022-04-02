@@ -5,10 +5,27 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="assets\filter.png" />
+    <None Remove="assets\filter_apply.png" />
+    <None Remove="assets\help.png" />
+    <None Remove="assets\icon.ico" />
+    <None Remove="assets\view.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="assets\filter.png" />
+    <Resource Include="assets\filter_apply.png" />
+    <Resource Include="assets\help.png" />
+    <Resource Include="assets\icon.ico" />
+    <Resource Include="assets\view.png" />
   </ItemGroup>
 
 </Project>
