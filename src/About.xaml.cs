@@ -11,5 +11,10 @@ namespace BackupAssistant
         {
             InitializeComponent();
         }
+
+        private void OK_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }

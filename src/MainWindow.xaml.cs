@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace BackupAssistant
 {
@@ -10,6 +11,21 @@ namespace BackupAssistant
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            Environment.Exit(0);
+        }
+
+        private void About_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new About
+            {
+                Owner = this
+            };
+
+            window.ShowDialog();
         }
     }
 }

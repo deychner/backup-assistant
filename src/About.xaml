@@ -25,6 +25,6 @@
     <StackPanel>
         <TextBlock Text="Backup Assistant" FontSize="24"/>
         <TextBlock Text="{Binding ApplicationVersion}" FontSize="12"/>
-        <Button Content="OK" Width="85"/>
+        <Button Content="OK" Click="OK_Click" Width="85"/>
     </StackPanel>
 </Window>
