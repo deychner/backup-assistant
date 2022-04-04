@@ -100,7 +100,9 @@
                 <Label Content="Progress:"/>
             </StatusBarItem>
             <StatusBarItem>
-                <ProgressBar Height="10" Width="150"/>
+                <ProgressBar Height="10" Width="150"
+                             Minimum="0" Maximum="100"
+                             Value="{Binding Progress}" />
             </StatusBarItem>
             <StatusBarItem>
                 <Label Content="Current"/>
