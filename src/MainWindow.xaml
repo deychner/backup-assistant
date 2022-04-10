@@ -84,9 +84,8 @@
                         Height="23" Width="23">
                     <Image Source="/assets/view.png" Stretch="None"/>
                 </Button>
-                <Button x:Name="Button_Filter"
-                        Grid.Column="5" Grid.Row="0" Grid.RowSpan="2"
-                        Width="23">
+                <Button Grid.Column="5" Grid.Row="0" Grid.RowSpan="2"
+                        Click="Filters_Click" Width="23">
                     <Image Source="{Binding FilterImageSource}" Stretch="None"/>
                 </Button>
 

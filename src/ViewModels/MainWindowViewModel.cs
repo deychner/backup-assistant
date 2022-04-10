@@ -1,15 +1,25 @@
-﻿using BackupAssistant.Models;
+﻿using BackupAssistant.DataModels;
+using BackupAssistant.Models;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Messaging;
+using System.Collections.ObjectModel;
 
 namespace BackupAssistant.ViewModels
 {
-    internal class MainWindowViewModel : ObservableObject
+    internal class MainWindowViewModel : ObservableRecipient
     {
         private MainWindowModel _model;
 
         public MainWindowViewModel()
         {
             _model = new MainWindowModel();
+
+            this.IsActive = true;
+        }
+
+        protected override void OnActivated()
+        {
+            Messenger.Register<MainWindowViewModel, FiltersChangedMessage>(this, (r, m) => r.FilterItems = m.Value);
         }
 
         public int Progress
@@ -29,8 +39,19 @@ namespace BackupAssistant.ViewModels
                 {
                     _model.Progress = value;
                 }
-                
+
                 OnPropertyChanged(nameof(Progress));
+            }
+        }
+
+        public ObservableCollection<FilterItem> FilterItems
+        {
+            get { return _model.Filters; }
+            set
+            {
+                _model.Filters = value;
+                OnPropertyChanged(nameof(FilterItems));
+                OnPropertyChanged(nameof(FilterImageSource));
             }
         }
 
