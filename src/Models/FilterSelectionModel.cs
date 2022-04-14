@@ -5,13 +5,12 @@ namespace BackupAssistant.Models
 {
     internal class FilterSelectionModel
     {
+        public string RootPath { get; set; } = string.Empty;
         public ObservableCollection<FilterItem> FilterItems { get; set; } = new ObservableCollection<FilterItem>();
 
         public FilterSelectionModel()
         {
-            this.FilterItems.Add(new FilterItem() { IsChecked = true, Path = "testpath1" });
-            this.FilterItems.Add(new FilterItem() { IsChecked = false, Path = "testpath2" });
-            this.FilterItems.Add(new FilterItem() { IsChecked = true, Path = "testpath3" });
+
         }
     }
 }
