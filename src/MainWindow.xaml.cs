@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BackupAssistant.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Windows;
 
 namespace BackupAssistant
@@ -11,6 +13,8 @@ namespace BackupAssistant
         public MainWindow()
         {
             InitializeComponent();
+
+            this.DataContext = App.Current.Services.GetService<MainWindowViewModel>();
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
