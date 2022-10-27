@@ -4,14 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodels="clr-namespace:BackupAssistant.ViewModels"
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
         mc:Ignorable="d"
         Title="Backup Assistant" Icon="/assets/icon.ico"
         WindowStartupLocation="CenterScreen"
         SizeToContent="Height" Width="500"
         ResizeMode="CanResize">
-    <Window.DataContext>
-        <viewmodels:MainWindowViewModel/>
-    </Window.DataContext>
     <Window.Resources>
         <Style TargetType="{x:Type Button}">
             <Setter Property="Margin" Value="5"/>
@@ -67,9 +65,9 @@
                 <Label Content="Destination:" Grid.Column="0" Grid.Row="1" />
                 <Label Content="Type:" Grid.Column="0" Grid.Row="2" />
 
-                <TextBox IsEnabled="False"
+                <TextBox IsEnabled="False" Text="{Binding Source}"
                          Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="3"/>
-                <TextBox IsEnabled="False"
+                <TextBox IsEnabled="False" Text="{Binding Destination}"
                          Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" />
                 <ComboBox Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3">
                     <ComboBoxItem>Incremental</ComboBoxItem>
@@ -77,10 +75,12 @@
                 </ComboBox>
 
                 <Button Grid.Column="4" Grid.Row="0"
+                        Command="{Binding AddEditSourceCommand}"
                         Height="23" Width="23">
                     <Image Source="/assets/view.png" Stretch="None"/>
                 </Button>
                 <Button Grid.Column="4" Grid.Row="1"
+                        Command="{Binding AddEditDestinationCommand}"
                         Height="23" Width="23">
                     <Image Source="/assets/view.png" Stretch="None"/>
                 </Button>

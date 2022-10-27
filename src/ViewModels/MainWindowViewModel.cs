@@ -1,18 +1,26 @@
 ﻿using BackupAssistant.DataModels;
 using BackupAssistant.Models;
+using BackupAssistant.Services;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
+using System.Windows.Forms;
 
 namespace BackupAssistant.ViewModels
 {
     internal class MainWindowViewModel : ObservableRecipient
     {
-        private MainWindowModel _model;
+        private readonly MainWindowModel _model;
+        private readonly IDialogService _dialogService;
 
-        public MainWindowViewModel()
+        public IRelayCommand AddEditSourceCommand => new RelayCommand(AddEditSource);
+        public IRelayCommand AddEditDestinationCommand => new RelayCommand(AddEditDestination);
+
+        public MainWindowViewModel(IDialogService dialogService)
         {
             _model = new MainWindowModel();
+            _dialogService = dialogService;
 
             this.IsActive = true;
         }
@@ -20,6 +28,46 @@ namespace BackupAssistant.ViewModels
         protected override void OnActivated()
         {
             Messenger.Register<MainWindowViewModel, FiltersChangedMessage>(this, (r, m) => r.FilterItems = m.Value);
+        }
+
+        public string Source
+        {
+            get => _model.Source;
+            set
+            {
+                _model.Source = value;
+                OnPropertyChanged(nameof(Source));
+            }
+        }
+
+        public string Destination
+        {
+            get => _model.Destination;
+            set
+            {
+                _model.Destination = value;
+                OnPropertyChanged(nameof(Destination));
+            }
+        }
+
+        public void AddEditSource()
+        {
+            (DialogResult dialogResult, string selectedPath) = _dialogService.ShowFolderBrowserDialog(this.Source);
+
+            if (dialogResult == DialogResult.OK)
+            {
+                this.Source = selectedPath;
+            }
+        }
+
+        public void AddEditDestination()
+        {
+            (DialogResult dialogResult, string selectedPath) = _dialogService.ShowFolderBrowserDialog(this.Destination);
+
+            if (dialogResult == DialogResult.OK)
+            {
+                this.Destination = selectedPath;
+            }
         }
 
         public int Progress
