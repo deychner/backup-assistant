@@ -1,4 +1,6 @@
-﻿using System.Windows.Forms;
+﻿using BackupAssistant.ViewModels;
+using System.Windows;
+using System.Windows.Forms;
 
 namespace BackupAssistant.Services
 {
@@ -12,6 +14,16 @@ namespace BackupAssistant.Services
             };
 
             return (dialog.ShowDialog(), dialog.SelectedPath);
+        }
+
+        public bool? ShowDialog<T>(IDialogViewModel viewModel) where T : Window, new()
+        {
+            T t = new()
+            {
+                DataContext = viewModel
+            };
+
+            return t.ShowDialog();
         }
     }
 }

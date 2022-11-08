@@ -3,31 +3,24 @@ using BackupAssistant.Models;
 using BackupAssistant.Services;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
-using Microsoft.Toolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
 using System.Windows.Forms;
 
 namespace BackupAssistant.ViewModels
 {
-    internal class MainWindowViewModel : ObservableRecipient
+    internal class MainWindowViewModel : ObservableObject
     {
         private readonly MainWindowModel _model;
         private readonly IDialogService _dialogService;
 
         public IRelayCommand AddEditSourceCommand => new RelayCommand(AddEditSource);
         public IRelayCommand AddEditDestinationCommand => new RelayCommand(AddEditDestination);
+        public IRelayCommand EditFiltersCommand => new RelayCommand(() => EditFilters(new FilterSelectionViewModel()), CanEditFilters);
 
         public MainWindowViewModel(IDialogService dialogService)
         {
             _model = new MainWindowModel();
             _dialogService = dialogService;
-
-            this.IsActive = true;
-        }
-
-        protected override void OnActivated()
-        {
-            Messenger.Register<MainWindowViewModel, FiltersChangedMessage>(this, (r, m) => r.FilterItems = m.Value);
         }
 
         public string Source
@@ -37,6 +30,7 @@ namespace BackupAssistant.ViewModels
             {
                 _model.Source = value;
                 OnPropertyChanged(nameof(Source));
+                OnPropertyChanged(nameof(EditFiltersCommand));
             }
         }
 
@@ -68,6 +62,23 @@ namespace BackupAssistant.ViewModels
             {
                 this.Destination = selectedPath;
             }
+        }
+
+        public void EditFilters(IDialogViewModel dialogViewModel)
+        {
+            dialogViewModel.Input = this.Source;
+
+            bool? dialogResult = _dialogService.ShowDialog<FilterSelection>(dialogViewModel);
+
+            if (dialogResult.HasValue && dialogResult.Value)
+            {
+                this.FilterItems = (ObservableCollection<FilterItem>)dialogViewModel.Output;
+            }
+        }
+
+        public bool CanEditFilters()
+        {
+            return !string.IsNullOrEmpty(this.Source);
         }
 
         public int Progress

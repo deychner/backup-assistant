@@ -31,15 +31,5 @@ namespace BackupAssistant
 
             window.ShowDialog();
         }
-
-        private void Filters_Click(object sender, RoutedEventArgs e)
-        {
-            var window = new FilterSelection
-            {
-                Owner = this
-            };
-
-            window.ShowDialog();
-        }
     }
 }

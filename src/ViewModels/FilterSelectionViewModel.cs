@@ -1,21 +1,16 @@
 ﻿using BackupAssistant.DataModels;
 using BackupAssistant.Models;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
-using Microsoft.Toolkit.Mvvm.Input;
-using Microsoft.Toolkit.Mvvm.Messaging;
+using System;
 using System.Collections.ObjectModel;
 using System.IO.Abstractions;
-using System;
-using System.Linq;
 
 namespace BackupAssistant.ViewModels
 {
-    internal class FilterSelectionViewModel : ObservableRecipient
+    internal class FilterSelectionViewModel : ObservableObject, IDialogViewModel
     {
-        private FilterSelectionModel _model;
-        private IFileSystem _fileSystem;
-
-        public IRelayCommand SendFilterSelectionCommand { get; }
+        private readonly FilterSelectionModel _model;
+        private readonly IFileSystem _fileSystem;
 
         public FilterSelectionViewModel() : this(new FileSystem())
         {
@@ -26,20 +21,13 @@ namespace BackupAssistant.ViewModels
         {
             _fileSystem = fileSystem;
 
-            _model = new FilterSelectionModel
-            {
-                RootPath = @"D:\Products" // TODO: Get source path from MainWindowViewModel
-            };
-            PopulateFilterList();
-
-            this.SendFilterSelectionCommand = new RelayCommand(SendFilterSelection);
-
-            // TODO: I don't think I need this. This looks like it only replies to requests.
-            this.IsActive = true;
+            _model = new FilterSelectionModel();
         }
 
         public void PopulateFilterList()
         {
+            _model.FilterItems.Clear();
+            
             if (!string.IsNullOrEmpty(_model.RootPath))
             {
                 string[] directoriesToFilter = Array.Empty<string>();
@@ -61,17 +49,6 @@ namespace BackupAssistant.ViewModels
             }
         }
 
-        protected override void OnActivated()
-        {
-            // TODO: I don't think I need this. This looks like it only replies to requests.
-            Messenger.Register<FilterSelectionViewModel, CurrentFiltersRequestMessage>(this, (r, m) => m.Reply(r.FilterItems));
-        }
-
-        protected override void OnDeactivated()
-        {
-            Messenger.Unregister<CurrentFiltersRequestMessage>(this);
-        }
-
         public ObservableCollection<FilterItem> FilterItems
         {
             get { return _model.FilterItems; }
@@ -81,12 +58,19 @@ namespace BackupAssistant.ViewModels
                 OnPropertyChanged(nameof(FilterItems));
             }
         }
-        
-        public void SendFilterSelection()
+
+        public object Input
         {
-            ObservableCollection<FilterItem> selectedItems = new(this.FilterItems.Where(x => x.IsChecked));
-            Messenger.Send(new FiltersChangedMessage(selectedItems));
-            // TODO: Deactivate and close
+            set
+            {
+                if (value != null && !_model.RootPath.Equals(value.ToString()))
+                {
+                    _model.RootPath = value.ToString()!;
+                    PopulateFilterList();
+                }
+            }
         }
+
+        public object Output => _model.FilterItems;
     }
 }
