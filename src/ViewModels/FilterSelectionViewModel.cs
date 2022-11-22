@@ -4,6 +4,7 @@ using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.ObjectModel;
 using System.IO.Abstractions;
+using System.Linq;
 
 namespace BackupAssistant.ViewModels
 {
@@ -24,10 +25,10 @@ namespace BackupAssistant.ViewModels
             _model = new FilterSelectionModel();
         }
 
-        public void PopulateFilterList()
+        public void PopulateFilterList(ObservableCollection<FilterItem> existingFilters)
         {
             _model.FilterItems.Clear();
-            
+
             if (!string.IsNullOrEmpty(_model.RootPath))
             {
                 string[] directoriesToFilter = Array.Empty<string>();
@@ -44,7 +45,13 @@ namespace BackupAssistant.ViewModels
                 foreach (string d in directoriesToFilter)
                 {
                     string shortName = d.Replace(_model.RootPath, "...");
-                    _model.FilterItems.Add(new FilterItem { Path = shortName, IsChecked = false }); //TODO: Determine checked state
+                    FilterItem? existingEntry = existingFilters.Where(f => f.Path.Equals(shortName)).FirstOrDefault();
+
+                    _model.FilterItems.Add(new FilterItem
+                    {
+                        Path = shortName,
+                        IsChecked = existingEntry != null && existingEntry.IsChecked,
+                    }); ;
                 }
             }
         }
@@ -63,10 +70,11 @@ namespace BackupAssistant.ViewModels
         {
             set
             {
-                if (value != null && !_model.RootPath.Equals(value.ToString()))
+                if (value != null && value is FilterSelectionInput f)
                 {
-                    _model.RootPath = value.ToString()!;
-                    PopulateFilterList();
+                    _model.RootPath = f.RootPath;
+
+                    PopulateFilterList(f.ExistingFilters);
                 }
             }
         }
