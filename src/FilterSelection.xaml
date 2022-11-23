@@ -6,7 +6,7 @@
         xmlns:viewmodels="clr-namespace:BackupAssistant.ViewModels"
         mc:Ignorable="d"
         Title="Filter selection" Icon="/assets/icon.ico"
-        WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterScreen"
         Height="450" Width="500">
     <Window.DataContext>
         <viewmodels:FilterSelectionViewModel/>
