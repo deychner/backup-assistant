@@ -17,12 +17,6 @@ namespace BackupAssistant.ViewModels
         public IRelayCommand AddEditDestinationCommand => new RelayCommand(AddEditDestination);
         public IRelayCommand EditFiltersCommand => new RelayCommand(() => EditFilters(new FilterSelectionViewModel()), CanEditFilters);
 
-        public MainWindowViewModel(IDialogService dialogService)
-        {
-            _model = new MainWindowModel();
-            _dialogService = dialogService;
-        }
-
         public string Source
         {
             get => _model.Source;
@@ -47,6 +41,38 @@ namespace BackupAssistant.ViewModels
                 _model.Destination = value;
                 OnPropertyChanged(nameof(Destination));
             }
+        }
+
+        public ObservableCollection<string> FilterItems
+        {
+            get { return _model.Filters; }
+            set
+            {
+                _model.Filters = value;
+                OnPropertyChanged(nameof(FilterItems));
+                OnPropertyChanged(nameof(FilterImageSource));
+            }
+        }
+
+        public string FilterImageSource
+        {
+            get
+            {
+                if (_model.Filters.Count > 0)
+                {
+                    return "/assets/filter_apply.png";
+                }
+                else
+                {
+                    return "/assets/filter.png";
+                }
+            }
+        }
+
+        public MainWindowViewModel(IDialogService dialogService)
+        {
+            _model = new MainWindowModel();
+            _dialogService = dialogService;
         }
 
         public void AddEditSource()
@@ -105,32 +131,6 @@ namespace BackupAssistant.ViewModels
                 }
 
                 OnPropertyChanged(nameof(Progress));
-            }
-        }
-
-        public ObservableCollection<string> FilterItems
-        {
-            get { return _model.Filters; }
-            set
-            {
-                _model.Filters = value;
-                OnPropertyChanged(nameof(FilterItems));
-                OnPropertyChanged(nameof(FilterImageSource));
-            }
-        }
-
-        public string FilterImageSource
-        {
-            get
-            {
-                if (_model.Filters.Count > 0)
-                {
-                    return "/assets/filter_apply.png";
-                }
-                else
-                {
-                    return "/assets/filter.png";
-                }
             }
         }
     }
