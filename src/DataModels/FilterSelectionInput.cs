@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 
 namespace BackupAssistant.DataModels
 {
@@ -6,6 +6,6 @@ namespace BackupAssistant.DataModels
     {
         public string RootPath { get; set; } = string.Empty;
 
-        public ObservableCollection<FilterItem> ExistingFilters { get; set; } = new ObservableCollection<FilterItem>();
+        public IEnumerable<string>? ExistingFilters { get; set; }
     }
 }

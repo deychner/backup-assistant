@@ -1,5 +1,4 @@
-﻿using BackupAssistant.DataModels;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 
 namespace BackupAssistant.Models
 {
@@ -7,7 +6,7 @@ namespace BackupAssistant.Models
     {
         public string Source = string.Empty;
         public string Destination = string.Empty;
-        public ObservableCollection<FilterItem> Filters { get; set; } = new ObservableCollection<FilterItem>();
+        public ObservableCollection<string> Filters { get; set; } = new ObservableCollection<string>();
 
         public int Progress { get; set; } = 0;
 

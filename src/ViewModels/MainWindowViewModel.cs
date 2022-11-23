@@ -4,7 +4,6 @@ using BackupAssistant.Services;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace BackupAssistant.ViewModels
@@ -31,7 +30,7 @@ namespace BackupAssistant.ViewModels
             {
                 if (!_model.Source.Equals(value))
                 {
-                    this.FilterItems = new ObservableCollection<FilterItem>();
+                    this.FilterItems = new ObservableCollection<string>();
                 }
 
                 _model.Source = value;
@@ -78,7 +77,7 @@ namespace BackupAssistant.ViewModels
 
             if (dialogResult.HasValue && dialogResult.Value)
             {
-                this.FilterItems = (ObservableCollection<FilterItem>)dialogViewModel.Output;
+                this.FilterItems = (ObservableCollection<string>)dialogViewModel.Output;
             }
         }
 
@@ -109,7 +108,7 @@ namespace BackupAssistant.ViewModels
             }
         }
 
-        public ObservableCollection<FilterItem> FilterItems
+        public ObservableCollection<string> FilterItems
         {
             get { return _model.Filters; }
             set
@@ -124,7 +123,7 @@ namespace BackupAssistant.ViewModels
         {
             get
             {
-                if (_model.Filters.Where(f => f.IsChecked).Any())
+                if (_model.Filters.Count > 0)
                 {
                     return "/assets/filter_apply.png";
                 }
