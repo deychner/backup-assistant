@@ -10,6 +10,10 @@
     <AssemblyVersion>2022.4.1.1</AssemblyVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;WFAC010</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="assets\filter.png" />
     <None Remove="assets\filter_apply.png" />
