@@ -2,6 +2,7 @@
 using BackupAssistant.Models;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO.Abstractions;
@@ -65,7 +66,7 @@ namespace BackupAssistant.ViewModels
                     // Do nothing
                 }
 
-                foreach (string d in directoriesToFilter)
+                foreach (string d in directoriesToFilter.Where(d => !_fileSystem.DirectoryInfo.New(d).Attributes.HasFlag(System.IO.FileAttributes.Hidden)))
                 {
                     string shortName = d.Replace(_model.RootPath, "...");
 
