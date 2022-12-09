@@ -3,6 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:datamodels="clr-namespace:BackupAssistant.DataModels"
+        xmlns:extensions="clr-namespace:BackupAssistant.Extensions"
         xmlns:viewmodels="clr-namespace:BackupAssistant.ViewModels"
         d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
         mc:Ignorable="d"
@@ -69,10 +71,9 @@
                          Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="3"/>
                 <TextBox IsEnabled="False" Text="{Binding Destination}"
                          Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" />
-                <ComboBox Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3">
-                    <ComboBoxItem>Incremental</ComboBoxItem>
-                    <ComboBoxItem>Full</ComboBoxItem>
-                </ComboBox>
+                <ComboBox Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3"
+                          SelectedValue="{Binding BackupType}"
+                          ItemsSource="{extensions:EnumCollection EnumType=datamodels:BackupType}" />
 
                 <Button Grid.Column="4" Grid.Row="0"
                         Command="{Binding AddEditSourceCommand}"
@@ -89,7 +90,8 @@
                     <Image Source="{Binding FilterImageSource}" Stretch="None"/>
                 </Button>
 
-                <Button Content="Backup" Grid.Column="2" Grid.Row="3" />
+                <Button Grid.Column="2" Grid.Row="3"
+                        Content="Backup" Command="{Binding RunBackupCommand}" />
                 <Button Content="Cancel" Grid.Column="3" Grid.Row="3" />
             </Grid>
         </GroupBox>

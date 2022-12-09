@@ -4,6 +4,7 @@ using BackupAssistant.Services;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BackupAssistant.ViewModels
@@ -16,6 +17,7 @@ namespace BackupAssistant.ViewModels
         public IRelayCommand AddEditSourceCommand => new RelayCommand(AddEditSource);
         public IRelayCommand AddEditDestinationCommand => new RelayCommand(AddEditDestination);
         public IRelayCommand EditFiltersCommand => new RelayCommand(() => EditFilters(new FilterSelectionViewModel()), CanEditFilters);
+        public IAsyncRelayCommand RunBackupCommand => new AsyncRelayCommand(RunBackup, CanRunBackup);
 
         public string Source
         {
@@ -30,6 +32,7 @@ namespace BackupAssistant.ViewModels
                 _model.Source = value;
                 OnPropertyChanged(nameof(Source));
                 OnPropertyChanged(nameof(EditFiltersCommand));
+                OnPropertyChanged(nameof(RunBackupCommand));
             }
         }
 
@@ -40,6 +43,19 @@ namespace BackupAssistant.ViewModels
             {
                 _model.Destination = value;
                 OnPropertyChanged(nameof(Destination));
+                OnPropertyChanged(nameof(RunBackupCommand));
+            }
+        }
+
+        public BackupType BackupType
+        {
+            get => _model.BackupType;
+            set
+            {
+                _model.BackupType = value;
+
+                OnPropertyChanged(nameof(BackupType));
+                OnPropertyChanged(nameof(RunBackupCommand));
             }
         }
 
@@ -110,6 +126,16 @@ namespace BackupAssistant.ViewModels
         public bool CanEditFilters()
         {
             return !string.IsNullOrEmpty(this.Source);
+        }
+
+        public Task RunBackup()
+        {
+            return Task.Delay(1000);
+        }
+
+        public bool CanRunBackup()
+        {
+            return !string.IsNullOrEmpty(this.Source) && !string.IsNullOrEmpty(this.Destination);
         }
 
         public int Progress
