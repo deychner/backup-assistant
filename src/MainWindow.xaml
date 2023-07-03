@@ -12,24 +12,9 @@
         WindowStartupLocation="CenterScreen"
         SizeToContent="Height" Width="500"
         ResizeMode="CanResize">
-    <Window.Resources>
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-        <Style TargetType="{x:Type TextBox}">
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-        <Style TargetType="{x:Type ComboBox}">
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-        <Style TargetType="{x:Type GroupBox}">
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-        <Style TargetType="{x:Type Label}">
-            <Setter Property="HorizontalAlignment" Value="Right"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
-    </Window.Resources>
+    <Window.Background>
+        <SolidColorBrush Color="WhiteSmoke"/>
+    </Window.Background>
     <StackPanel>
         <DockPanel Grid.Column="0" Grid.Row="0">
             <Menu DockPanel.Dock="Top">

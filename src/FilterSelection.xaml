@@ -11,15 +11,9 @@
     <Window.DataContext>
         <viewmodels:FilterSelectionViewModel/>
     </Window.DataContext>
-    <Window.Resources>
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="Width" Value="85"/>
-        </Style>
-        <Style TargetType="{x:Type ListBox}">
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-    </Window.Resources>
+    <Window.Background>
+        <SolidColorBrush Color="WhiteSmoke"/>
+    </Window.Background>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -44,8 +38,8 @@
 
         <StackPanel Grid.Row="1" Grid.Column="0"
                     Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Apply" Click="Apply_Click"/>
-            <Button Content="Cancel" Click="Cancel_Click"/>
+            <Button Content="Apply" Width="85" Click="Apply_Click"/>
+            <Button Content="Cancel" Width="85" Click="Cancel_Click"/>
         </StackPanel>
     </Grid>
 </Window>
