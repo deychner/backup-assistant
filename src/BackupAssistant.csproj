@@ -7,7 +7,13 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AssemblyVersion>2022.4.1.1</AssemblyVersion>
+    <AssemblyVersion>2023.7.18.1</AssemblyVersion>
+    <StartupObject>BackupAssistant.App</StartupObject>
+    <ApplicationIcon>assets\icon.ico</ApplicationIcon>
+    <Authors>Darryl Eychner</Authors>
+    <Company>Anaheim Electronics</Company>
+    <Copyright>Copyright © Darryl Eychner 2023</Copyright>
+    <FileVersion>2023.7.18.1</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -23,7 +29,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
+    <Content Include="assets\icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="System.IO.Abstractions" Version="19.2.29" />
   </ItemGroup>
