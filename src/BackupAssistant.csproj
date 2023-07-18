@@ -20,16 +20,12 @@
     <NoWarn>1701;1702;WFAC010</NoWarn>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="assets\filter.png" />
-    <None Remove="assets\filter_apply.png" />
-    <None Remove="assets\help.png" />
-    <None Remove="assets\icon.ico" />
-    <None Remove="assets\view.png" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;WFAC010</NoWarn>
+  </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="assets\icon.ico" />
+    <None Remove="assets\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,11 +35,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="assets\filter.png" />
-    <Resource Include="assets\filter_apply.png" />
-    <Resource Include="assets\help.png" />
-    <Resource Include="assets\icon.ico" />
-    <Resource Include="assets\view.png" />
+    <Resource Include="assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
 </Project>
