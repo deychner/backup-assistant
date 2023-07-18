@@ -54,7 +54,7 @@ namespace BackupAssistant.ViewModels
 
             if (!string.IsNullOrEmpty(_model.RootPath))
             {
-                string[] directoriesToFilter = Array.Empty<string>();
+                string[] directoriesToFilter;
 
                 try
                 {
@@ -62,7 +62,7 @@ namespace BackupAssistant.ViewModels
                 }
                 catch
                 {
-                    // Do nothing
+                    directoriesToFilter = Array.Empty<string>();
                 }
 
                 foreach (string d in directoriesToFilter.Where(d => !_fileSystem.DirectoryInfo.New(d).Attributes.HasFlag(System.IO.FileAttributes.Hidden)))
