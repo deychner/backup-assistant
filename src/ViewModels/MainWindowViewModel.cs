@@ -6,12 +6,15 @@ using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Collections.Specialized;
+using System.Linq;
 
 namespace BackupAssistant.ViewModels
 {
     internal class MainWindowViewModel : ObservableObject
     {
         private readonly MainWindowModel _model;
+        private readonly ISettingsService _settingsService;
         private readonly IDialogService _dialogService;
 
         public IRelayCommand AddEditSourceCommand => new RelayCommand(AddEditSource);
@@ -24,13 +27,19 @@ namespace BackupAssistant.ViewModels
             get => _model.Source;
             set
             {
+                _model.Source = value;
+                OnPropertyChanged(nameof(Source));
+
+                // Update settings
+                _settingsService.Source = _model.Source;
+                _settingsService.Save();
+
+                // Update dependencies
                 if (!_model.Source.Equals(value))
                 {
                     this.FilterItems = new ObservableCollection<string>();
                 }
 
-                _model.Source = value;
-                OnPropertyChanged(nameof(Source));
                 OnPropertyChanged(nameof(EditFiltersCommand));
                 OnPropertyChanged(nameof(RunBackupCommand));
             }
@@ -43,6 +52,12 @@ namespace BackupAssistant.ViewModels
             {
                 _model.Destination = value;
                 OnPropertyChanged(nameof(Destination));
+
+                // Update settings
+                _settingsService.Destination = _model.Destination;
+                _settingsService.Save();
+
+                // Update dependencies
                 OnPropertyChanged(nameof(RunBackupCommand));
             }
         }
@@ -53,8 +68,13 @@ namespace BackupAssistant.ViewModels
             set
             {
                 _model.BackupType = value;
-
                 OnPropertyChanged(nameof(BackupType));
+
+                // Update settings
+                _settingsService.BackupType = (int)_model.BackupType;
+                _settingsService.Save();
+
+                // Update dependencies
                 OnPropertyChanged(nameof(RunBackupCommand));
             }
         }
@@ -66,6 +86,13 @@ namespace BackupAssistant.ViewModels
             {
                 _model.Filters = value;
                 OnPropertyChanged(nameof(FilterItems));
+
+                // Update settings
+                _settingsService.Filters.Clear();
+                _settingsService.Filters.AddRange(_model.Filters.ToArray<string>());
+                _settingsService.Save();
+
+                // Update dependencies
                 OnPropertyChanged(nameof(FilterImageSource));
             }
         }
@@ -85,10 +112,32 @@ namespace BackupAssistant.ViewModels
             }
         }
 
-        public MainWindowViewModel(IDialogService dialogService)
+        public MainWindowViewModel(ISettingsService settingsService, IDialogService dialogService)
         {
             _model = new MainWindowModel();
+
+            _settingsService = settingsService;
             _dialogService = dialogService;
+
+            // Initialize filters if needed
+            if (_settingsService.Filters == null)
+            {
+                _settingsService.Filters = new StringCollection();
+                _settingsService.Save();
+            }
+
+            // Load filters from settings
+            foreach (string? filter in _settingsService.Filters)
+            {
+                if (filter != null)
+                {
+                    this.FilterItems.Add(filter);
+                }
+            }
+
+            this.Source = _settingsService.Source;
+            this.Destination = _settingsService.Destination;
+            this.BackupType = (BackupType)_settingsService.BackupType;
         }
 
         public void AddEditSource()

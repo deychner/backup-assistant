@@ -38,6 +38,7 @@ namespace BackupAssistant
             var services = new ServiceCollection();
 
             // Services
+            services.AddSingleton<ISettingsService, SettingsService>();
             services.AddSingleton<IDialogService, DialogService>();
 
             // View models
