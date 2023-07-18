@@ -4,10 +4,10 @@ using BackupAssistant.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace BackupAssistant.ViewModels
 {
