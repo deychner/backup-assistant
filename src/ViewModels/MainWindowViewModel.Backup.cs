@@ -34,10 +34,28 @@ namespace BackupAssistant.ViewModels
 
         internal void RunBackupInternal(CancellationToken token)
         {
-            while (true)
+            switch (this.BackupType)
             {
-                token.ThrowIfCancellationRequested();
+                case BackupType.Full:
+                    RunFullBackupInternal(token);
+                    break;
+                case BackupType.Incremental:
+                    RunIncrementalBackupInternal(token);
+                    break;
+                default:
+                    // do nothing
+                    break;
             }
+        }
+
+        internal void RunFullBackupInternal(CancellationToken token)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void RunIncrementalBackupInternal(CancellationToken token)
+        {
+            throw new NotImplementedException();
         }
 
         public BackupType BackupType
