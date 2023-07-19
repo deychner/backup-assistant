@@ -40,6 +40,7 @@ namespace BackupAssistant
             // Services
             services.AddSingleton<ISettingsService, SettingsService>();
             services.AddSingleton<IDialogService, DialogService>();
+            services.AddSingleton<ILogService, LogService>();
 
             // View models
             services.AddTransient<MainWindowViewModel>();
