@@ -15,6 +15,11 @@ namespace BackupAssistant.ViewModels
             get => _model.Source;
             set
             {
+                if (!_model.Source.Equals(value))
+                {
+                    this.FilterItems = new ObservableCollection<string>();
+                }
+
                 _model.Source = value;
                 OnPropertyChanged(nameof(Source));
 
@@ -23,10 +28,6 @@ namespace BackupAssistant.ViewModels
                 _settingsService.Save();
 
                 // Update dependencies
-                if (!_model.Source.Equals(value))
-                {
-                    this.FilterItems = new ObservableCollection<string>();
-                }
 
                 OnPropertyChanged(nameof(EditFiltersCommand));
                 OnPropertyChanged(nameof(RunBackupCommand));
