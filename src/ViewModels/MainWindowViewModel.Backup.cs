@@ -27,6 +27,10 @@ namespace BackupAssistant.ViewModels
             {
                 this.Status = "Backup was canceled.";
             }
+            finally
+            {
+                _logService.WriteLogEntry();
+            }
         }
 
         public bool CanRunBackup()
@@ -75,7 +79,7 @@ namespace BackupAssistant.ViewModels
             }
             catch
             {
-                //_caller.AddToLogEntry($"Failed to get files in directory '{directory}'.");
+                _logService.AddToLogEntry($"Failed to get files in directory '{directory}'.");
 
                 return new ReadOnlyCollection<string>(Array.Empty<string>());
             }
@@ -91,7 +95,7 @@ namespace BackupAssistant.ViewModels
             }
             catch
             {
-                //_caller.AddToLogEntry($"Failed to get directories in directory '{directory}'.");
+                _logService.AddToLogEntry($"Failed to get directories in directory '{directory}'.");
 
                 return new ReadOnlyCollection<string>(Array.Empty<string>());
             }
@@ -122,7 +126,7 @@ namespace BackupAssistant.ViewModels
             }
             catch
             {
-                //_caller.AddToLogEntry($"Copy file failed for file '{sourceFileName}'.");
+                _logService.AddToLogEntry($"Copy file failed for file '{sourceFileName}'.");
             }
         }
 
