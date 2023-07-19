@@ -4,6 +4,7 @@ using BackupAssistant.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.Specialized;
+using System.IO.Abstractions;
 using System.Threading;
 
 namespace BackupAssistant.ViewModels
@@ -11,13 +12,17 @@ namespace BackupAssistant.ViewModels
     public partial class MainWindowViewModel : ObservableObject
     {
         private readonly MainWindowModel _model;
+        private readonly IFileSystem _fileSystem;
         private readonly ISettingsService _settingsService;
         private readonly IDialogService _dialogService;
 
-        public MainWindowViewModel(ISettingsService settingsService, IDialogService dialogService)
+        public MainWindowViewModel(ISettingsService settingsService, IDialogService dialogService) : this(settingsService, dialogService, new FileSystem()) { }
+
+        public MainWindowViewModel(ISettingsService settingsService, IDialogService dialogService, IFileSystem fileSystem)
         {
             _model = new MainWindowModel();
 
+            _fileSystem = fileSystem;
             _settingsService = settingsService;
             _dialogService = dialogService;
 
