@@ -92,7 +92,7 @@
                              Value="{Binding Progress}" />
             </StatusBarItem>
             <StatusBarItem>
-                <Label Content="Current"/>
+                <Label Content="{Binding Status}"/>
             </StatusBarItem>
         </StatusBar>
     </StackPanel>

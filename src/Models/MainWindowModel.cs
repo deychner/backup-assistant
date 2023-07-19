@@ -11,6 +11,7 @@ namespace BackupAssistant.Models
         public ObservableCollection<string> Filters { get; set; } = new ObservableCollection<string>();
 
         public int Progress { get; set; } = 0;
+        public string Status { get; set; } = string.Empty;
 
         public MainWindowModel()
         {

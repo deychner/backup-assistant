@@ -67,5 +67,15 @@ namespace BackupAssistant.ViewModels
                 OnPropertyChanged(nameof(Progress));
             }
         }
+
+        public string Status
+        {
+            get { return _model.Status; }
+            set
+            {
+                _model.Status = value;
+                OnPropertyChanged(nameof(Status));
+            }
+        }
     }
 }
