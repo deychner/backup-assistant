@@ -68,6 +68,48 @@ namespace BackupAssistant.ViewModels
             }
         }
 
+        public int Progress
+        {
+            get { return _model.Progress; }
+            set
+            {
+                if (value < 0)
+                {
+                    _model.Progress = 0;
+                }
+                else if (value > 100)
+                {
+                    _model.Progress = 100;
+                }
+                else
+                {
+                    _model.Progress = value;
+                }
+
+                OnPropertyChanged(nameof(Progress));
+            }
+        }
+
+        public bool ProgressBarIsIndeterminate
+        {
+            get { return _model.ProgressBarIsIndeterminate; }
+            set
+            {
+                _model.ProgressBarIsIndeterminate = value;
+                OnPropertyChanged(nameof(ProgressBarIsIndeterminate));
+            }
+        }
+
+        public string Status
+        {
+            get { return _model.Status; }
+            set
+            {
+                _model.Status = value;
+                OnPropertyChanged(nameof(Status));
+            }
+        }
+
         #region Safety
 
         private IReadOnlyCollection<string> SafeGetFiles(string directory)

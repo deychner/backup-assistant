@@ -52,37 +52,5 @@ namespace BackupAssistant.ViewModels
             this.Destination = _settingsService.Destination;
             this.BackupType = (BackupType)_settingsService.BackupType;
         }
-
-        public int Progress
-        {
-            get { return _model.Progress; }
-            set
-            {
-                if (value < 0)
-                {
-                    _model.Progress = 0;
-                }
-                else if (value > 100)
-                {
-                    _model.Progress = 100;
-                }
-                else
-                {
-                    _model.Progress = value;
-                }
-
-                OnPropertyChanged(nameof(Progress));
-            }
-        }
-
-        public string Status
-        {
-            get { return _model.Status; }
-            set
-            {
-                _model.Status = value;
-                OnPropertyChanged(nameof(Status));
-            }
-        }
     }
 }

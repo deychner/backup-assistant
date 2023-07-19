@@ -11,6 +11,7 @@ namespace BackupAssistant.ViewModels
             this.Progress = 0;
 
             // Get file list
+            this.ProgressBarIsIndeterminate = true;
             this.Status = "Getting source file list...";
             IList<string> sourceFiles = GetFileList(this.Source, token);
 
@@ -22,6 +23,7 @@ namespace BackupAssistant.ViewModels
             }
 
             // Copy files
+            this.ProgressBarIsIndeterminate = false;
             this.Status = "Copying files...";
             for (int i = 0; i < sourceFiles.Count; i++)
             {
