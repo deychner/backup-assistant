@@ -2,7 +2,9 @@
 using BackupAssistant.Models;
 using BackupAssistant.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System.Collections.Specialized;
+using System.Threading;
 
 namespace BackupAssistant.ViewModels
 {
@@ -35,6 +37,10 @@ namespace BackupAssistant.ViewModels
                 }
             }
 
+            // Initialize cancelable commands
+            _runBackupCommand = new AsyncRelayCommand(async (CancellationToken token) => await RunBackup(token), CanRunBackup);
+
+            // Load other settings
             this.Source = _settingsService.Source;
             this.Destination = _settingsService.Destination;
             this.BackupType = (BackupType)_settingsService.BackupType;

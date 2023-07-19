@@ -10,8 +10,8 @@ namespace BackupAssistant.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
     {
-        private AsyncRelayCommand _runBackupCommand;
-        public IAsyncRelayCommand RunBackupCommand => _runBackupCommand ??= new AsyncRelayCommand(async (CancellationToken token) => await RunBackup(token), CanRunBackup);
+        private readonly AsyncRelayCommand _runBackupCommand;
+        public IAsyncRelayCommand RunBackupCommand => _runBackupCommand;
 
         public ICommand CancelRunBackupCommand => this.RunBackupCommand.CreateCancelCommand();
 
@@ -51,9 +51,6 @@ namespace BackupAssistant.ViewModels
                 // Update settings
                 _settingsService.BackupType = (int)_model.BackupType;
                 _settingsService.Save();
-
-                // Update dependencies
-                OnPropertyChanged(nameof(RunBackupCommand));
             }
         }
     }
