@@ -2,6 +2,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -23,7 +25,7 @@ namespace BackupAssistant.ViewModels
             }
             catch (OperationCanceledException)
             {
-                // No action is needed
+                this.Status = "Backup was canceled.";
             }
         }
 
@@ -48,16 +50,6 @@ namespace BackupAssistant.ViewModels
             }
         }
 
-        internal void RunFullBackupInternal(CancellationToken token)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void RunIncrementalBackupInternal(CancellationToken token)
-        {
-            throw new NotImplementedException();
-        }
-
         public BackupType BackupType
         {
             get => _model.BackupType;
@@ -71,5 +63,78 @@ namespace BackupAssistant.ViewModels
                 _settingsService.Save();
             }
         }
+
+        #region Safety
+
+        private IReadOnlyCollection<string> SafeGetFiles(string directory)
+        {
+            try
+            {
+                string[] files = _fileSystem.Directory.GetFiles(directory);
+                return new ReadOnlyCollection<string>(files);
+            }
+            catch
+            {
+                //_caller.AddToLogEntry($"Failed to get files in directory '{directory}'.");
+
+                return new ReadOnlyCollection<string>(Array.Empty<string>());
+            }
+        }
+
+        private IReadOnlyCollection<string> SafeGetDirectories(string directory)
+
+        {
+            try
+            {
+                string[] directories = _fileSystem.Directory.GetDirectories(directory);
+                return new ReadOnlyCollection<string>(directories);
+            }
+            catch
+            {
+                //_caller.AddToLogEntry($"Failed to get directories in directory '{directory}'.");
+
+                return new ReadOnlyCollection<string>(Array.Empty<string>());
+            }
+        }
+
+        public void SafeCopyFile(string sourceFileName, string destinationFileName)
+        {
+            SafeCopyFile(sourceFileName, destinationFileName, false);
+        }
+
+        public void EnsureDirectoryPathExists(string path)
+        {
+            string? directory = _fileSystem.Path.GetDirectoryName(path);
+
+            if (!string.IsNullOrEmpty(directory) && !_fileSystem.Directory.Exists(directory))
+            {
+                _fileSystem.Directory.CreateDirectory(directory);
+            }
+        }
+
+        public void SafeCopyFile(string sourceFileName, string destinationFileName, bool overwrite)
+        {
+            try
+            {
+                EnsureDirectoryPathExists(destinationFileName);
+
+                _fileSystem.File.Copy(sourceFileName, destinationFileName, overwrite);
+            }
+            catch
+            {
+                //_caller.AddToLogEntry($"Copy file failed for file '{sourceFileName}'.");
+            }
+        }
+
+        #endregion
+
+        #region Compression
+
+        private static string GetFullFileName(string abbreviatedFileName, string lengthenString)
+        {
+            return abbreviatedFileName.Replace("...", lengthenString);
+        }
+
+        #endregion
     }
 }
