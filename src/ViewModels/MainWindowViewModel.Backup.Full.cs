@@ -44,14 +44,14 @@ namespace BackupAssistant.ViewModels
             if (this.FilterItems.Count > 0)
             {
                 // Get files in root directory
-                GetFilesInDirectory(rootDirectory, files);
-
-                // Check for cancellation
-                token.ThrowIfCancellationRequested();
+                GetFilesInDirectory(rootDirectory, files, token);
 
                 // Get files in filtered directories and all subdirectories
                 foreach (string f in this.FilterItems)
                 {
+                    // Check for cancellation
+                    token.ThrowIfCancellationRequested();
+
                     string d = GetFullFileName(f, rootDirectory);
                     DirectorySearch(d, files, token);
                 }
@@ -66,21 +66,24 @@ namespace BackupAssistant.ViewModels
 
         private void DirectorySearch(string directory, IList<string> fileList, CancellationToken token)
         {
-            GetFilesInDirectory(directory, fileList);
-
-            // Check for cancellation
-            token.ThrowIfCancellationRequested();
+            GetFilesInDirectory(directory, fileList, token);
 
             foreach (string d in SafeGetDirectories(directory))
             {
+                // Check for cancellation
+                token.ThrowIfCancellationRequested();
+
                 DirectorySearch(d, fileList, token);
             }
         }
 
-        private void GetFilesInDirectory(string directory, IList<string> fileList)
+        private void GetFilesInDirectory(string directory, IList<string> fileList, CancellationToken token)
         {
             foreach (string f in SafeGetFiles(directory))
             {
+                // Check for cancellation
+                token.ThrowIfCancellationRequested();
+
                 fileList.Add(f);
             }
         }
