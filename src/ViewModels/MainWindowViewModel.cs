@@ -48,8 +48,16 @@ namespace BackupAssistant.ViewModels
             _runBackupCommand = new AsyncRelayCommand(async (CancellationToken token) => await RunBackup(token), CanRunBackup);
 
             // Load other settings
-            this.Source = _settingsService.Source;
-            this.Destination = _settingsService.Destination;
+            if (_fileSystem.Directory.Exists(_settingsService.Source))
+            {
+                this.Source = _settingsService.Source;
+            }
+
+            if (_fileSystem.Directory.Exists(_settingsService.Destination))
+            {
+                this.Destination = _settingsService.Destination;
+            }
+
             this.BackupType = (BackupType)_settingsService.BackupType;
         }
     }
