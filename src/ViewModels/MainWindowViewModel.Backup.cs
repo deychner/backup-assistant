@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO.Abstractions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -112,6 +113,20 @@ namespace BackupAssistant.ViewModels
 
         #region Safety
 
+        public IFileInfo? SafeGetFileInfo(string file)
+        {
+            try
+            {
+                return _fileSystem.FileInfo.New(file);
+            }
+            catch
+            {
+                _logService.AddToLogEntry($"Failed to get file information for file '{file}'.");
+
+                return null;
+            }
+        }
+
         private IReadOnlyCollection<string> SafeGetFiles(string directory)
         {
             try
@@ -172,13 +187,49 @@ namespace BackupAssistant.ViewModels
             }
         }
 
+        public void SafeDeleteFile(string file)
+        {
+            try
+            {
+                _fileSystem.File.Delete(file);
+            }
+            catch
+            {
+                _logService.AddToLogEntry($"Delete file failed for file '{file}'.");
+            }
+        }
+
         #endregion
 
         #region Compression
 
-        private static string GetFullFileName(string abbreviatedFileName, string lengthenString)
+        string ShrinkSourceFileName(string fileName)
+        {
+            return GetAbbreviatedFileName(fileName, this.Source);
+        }
+
+        string ShrinkDestinationFileName(string fileName)
+        {
+            return GetAbbreviatedFileName(fileName, this.Destination);
+        }
+
+        string ExpandSourceFileName(string fileName)
+        {
+            return GetFullFileName(fileName, this.Source);
+        }
+        string ExpandDestinationFileName(string fileName)
+        {
+            return GetFullFileName(fileName, this.Destination);
+        }
+
+        static string GetFullFileName(string abbreviatedFileName, string lengthenString)
         {
             return abbreviatedFileName.Replace("...", lengthenString);
+        }
+
+        static string GetAbbreviatedFileName(string fileName, string shortenString)
+        {
+            return fileName.Replace(shortenString, "...");
         }
 
         #endregion
