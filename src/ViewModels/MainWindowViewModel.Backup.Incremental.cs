@@ -20,8 +20,8 @@ namespace BackupAssistant.ViewModels
             IDictionary<string, FileListing> files = GetCombinedFileList(this.Source, this.Destination, token);
 
             // Get total size
-            long processed = 0L;
-            long totalSize =
+            float processed = 0F;
+            float totalSize =
                 (from FileListing f in files.Values
                  where f.GetBackupAction() != BackupAction.None
                  select f.Size).Sum();
@@ -63,7 +63,7 @@ namespace BackupAssistant.ViewModels
                 // Handle edge case where all files eligible for backup are empty
                 if (totalSize > 0)
                 {
-                    this.Progress = (int)(100L * (processed / totalSize));
+                    this.Progress = (int)(100F * (processed / totalSize));
                 }
                 else
                 {
