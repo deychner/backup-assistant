@@ -9,10 +9,12 @@ using System.Linq;
 
 namespace BackupAssistant.ViewModels
 {
-    internal class FilterSelectionViewModel : ObservableObject, IDialogViewModel
+    public class FilterSelectionViewModel : ObservableObject, IDialogViewModel
     {
         private readonly FilterSelectionModel _model;
         private readonly IFileSystem _fileSystem;
+
+        public FilterSelectionModel Model => _model;
 
         public ObservableCollection<FilterItem> FilterItems
         {
