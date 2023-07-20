@@ -33,10 +33,10 @@ namespace BackupAssistant.ViewModels
                 string destinationFile = sourceFiles[i].Replace(this.Source, this.Destination);
                 SafeCopyFile(sourceFiles[i], destinationFile);
 
-                this.Progress = (100 * (i + 1) / sourceFiles.Count);
+                this.Progress = 100 * (i + 1) / sourceFiles.Count;
             }
 
-            this.Status = "Operation complete!";
+            this.Status = "Backup is complete.";
         }
 
         private IList<string> GetFileList(string rootDirectory, CancellationToken token)

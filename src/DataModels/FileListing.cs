@@ -2,7 +2,7 @@
 
 namespace BackupAssistant.DataModels
 {
-    internal enum BackupAction : byte
+    public enum BackupAction : byte
     {
         None,
         Copy,
