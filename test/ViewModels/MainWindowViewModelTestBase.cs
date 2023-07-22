@@ -1,6 +1,7 @@
 ﻿using BackupAssistant.Services;
 using BackupAssistant.ViewModels;
 using Moq;
+using System.Collections.Specialized;
 using System.IO.Abstractions.TestingHelpers;
 
 namespace BackupAssistant.Test.ViewModels
@@ -23,6 +24,12 @@ namespace BackupAssistant.Test.ViewModels
 
             if (createInstance)
             {
+                this.SettingsServiceMock.SetupProperty(f => f.Filters, new StringCollection());
+                this.SettingsServiceMock.SetupProperty(s => s.Source, null);
+                this.SettingsServiceMock.SetupProperty(d => d.Destination, null);
+                this.SettingsServiceMock.SetupProperty(b => b.BackupType);
+                this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
+
                 this.ViewModelInstance = new MainWindowViewModel(this.SettingsServiceMock.Object, this.DialogServiceMock.Object, this.LogServiceMock.Object, this.FileSystemMock);
             }
         }
