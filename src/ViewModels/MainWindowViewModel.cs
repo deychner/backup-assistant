@@ -17,6 +17,8 @@ namespace BackupAssistant.ViewModels
         private readonly IDialogService _dialogService;
         private readonly ILogService _logService;
 
+        public MainWindowModel Model => _model;
+
         public MainWindowViewModel(ISettingsService settingsService, IDialogService dialogService, ILogService logService) : this(settingsService, dialogService, logService, new FileSystem()) { }
 
         public MainWindowViewModel(ISettingsService settingsService, IDialogService dialogService, ILogService logService, IFileSystem fileSystem)

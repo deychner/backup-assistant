@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace BackupAssistant.Models
 {
-    internal class MainWindowModel
+    public class MainWindowModel
     {
         public string Source = string.Empty;
         public string Destination = string.Empty;
