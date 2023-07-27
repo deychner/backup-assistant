@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Moq;
-using System.IO.Abstractions.TestingHelpers;
+﻿using BackupAssistant.DataModels;
 using System.Collections.ObjectModel;
-using BackupAssistant.DataModels;
+using System.IO.Abstractions.TestingHelpers;
 
 namespace BackupAssistant.Test.ViewModels
 {
