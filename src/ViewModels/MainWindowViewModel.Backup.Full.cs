@@ -6,7 +6,7 @@ namespace BackupAssistant.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
     {
-        public void RunFullBackupInternal(CancellationToken token)
+        internal void RunFullBackupInternal(CancellationToken token)
         {
             this.Progress = 0;
 
