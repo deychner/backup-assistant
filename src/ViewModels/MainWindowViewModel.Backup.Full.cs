@@ -6,7 +6,7 @@ namespace BackupAssistant.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
     {
-        internal void RunFullBackupInternal(CancellationToken token)
+        public void RunFullBackupInternal(CancellationToken token)
         {
             this.Progress = 0;
 
@@ -39,7 +39,7 @@ namespace BackupAssistant.ViewModels
             this.Status = "Backup is complete.";
         }
 
-        private IList<string> GetFileList(string rootDirectory, CancellationToken token)
+        public IList<string> GetFileList(string rootDirectory, CancellationToken token)
         {
             List<string> files = new();
 
