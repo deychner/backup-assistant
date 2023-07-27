@@ -14,6 +14,8 @@
     <Company>Anaheim Electronics</Company>
     <Copyright>Copyright © Darryl Eychner 2023</Copyright>
     <FileVersion>2023.7.27.1</FileVersion>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>Deploy\signingkey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
