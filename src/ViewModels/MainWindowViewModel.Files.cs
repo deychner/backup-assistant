@@ -28,7 +28,6 @@ namespace BackupAssistant.ViewModels
                 _settingsService.Save();
 
                 // Update dependencies
-
                 OnPropertyChanged(nameof(EditFiltersCommand));
                 OnPropertyChanged(nameof(RunBackupCommand));
             }
