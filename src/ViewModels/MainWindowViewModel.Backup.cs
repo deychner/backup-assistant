@@ -127,7 +127,7 @@ namespace BackupAssistant.ViewModels
             }
         }
 
-        private IReadOnlyCollection<string> SafeGetFiles(string directory)
+        public IReadOnlyCollection<string> SafeGetFiles(string directory)
         {
             try
             {
@@ -142,7 +142,7 @@ namespace BackupAssistant.ViewModels
             }
         }
 
-        private IReadOnlyCollection<string> SafeGetDirectories(string directory)
+        public IReadOnlyCollection<string> SafeGetDirectories(string directory)
 
         {
             try
