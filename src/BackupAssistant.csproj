@@ -1,62 +1,54 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
-    <StartupObject>BackupAssistant.Program</StartupObject>
-    <AssemblyName>Backup Assistant</AssemblyName>
-    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-    <Company>Anaheim Electronics</Company>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyVersion>2023.7.27.1</AssemblyVersion>
+    <StartupObject>BackupAssistant.App</StartupObject>
+    <ApplicationIcon>assets\icon.ico</ApplicationIcon>
     <Authors>Darryl Eychner</Authors>
-    <Copyright>Copyright © 2021</Copyright>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <FileVersion>2.0.0.0</FileVersion>
-    <PackageIcon></PackageIcon>
+    <Company>Anaheim Electronics</Company>
+    <Copyright>Copyright © Darryl Eychner 2023</Copyright>
+    <FileVersion>2023.7.27.1</FileVersion>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>Deploy\signingkey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;WFAC010</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;WFAC010</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Resources\**" />
-    <EmbeddedResource Remove="Resources\**" />
-    <None Remove="Resources\**" />
+    <None Remove="assets\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Core\BackupAgent.*.cs">
-      <DependentUpon>BackupAgent.cs</DependentUpon>
-    </Compile>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="System.IO.Abstractions" Version="19.2.29" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="UI.*.cs">
-      <DependentUpon>UI.cs</DependentUpon>
-    </Compile>
+    <Resource Include="assets\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>Backup Assistant Tests</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Update="Properties\Settings.Designer.cs">
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <Compile Update="ViewModels\MainWindowViewModel.*.cs">
+      <DependentUpon>MainWindowViewModel.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -64,11 +56,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="6.0.0" />
-    <PackageReference Include="System.IO.Abstractions" Version="17.2.3" />
   </ItemGroup>
 
 </Project>
