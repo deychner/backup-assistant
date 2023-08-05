@@ -47,7 +47,7 @@ namespace BackupAssistant.ViewModels
             }
 
             // Initialize cancelable commands
-            _runBackupCommand = new AsyncRelayCommand(async (CancellationToken token) => await RunBackup(token), CanRunBackup);
+            _runBackupCommand = new AsyncRelayCommand(async (CancellationToken token) => await RunBackupAsync(token), CanRunBackup);
 
             // Load other settings
             if (_fileSystem.Directory.Exists(_settingsService.Source))

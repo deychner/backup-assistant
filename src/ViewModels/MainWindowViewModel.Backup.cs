@@ -18,7 +18,7 @@ namespace BackupAssistant.ViewModels
 
         public ICommand CancelRunBackupCommand => this.RunBackupCommand.CreateCancelCommand();
 
-        public async Task RunBackup(CancellationToken token)
+        public async Task RunBackupAsync(CancellationToken token)
         {
             _logService.ClearLog();
 
