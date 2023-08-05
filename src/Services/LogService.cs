@@ -18,6 +18,11 @@ namespace BackupAssistant.Services
             _logMessage?.AppendLine(message);
         }
 
+        public void ClearLog()
+        {
+            _logMessage?.Clear();
+        }
+
         public void WriteLogEntry()
         {
             if (_logMessage.Length > 0 && EventLog.SourceExists(Source))

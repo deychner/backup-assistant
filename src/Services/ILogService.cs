@@ -4,6 +4,8 @@
     {
         void AddToLogEntry(string message);
 
+        void ClearLog();
+
         void WriteLogEntry();
     }
 }

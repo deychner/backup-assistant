@@ -20,6 +20,8 @@ namespace BackupAssistant.ViewModels
 
         public async Task RunBackup(CancellationToken token)
         {
+            _logService.ClearLog();
+
             try
             {
                 await Task.Run(() => RunBackupInternal(token), token);
