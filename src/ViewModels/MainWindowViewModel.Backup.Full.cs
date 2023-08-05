@@ -24,7 +24,7 @@ namespace BackupAssistant.ViewModels
 
             // Copy files
             this.ProgressBarIsIndeterminate = false;
-            this.Status = "Copying files...";
+            this.Status = $"Copying {sourceFiles.Count} files...";
             for (int i = 0; i < sourceFiles.Count; i++)
             {
                 // Check for cancellation

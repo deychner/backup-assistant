@@ -25,10 +25,14 @@ namespace BackupAssistant.ViewModels
                 (from FileListing f in files.Values
                  where f.GetBackupAction() != BackupAction.None
                  select f.Size).Sum();
+            float totalFiles =
+                (from FileListing f in files.Values
+                 where f.GetBackupAction() != BackupAction.None
+                 select 1).Count();
 
             // Process files
             this.ProgressBarIsIndeterminate = false;
-            this.Status = "Processing files...";
+            this.Status = $"Processing {totalFiles} files...";
             foreach (string key in files.Keys)
             {
                 // Check for cancellation
