@@ -121,9 +121,9 @@ namespace BackupAssistant.ViewModels
             {
                 return _fileSystem.FileInfo.New(file);
             }
-            catch
+            catch (Exception e)
             {
-                _logService.AddToLogEntry($"Failed to get file information for file '{file}'.");
+                _logService.AddToLogEntry($"Failed to get file information for file '{file}', Exception: {e.Message}");
 
                 return null;
             }
@@ -136,9 +136,9 @@ namespace BackupAssistant.ViewModels
                 string[] files = _fileSystem.Directory.GetFiles(directory);
                 return new ReadOnlyCollection<string>(files);
             }
-            catch
+            catch (Exception e)
             {
-                _logService.AddToLogEntry($"Failed to get files in directory '{directory}'.");
+                _logService.AddToLogEntry($"Failed to get files in directory '{directory}', Exception: {e.Message}");
 
                 return new ReadOnlyCollection<string>(Array.Empty<string>());
             }
@@ -152,9 +152,9 @@ namespace BackupAssistant.ViewModels
                 string[] directories = _fileSystem.Directory.GetDirectories(directory);
                 return new ReadOnlyCollection<string>(directories);
             }
-            catch
+            catch (Exception e)
             {
-                _logService.AddToLogEntry($"Failed to get directories in directory '{directory}'.");
+                _logService.AddToLogEntry($"Failed to get directories in directory '{directory}', Exception: {e.Message}");
 
                 return new ReadOnlyCollection<string>(Array.Empty<string>());
             }
@@ -183,9 +183,9 @@ namespace BackupAssistant.ViewModels
 
                 _fileSystem.File.Copy(sourceFileName, destinationFileName, overwrite);
             }
-            catch
+            catch (Exception e)
             {
-                _logService.AddToLogEntry($"Copy file failed for file '{sourceFileName}'.");
+                _logService.AddToLogEntry($"Copy file failed for file '{sourceFileName}', Exception: {e.Message}");
             }
         }
 
@@ -195,9 +195,9 @@ namespace BackupAssistant.ViewModels
             {
                 _fileSystem.File.Delete(file);
             }
-            catch
+            catch (Exception e)
             {
-                _logService.AddToLogEntry($"Delete file failed for file '{file}'.");
+                _logService.AddToLogEntry($"Delete file failed for file '{file}', Exception: {e.Message}");
             }
         }
 
