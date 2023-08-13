@@ -13,8 +13,8 @@ namespace BackupAssistant.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
     {
-        private readonly AsyncRelayCommand _runBackupCommand;
-        public IAsyncRelayCommand RunBackupCommand => _runBackupCommand;
+        private AsyncRelayCommand? _runBackupCommand;
+        public IAsyncRelayCommand RunBackupCommand => _runBackupCommand ??= new AsyncRelayCommand(async (CancellationToken token) => await RunBackupAsync(token), CanRunBackup);
 
         public ICommand CancelRunBackupCommand => this.RunBackupCommand.CreateCancelCommand();
 
@@ -38,7 +38,7 @@ namespace BackupAssistant.ViewModels
 
         public bool CanRunBackup()
         {
-            return !string.IsNullOrEmpty(this.Source) && !string.IsNullOrEmpty(this.Destination) && !_runBackupCommand.IsRunning;
+            return !string.IsNullOrEmpty(this.Source) && !string.IsNullOrEmpty(this.Destination) && !_runBackupCommand!.IsRunning;
         }
 
         internal void RunBackupInternal(CancellationToken token)

@@ -7,8 +7,11 @@ namespace BackupAssistant.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
     {
-        public IRelayCommand AddEditSourceCommand => new RelayCommand(AddEditSource);
-        public IRelayCommand AddEditDestinationCommand => new RelayCommand(AddEditDestination);
+        private RelayCommand? _addEditSourceCommand;
+        private RelayCommand? _addEditDestinationCommand;
+
+        public IRelayCommand AddEditSourceCommand => _addEditSourceCommand ??= new RelayCommand(AddEditSource);
+        public IRelayCommand AddEditDestinationCommand => _addEditDestinationCommand ??= new RelayCommand(AddEditDestination);
 
         public string Source
         {
@@ -29,7 +32,7 @@ namespace BackupAssistant.ViewModels
                 _settingsService.Save();
 
                 // Update dependencies
-                OnPropertyChanged(nameof(EditFiltersCommand));
+                this.EditFiltersCommand.NotifyCanExecuteChanged();
                 this.RunBackupCommand.NotifyCanExecuteChanged();
             }
         }

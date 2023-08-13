@@ -8,7 +8,8 @@ namespace BackupAssistant.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
     {
-        public IRelayCommand EditFiltersCommand => new RelayCommand(() => EditFilters(new FilterSelectionViewModel()), CanEditFilters);
+        private RelayCommand? _editFiltersCommand;
+        public IRelayCommand EditFiltersCommand => _editFiltersCommand ??= new RelayCommand(() => EditFilters(new FilterSelectionViewModel()), CanEditFilters);
 
         public ObservableCollection<string> FilterItems
         {

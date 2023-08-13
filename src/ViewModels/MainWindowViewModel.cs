@@ -2,10 +2,8 @@
 using BackupAssistant.Models;
 using BackupAssistant.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using System.Collections.Specialized;
 using System.IO.Abstractions;
-using System.Threading;
 
 namespace BackupAssistant.ViewModels
 {
@@ -45,9 +43,6 @@ namespace BackupAssistant.ViewModels
                     this.FilterItems.Add(filter);
                 }
             }
-
-            // Initialize cancelable commands
-            _runBackupCommand = new AsyncRelayCommand(async (CancellationToken token) => await RunBackupAsync(token), CanRunBackup);
 
             // Load other settings
             if (_fileSystem.Directory.Exists(_settingsService.Source))
