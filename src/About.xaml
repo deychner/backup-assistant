@@ -9,6 +9,9 @@
         WindowStartupLocation="CenterOwner"
         SizeToContent="WidthAndHeight"
         ResizeMode="NoResize" Icon="/assets/icon.ico">
+    <Window.Background>
+        <SolidColorBrush Color="WhiteSmoke"/>
+    </Window.Background>
     <Window.DataContext>
         <viewmodels:AboutViewModel/>
     </Window.DataContext>
