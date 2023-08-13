@@ -30,7 +30,7 @@ namespace BackupAssistant.ViewModels
 
                 // Update dependencies
                 OnPropertyChanged(nameof(EditFiltersCommand));
-                OnPropertyChanged(nameof(RunBackupCommand));
+                this.RunBackupCommand.NotifyCanExecuteChanged();
             }
         }
 
@@ -47,7 +47,7 @@ namespace BackupAssistant.ViewModels
                 _settingsService.Save();
 
                 // Update dependencies
-                OnPropertyChanged(nameof(RunBackupCommand));
+                this.RunBackupCommand.NotifyCanExecuteChanged();
             }
         }
 
