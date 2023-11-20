@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Runtime.Versioning;
 using System.Text;
 
 namespace BackupAssistant.Services
@@ -23,9 +25,10 @@ namespace BackupAssistant.Services
             _logMessage?.Clear();
         }
 
+        [SupportedOSPlatformGuard("windows")]
         public void WriteLogEntry()
         {
-            if (_logMessage.Length > 0 && EventLog.SourceExists(Source))
+            if (OperatingSystem.IsWindows() && _logMessage.Length > 0 && EventLog.SourceExists(Source))
             {
                 using EventLog log = new();
                 log.Source = Source;
