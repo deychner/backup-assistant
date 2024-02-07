@@ -8,13 +8,13 @@
     <IsTestProject>true</IsTestProject>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\src\Deploy\signingkey.snk</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>2023.11.20.1</AssemblyVersion>
+    <AssemblyVersion>2024.2.7.1</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
     <PackageReference Include="Moq" Version="4.20.70" />
-    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="20.0.4" />
+    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="20.0.15" />
     <PackageReference Include="xunit" Version="2.6.6" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

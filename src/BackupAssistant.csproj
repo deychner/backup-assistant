@@ -7,13 +7,13 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AssemblyVersion>2023.11.20.1</AssemblyVersion>
+    <AssemblyVersion>2024.2.7.1</AssemblyVersion>
     <StartupObject>BackupAssistant.App</StartupObject>
     <ApplicationIcon>assets\icon.ico</ApplicationIcon>
     <Authors>Darryl Eychner</Authors>
     <Company>Anaheim Electronics</Company>
-    <Copyright>Copyright © Darryl Eychner 2023</Copyright>
-    <FileVersion>2023.11.20.1</FileVersion>
+    <Copyright>Copyright © Darryl Eychner 2024</Copyright>
+    <FileVersion>2024.2.7.1</FileVersion>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>Deploy\signingkey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
@@ -33,7 +33,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-    <PackageReference Include="System.IO.Abstractions" Version="20.0.4" />
+    <PackageReference Include="System.IO.Abstractions" Version="20.0.15" />
   </ItemGroup>
 
   <ItemGroup>
