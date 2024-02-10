@@ -26,12 +26,12 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public void Constructor_LoadFilters()
         {
-            StringCollection filters = new()
-            {
+            StringCollection filters =
+            [
                 "filter1",
                 "filter2",
                 null
-            };
+            ];
 
             this.SettingsServiceMock.SetupProperty(f => f.Filters, filters);
             this.SettingsServiceMock.SetupProperty(s => s.Source, null);

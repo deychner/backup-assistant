@@ -11,10 +11,10 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public void FilterImageSource()
         {
-            this.ViewModelInstance!.Model.Filters = new ObservableCollection<string>();
+            this.ViewModelInstance!.Model.Filters = [];
             Assert.Equal("/assets/filter.png", this.ViewModelInstance.FilterImageSource);
 
-            this.ViewModelInstance!.Model.Filters = new ObservableCollection<string>() { "test" };
+            this.ViewModelInstance!.Model.Filters = ["test"];
             Assert.Equal("/assets/filter_apply.png", this.ViewModelInstance.FilterImageSource);
         }
 
@@ -29,8 +29,8 @@ namespace BackupAssistant.Test.ViewModels
 
             // Add existing information
             this.ViewModelInstance!.Model.Source = "original";
-            this.ViewModelInstance.Model.Filters = new ObservableCollection<string> { "original_filter" };
-            this.SettingsServiceMock.Object.Filters = new StringCollection { "original_filter" };
+            this.ViewModelInstance.Model.Filters = ["original_filter"];
+            this.SettingsServiceMock.Object.Filters = ["original_filter"];
 
             this.ViewModelInstance.EditFilters(dialogViewModelMock.Object);
 
@@ -51,8 +51,8 @@ namespace BackupAssistant.Test.ViewModels
 
             // Add existing information
             this.ViewModelInstance!.Model.Source = "original";
-            this.ViewModelInstance.Model.Filters = new ObservableCollection<string> { "original_filter" };
-            this.SettingsServiceMock.Object.Filters = new StringCollection { "original_filter" };
+            this.ViewModelInstance.Model.Filters = ["original_filter"];
+            this.SettingsServiceMock.Object.Filters = ["original_filter"];
 
             this.ViewModelInstance.EditFilters(dialogViewModelMock.Object);
 

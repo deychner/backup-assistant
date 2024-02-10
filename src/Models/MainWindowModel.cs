@@ -8,7 +8,7 @@ namespace BackupAssistant.Models
         public string Source = string.Empty;
         public string Destination = string.Empty;
         public BackupType BackupType;
-        public ObservableCollection<string> Filters { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<string> Filters { get; set; } = [];
 
         public int Progress { get; set; } = 0;
         public bool ProgressBarIsIndeterminate { get; set; } = false;

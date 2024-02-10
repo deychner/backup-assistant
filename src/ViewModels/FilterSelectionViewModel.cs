@@ -9,10 +9,10 @@ using System.Linq;
 
 namespace BackupAssistant.ViewModels
 {
-    public class FilterSelectionViewModel : ObservableObject, IDialogViewModel
+    public class FilterSelectionViewModel(IFileSystem fileSystem) : ObservableObject, IDialogViewModel
     {
-        private readonly FilterSelectionModel _model;
-        private readonly IFileSystem _fileSystem;
+        private readonly FilterSelectionModel _model = new();
+        private readonly IFileSystem _fileSystem = fileSystem;
 
         public FilterSelectionModel Model => _model;
 
@@ -43,13 +43,6 @@ namespace BackupAssistant.ViewModels
 
         public FilterSelectionViewModel() : this(new FileSystem()) { }
 
-        public FilterSelectionViewModel(IFileSystem fileSystem)
-        {
-            _fileSystem = fileSystem;
-
-            _model = new FilterSelectionModel();
-        }
-
         public void PopulateFilterList(IEnumerable<string> existingFilters)
         {
             _model.FilterItems.Clear();
@@ -64,7 +57,7 @@ namespace BackupAssistant.ViewModels
                 }
                 catch
                 {
-                    directoriesToFilter = Array.Empty<string>();
+                    directoriesToFilter = [];
                 }
 
                 foreach (string d in directoriesToFilter.Where(d => !_fileSystem.DirectoryInfo.New(d).Attributes.HasFlag(System.IO.FileAttributes.Hidden)))

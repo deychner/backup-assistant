@@ -20,7 +20,7 @@ namespace BackupAssistant.ViewModels
                 // Do not reset filters when Source is being initialized or set to the same value
                 if (!(string.IsNullOrEmpty(_model.Source) || _model.Source.Equals(value)))
                 {
-                    this.FilterItems = new ObservableCollection<string>();
+                    this.FilterItems = [];
                 }
 
                 _model.Source = value;

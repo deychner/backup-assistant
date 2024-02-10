@@ -21,7 +21,7 @@ namespace BackupAssistant.ViewModels
 
                 // Update settings
                 _settingsService.Filters.Clear();
-                _settingsService.Filters.AddRange(_model.Filters.ToArray<string>());
+                _settingsService.Filters.AddRange([.. _model.Filters]);
                 _settingsService.Save();
 
                 // Update dependencies

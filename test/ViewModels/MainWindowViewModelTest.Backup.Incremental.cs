@@ -13,7 +13,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.Model.Source = @"c:\Single";
             this.ViewModelInstance.Model.Destination = @"c:\Single_Backup";
-            this.ViewModelInstance.Model.Filters = new ObservableCollection<string>();
+            this.ViewModelInstance.Model.Filters = [];
 
             IDictionary<string, FileListing> fileList = this.ViewModelInstance.GetCombinedFileList(@"c:\Single", @"c:\Single_Backup", CancellationToken.None);
 
@@ -30,7 +30,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.Model.Source = @"c:\Single";
             this.ViewModelInstance.Model.Destination = @"c:\Single_Backup";
-            this.ViewModelInstance.Model.Filters = new ObservableCollection<string>();
+            this.ViewModelInstance.Model.Filters = [];
 
             IDictionary<string, FileListing> fileList = this.ViewModelInstance.GetCombinedFileList(@"c:\Single", @"c:\Single_Backup", CancellationToken.None);
 
@@ -47,7 +47,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.Model.Source = @"c:\Single";
             this.ViewModelInstance.Model.Destination = @"c:\Single_Backup";
-            this.ViewModelInstance.Model.Filters = new ObservableCollection<string>();
+            this.ViewModelInstance.Model.Filters = [];
 
             IDictionary<string, FileListing> fileList = this.ViewModelInstance.GetCombinedFileList(@"c:\Single", @"c:\Single_Backup", CancellationToken.None);
 
@@ -64,7 +64,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.Model.Source = @"c:\Multi";
             this.ViewModelInstance.Model.Destination = @"c:\Multi_Backup";
-            this.ViewModelInstance.Model.Filters = new ObservableCollection<string>();
+            this.ViewModelInstance.Model.Filters = [];
 
             IDictionary<string, FileListing> fileList = this.ViewModelInstance.GetCombinedFileList(@"c:\Multi", @"c:\Multi_Backup", CancellationToken.None);
 
@@ -81,7 +81,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.Model.Source = @"c:\Multi";
             this.ViewModelInstance.Model.Destination = @"c:\Multi_Backup";
-            this.ViewModelInstance.Model.Filters = new ObservableCollection<string>();
+            this.ViewModelInstance.Model.Filters = [];
 
             IDictionary<string, FileListing> fileList = this.ViewModelInstance.GetCombinedFileList(@"c:\Multi", @"c:\Multi_Backup", CancellationToken.None);
 
@@ -98,7 +98,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.Model.Source = @"c:\Multi";
             this.ViewModelInstance.Model.Destination = @"c:\Multi_Backup";
-            this.ViewModelInstance.Model.Filters = new ObservableCollection<string>();
+            this.ViewModelInstance.Model.Filters = [];
 
             IDictionary<string, FileListing> fileList = this.ViewModelInstance.GetCombinedFileList(@"c:\Multi", @"c:\Multi_Backup", CancellationToken.None);
 
@@ -115,7 +115,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.Model.Source = @"c:\Multi";
             this.ViewModelInstance.Model.Destination = @"c:\Multi_Backup";
-            this.ViewModelInstance.Model.Filters = new ObservableCollection<string>() { @"...\L1F1" };
+            this.ViewModelInstance.Model.Filters = [@"...\L1F1"];
 
             IDictionary<string, FileListing> fileList = this.ViewModelInstance.GetCombinedFileList(@"c:\Multi", @"c:\Multi_Backup", CancellationToken.None);
 
@@ -133,7 +133,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.Model.Source = @"c:\Single";
             this.ViewModelInstance.Model.Destination = @"c:\Single_Backup";
-            this.ViewModelInstance.Model.Filters = new ObservableCollection<string>();
+            this.ViewModelInstance.Model.Filters = [];
 
             this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
 
@@ -147,7 +147,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.Model.Source = @"c:\Single";
             this.ViewModelInstance.Model.Destination = @"c:\Single_Backup";
-            this.ViewModelInstance.Model.Filters = new ObservableCollection<string>();
+            this.ViewModelInstance.Model.Filters = [];
 
             this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
 
@@ -161,7 +161,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.Model.Source = @"c:\Single";
             this.ViewModelInstance.Model.Destination = @"c:\Single_Backup";
-            this.ViewModelInstance.Model.Filters = new ObservableCollection<string>();
+            this.ViewModelInstance.Model.Filters = [];
 
             this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
 
@@ -175,7 +175,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.Model.Source = @"c:\Single";
             this.ViewModelInstance.Model.Destination = @"c:\Single_Backup";
-            this.ViewModelInstance.Model.Filters = new ObservableCollection<string>();
+            this.ViewModelInstance.Model.Filters = [];
 
             // Check dates
             DateTime sourceLastModified = this.FileSystemMock.FileInfo.New(@"c:\Single\file2.txt").LastWriteTime;
@@ -203,7 +203,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.Model.Source = @"c:\Multi";
             this.ViewModelInstance.Model.Destination = @"c:\Multi_Backup";
-            this.ViewModelInstance.Model.Filters = new ObservableCollection<string>();
+            this.ViewModelInstance.Model.Filters = [];
 
             this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
 
@@ -217,7 +217,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.Model.Source = @"c:\Multi";
             this.ViewModelInstance.Model.Destination = @"c:\Multi_Backup";
-            this.ViewModelInstance.Model.Filters = new ObservableCollection<string>();
+            this.ViewModelInstance.Model.Filters = [];
 
             this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
 
@@ -231,7 +231,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.Model.Source = @"c:\Multi";
             this.ViewModelInstance.Model.Destination = @"c:\Multi_Backup";
-            this.ViewModelInstance.Model.Filters = new ObservableCollection<string>();
+            this.ViewModelInstance.Model.Filters = [];
 
             this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
 
@@ -245,7 +245,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.Model.Source = @"c:\Multi";
             this.ViewModelInstance.Model.Destination = @"c:\Multi_Backup";
-            this.ViewModelInstance.Model.Filters = new ObservableCollection<string>();
+            this.ViewModelInstance.Model.Filters = [];
 
             // Touch file3.txt in source to make it more recent
             this.FileSystemMock.File.WriteAllText(@"c:\Multi\L1F2\file3.txt", "New content");

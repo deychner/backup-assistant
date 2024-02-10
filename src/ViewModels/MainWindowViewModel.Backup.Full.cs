@@ -41,7 +41,7 @@ namespace BackupAssistant.ViewModels
 
         public IList<string> GetFileList(string rootDirectory, CancellationToken token)
         {
-            List<string> files = new();
+            List<string> files = [];
 
             if (this.FilterItems.Count > 0)
             {

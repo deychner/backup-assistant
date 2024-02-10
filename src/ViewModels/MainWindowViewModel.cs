@@ -31,7 +31,7 @@ namespace BackupAssistant.ViewModels
             // Initialize filters if needed
             if (_settingsService.Filters == null)
             {
-                _settingsService.Filters = new StringCollection();
+                _settingsService.Filters = [];
                 _settingsService.Save();
             }
 
