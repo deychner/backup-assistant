@@ -50,7 +50,7 @@ namespace BackupAssistant.ViewModels
 
             bool? dialogResult = _dialogService.ShowDialog<FilterSelection>(dialogViewModel);
 
-            if (dialogResult.HasValue && dialogResult.Value)
+            if (dialogResult == true)
             {
                 this.FilterItems = (ObservableCollection<string>)dialogViewModel.Output;
             }
