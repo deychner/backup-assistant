@@ -2,7 +2,6 @@
 using BackupAssistant.ViewModels;
 using Moq;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 
 namespace BackupAssistant.Test.ViewModels
 {

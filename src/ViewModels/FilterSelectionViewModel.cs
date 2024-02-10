@@ -1,7 +1,6 @@
 ﻿using BackupAssistant.DataModels;
 using BackupAssistant.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO.Abstractions;

@@ -1,7 +1,6 @@
 ﻿using BackupAssistant.Services;
 using BackupAssistant.ViewModels;
 using Moq;
-using System.Collections.Specialized;
 using System.IO.Abstractions.TestingHelpers;
 
 namespace BackupAssistant.Test.ViewModels

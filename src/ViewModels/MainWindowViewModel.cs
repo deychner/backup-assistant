@@ -2,7 +2,6 @@
 using BackupAssistant.Models;
 using BackupAssistant.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.Specialized;
 using System.IO.Abstractions;
 
 namespace BackupAssistant.ViewModels
