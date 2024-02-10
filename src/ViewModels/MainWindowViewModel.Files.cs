@@ -55,7 +55,7 @@ namespace BackupAssistant.ViewModels
 
         public void AddEditSource()
         {
-            (bool? dialogResult, string selectedPath) = _dialogService.ShowFolderBrowserDialog(this.Source);
+            (bool? dialogResult, string selectedPath) = _dialogService.ShowOpenFolderDialog(this.Source);
 
             if (dialogResult == true)
             {
@@ -65,7 +65,7 @@ namespace BackupAssistant.ViewModels
 
         public void AddEditDestination()
         {
-            (bool? dialogResult, string selectedPath) = _dialogService.ShowFolderBrowserDialog(this.Destination);
+            (bool? dialogResult, string selectedPath) = _dialogService.ShowOpenFolderDialog(this.Destination);
 
             if (dialogResult == true)
             {

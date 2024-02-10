@@ -6,12 +6,14 @@ namespace BackupAssistant.Services
 {
     public class DialogService : IDialogService
     {
-        public (bool?, string) ShowFolderBrowserDialog(string selectedPath = "")
+        public (bool?, string) ShowOpenFolderDialog(string selectedPath = "")
         {
             OpenFolderDialog dialog = new()
             {
+                AddToRecent = false,
                 InitialDirectory = selectedPath,
-                Multiselect = false
+                Multiselect = false,
+                ShowHiddenItems = false,
             };
 
             return (dialog.ShowDialog(), dialog.FolderName);

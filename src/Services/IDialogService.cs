@@ -5,7 +5,7 @@ namespace BackupAssistant.Services
 {
     public interface IDialogService
     {
-        (bool?, string) ShowFolderBrowserDialog(string selectedPath = "");
+        (bool?, string) ShowOpenFolderDialog(string selectedPath = "");
 
         bool? ShowDialog<T>(IDialogViewModel viewModel) where T : Window, new();
     }
