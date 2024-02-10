@@ -1,5 +1,4 @@
 ﻿using Moq;
-using System.Windows.Forms;
 
 namespace BackupAssistant.Test.ViewModels
 {
@@ -9,7 +8,7 @@ namespace BackupAssistant.Test.ViewModels
         public void AddEditSource()
         {
             this.ViewModelInstance!.Model.Source = "old source";
-            this.DialogServiceMock.Setup(s => s.ShowFolderBrowserDialog(It.IsAny<string>())).Returns(() => (DialogResult.OK, "new source"));
+            this.DialogServiceMock.Setup(s => s.ShowFolderBrowserDialog(It.IsAny<string>())).Returns(() => (true, "new source"));
 
             this.ViewModelInstance.AddEditSource();
 
@@ -20,7 +19,7 @@ namespace BackupAssistant.Test.ViewModels
         public void AddEditSource_NoAction()
         {
             this.ViewModelInstance!.Model.Source = "old source";
-            this.DialogServiceMock.Setup(s => s.ShowFolderBrowserDialog(It.IsAny<string>())).Returns(() => (DialogResult.Cancel, "new source"));
+            this.DialogServiceMock.Setup(s => s.ShowFolderBrowserDialog(It.IsAny<string>())).Returns(() => (false, "new source"));
 
             this.ViewModelInstance.AddEditSource();
 
@@ -31,7 +30,7 @@ namespace BackupAssistant.Test.ViewModels
         public void AddEditDestination()
         {
             this.ViewModelInstance!.Model.Destination = "old destination";
-            this.DialogServiceMock.Setup(s => s.ShowFolderBrowserDialog(It.IsAny<string>())).Returns(() => (DialogResult.OK, "new destination"));
+            this.DialogServiceMock.Setup(s => s.ShowFolderBrowserDialog(It.IsAny<string>())).Returns(() => (true, "new destination"));
 
             this.ViewModelInstance.AddEditDestination();
 
@@ -42,7 +41,7 @@ namespace BackupAssistant.Test.ViewModels
         public void AddEditDestination_NoAction()
         {
             this.ViewModelInstance!.Model.Destination = "old destination";
-            this.DialogServiceMock.Setup(s => s.ShowFolderBrowserDialog(It.IsAny<string>())).Returns(() => (DialogResult.Cancel, "new destination"));
+            this.DialogServiceMock.Setup(s => s.ShowFolderBrowserDialog(It.IsAny<string>())).Returns(() => (false, "new destination"));
 
             this.ViewModelInstance.AddEditDestination();
 
