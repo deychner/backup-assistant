@@ -1,7 +1,7 @@
 ﻿using BackupAssistant.ViewModels;
 using System.IO.Abstractions.TestingHelpers;
 
-namespace BackupAssistant.Test.ViewModels
+namespace BackupAssistant.Test.ViewModels.Base
 {
     public class FilterSelectionViewModelTestBase
     {
@@ -11,9 +11,9 @@ namespace BackupAssistant.Test.ViewModels
 
         public FilterSelectionViewModelTestBase()
         {
-            this.FileSystemMock = new MockFileSystem();
+            FileSystemMock = new MockFileSystem();
 
-            this.ViewModelInstance = new FilterSelectionViewModel(FileSystemMock);
+            ViewModelInstance = new FilterSelectionViewModel(FileSystemMock);
         }
     }
 }

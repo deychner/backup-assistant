@@ -1,4 +1,5 @@
-﻿using System.IO.Abstractions.TestingHelpers;
+﻿using BackupAssistant.Test.ViewModels.Base;
+using System.IO.Abstractions.TestingHelpers;
 
 namespace BackupAssistant.Test.ViewModels
 {

@@ -1,4 +1,5 @@
 ﻿using BackupAssistant.DataModels;
+using BackupAssistant.Test.ViewModels.Base;
 using BackupAssistant.ViewModels;
 using Moq;
 using System.Collections.ObjectModel;

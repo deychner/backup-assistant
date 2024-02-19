@@ -3,7 +3,7 @@ using BackupAssistant.ViewModels;
 using Moq;
 using System.IO.Abstractions.TestingHelpers;
 
-namespace BackupAssistant.Test.ViewModels
+namespace BackupAssistant.Test.ViewModels.Base
 {
     public class MainWindowViewModelTestBase : IDisposable
     {
@@ -16,20 +16,20 @@ namespace BackupAssistant.Test.ViewModels
 
         public MainWindowViewModelTestBase(bool createInstance = true)
         {
-            this.SettingsServiceMock = new Mock<ISettingsService>(MockBehavior.Strict);
-            this.DialogServiceMock = new Mock<IDialogService>(MockBehavior.Strict);
-            this.LogServiceMock = new Mock<ILogService>(MockBehavior.Strict);
-            this.FileSystemMock = new MockFileSystem();
+            SettingsServiceMock = new Mock<ISettingsService>(MockBehavior.Strict);
+            DialogServiceMock = new Mock<IDialogService>(MockBehavior.Strict);
+            LogServiceMock = new Mock<ILogService>(MockBehavior.Strict);
+            FileSystemMock = new MockFileSystem();
 
             if (createInstance)
             {
-                this.SettingsServiceMock.SetupProperty(f => f.Filters, []);
-                this.SettingsServiceMock.SetupProperty(s => s.Source, null);
-                this.SettingsServiceMock.SetupProperty(d => d.Destination, null);
-                this.SettingsServiceMock.SetupProperty(b => b.BackupType);
-                this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
+                SettingsServiceMock.SetupProperty(f => f.Filters, []);
+                SettingsServiceMock.SetupProperty(s => s.Source, null);
+                SettingsServiceMock.SetupProperty(d => d.Destination, null);
+                SettingsServiceMock.SetupProperty(b => b.BackupType);
+                SettingsServiceMock.Setup(s => s.Save()).Verifiable();
 
-                this.ViewModelInstance = new MainWindowViewModel(this.SettingsServiceMock.Object, this.DialogServiceMock.Object, this.LogServiceMock.Object, this.FileSystemMock);
+                ViewModelInstance = new MainWindowViewModel(SettingsServiceMock.Object, DialogServiceMock.Object, LogServiceMock.Object, FileSystemMock);
             }
         }
 

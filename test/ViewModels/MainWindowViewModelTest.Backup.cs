@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using BackupAssistant.Test.ViewModels.Base;
+using Moq;
 using System.IO.Abstractions;
 
 namespace BackupAssistant.Test.ViewModels

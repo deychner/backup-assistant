@@ -1,4 +1,5 @@
 ﻿using BackupAssistant.DataModels;
+using BackupAssistant.Test.ViewModels.Base;
 using System.Collections.ObjectModel;
 
 namespace BackupAssistant.Test.ViewModels
@@ -61,7 +62,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance.Model.RootPath = @"c:\Source";
 
-            this.ViewModelInstance.PopulateFilterList(new List<string>());
+            this.ViewModelInstance.PopulateFilterList([]);
 
             Assert.Equal(2, this.ViewModelInstance.Model.FilterItems.Count);
             Assert.Contains(this.ViewModelInstance.Model.FilterItems, (f) => f.Path.Equals(@"...\dir1") && !f.IsChecked);
@@ -78,7 +79,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance.Model.RootPath = @"c:\Source";
 
-            this.ViewModelInstance.PopulateFilterList(new List<string>() { @"...\dir1" });
+            this.ViewModelInstance.PopulateFilterList([@"...\dir1"]);
 
             Assert.Equal(2, this.ViewModelInstance.Model.FilterItems.Count);
             Assert.Contains(this.ViewModelInstance.Model.FilterItems, (f) => f.Path.Equals(@"...\dir1") && f.IsChecked);
@@ -95,7 +96,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance.Model.RootPath = @"c:\Source";
 
-            this.ViewModelInstance.PopulateFilterList(new List<string>());
+            this.ViewModelInstance.PopulateFilterList([]);
 
             Assert.Single(this.ViewModelInstance.Model.FilterItems);
             Assert.Contains(this.ViewModelInstance.Model.FilterItems, (f) => f.Path.Equals(@"...\dir1") && !f.IsChecked);

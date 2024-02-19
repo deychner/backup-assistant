@@ -1,4 +1,5 @@
-﻿using BackupAssistant.ViewModels;
+﻿using BackupAssistant.Test.ViewModels.Base;
+using BackupAssistant.ViewModels;
 using System.Collections.Specialized;
 
 namespace BackupAssistant.Test.ViewModels
