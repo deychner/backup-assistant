@@ -33,7 +33,7 @@ namespace BackupAssistant.ViewModels
                 {
                     _model.RootPath = f.RootPath;
 
-                    PopulateFilterList(f.ExistingFilters ?? new List<string>());
+                    PopulateFilterList(f.ExistingFilters ?? []);
                 }
             }
         }

@@ -148,10 +148,10 @@ namespace BackupAssistant.ViewModels
 
                 if (info != null)
                 {
-                    if (fileList.ContainsKey(fileName))
+                    if (fileList.TryGetValue(fileName, out FileListing? existingListing))
                     {
-                        fileList[fileName].IsInSource = true;
-                        fileList[fileName].SourceLastModified = info.LastWriteTime;
+                        existingListing.IsInSource = true;
+                        existingListing.SourceLastModified = info.LastWriteTime;
                     }
                     else
                     {
@@ -190,10 +190,10 @@ namespace BackupAssistant.ViewModels
 
                 if (info != null)
                 {
-                    if (fileList.ContainsKey(fileName))
+                    if (fileList.TryGetValue(fileName, out FileListing? existingListing))
                     {
-                        fileList[fileName].IsInDestination = true;
-                        fileList[fileName].DestinationLastModified = info.LastWriteTime;
+                        existingListing.IsInDestination = true;
+                        existingListing.DestinationLastModified = info.LastWriteTime;
                     }
                     else
                     {
