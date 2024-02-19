@@ -2,7 +2,6 @@
 using BackupAssistant.Models;
 using BackupAssistant.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.Specialized;
 using System.IO.Abstractions;
 
 namespace BackupAssistant.ViewModels
@@ -31,7 +30,7 @@ namespace BackupAssistant.ViewModels
             // Initialize filters if needed
             if (_settingsService.Filters == null)
             {
-                _settingsService.Filters = new StringCollection();
+                _settingsService.Filters = [];
                 _settingsService.Save();
             }
 

@@ -1,19 +1,22 @@
 ﻿using BackupAssistant.ViewModels;
+using Microsoft.Win32;
 using System.Windows;
-using System.Windows.Forms;
 
 namespace BackupAssistant.Services
 {
     public class DialogService : IDialogService
     {
-        public (DialogResult, string) ShowFolderBrowserDialog(string selectedPath = "")
+        public (bool?, string) ShowOpenFolderDialog(string selectedPath = "")
         {
-            using FolderBrowserDialog dialog = new()
+            OpenFolderDialog dialog = new()
             {
-                SelectedPath = selectedPath
+                AddToRecent = false,
+                InitialDirectory = selectedPath,
+                Multiselect = false,
+                ShowHiddenItems = false,
             };
 
-            return (dialog.ShowDialog(), dialog.SelectedPath);
+            return (dialog.ShowDialog(), dialog.FolderName);
         }
 
         public bool? ShowDialog<T>(IDialogViewModel viewModel) where T : Window, new()

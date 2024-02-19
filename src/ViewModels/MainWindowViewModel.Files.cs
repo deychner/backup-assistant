@@ -1,7 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.ObjectModel;
-using System.Windows.Forms;
 
 namespace BackupAssistant.ViewModels
 {
@@ -21,7 +19,7 @@ namespace BackupAssistant.ViewModels
                 // Do not reset filters when Source is being initialized or set to the same value
                 if (!(string.IsNullOrEmpty(_model.Source) || _model.Source.Equals(value)))
                 {
-                    this.FilterItems = new ObservableCollection<string>();
+                    this.FilterItems = [];
                 }
 
                 _model.Source = value;
@@ -56,9 +54,9 @@ namespace BackupAssistant.ViewModels
 
         public void AddEditSource()
         {
-            (DialogResult dialogResult, string selectedPath) = _dialogService.ShowFolderBrowserDialog(this.Source);
+            (bool? dialogResult, string selectedPath) = _dialogService.ShowOpenFolderDialog(this.Source);
 
-            if (dialogResult == DialogResult.OK)
+            if (dialogResult == true)
             {
                 this.Source = selectedPath;
             }
@@ -66,9 +64,9 @@ namespace BackupAssistant.ViewModels
 
         public void AddEditDestination()
         {
-            (DialogResult dialogResult, string selectedPath) = _dialogService.ShowFolderBrowserDialog(this.Destination);
+            (bool? dialogResult, string selectedPath) = _dialogService.ShowOpenFolderDialog(this.Destination);
 
-            if (dialogResult == DialogResult.OK)
+            if (dialogResult == true)
             {
                 this.Destination = selectedPath;
             }

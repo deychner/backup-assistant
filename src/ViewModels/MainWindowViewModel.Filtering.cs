@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace BackupAssistant.ViewModels
 {
@@ -21,7 +20,7 @@ namespace BackupAssistant.ViewModels
 
                 // Update settings
                 _settingsService.Filters.Clear();
-                _settingsService.Filters.AddRange(_model.Filters.ToArray<string>());
+                _settingsService.Filters.AddRange([.. _model.Filters]);
                 _settingsService.Save();
 
                 // Update dependencies
@@ -50,7 +49,7 @@ namespace BackupAssistant.ViewModels
 
             bool? dialogResult = _dialogService.ShowDialog<FilterSelection>(dialogViewModel);
 
-            if (dialogResult.HasValue && dialogResult.Value)
+            if (dialogResult == true)
             {
                 this.FilterItems = (ObservableCollection<string>)dialogViewModel.Output;
             }

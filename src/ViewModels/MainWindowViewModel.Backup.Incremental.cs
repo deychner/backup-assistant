@@ -80,7 +80,7 @@ namespace BackupAssistant.ViewModels
 
         public IDictionary<string, FileListing> GetCombinedFileList(string sourceDirectory, string destinationDirectory, CancellationToken token)
         {
-            Dictionary<string, FileListing> files = new();
+            Dictionary<string, FileListing> files = [];
 
             if (this.FilterItems.Count > 0)
             {
