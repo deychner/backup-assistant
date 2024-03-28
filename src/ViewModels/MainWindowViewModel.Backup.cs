@@ -140,7 +140,7 @@ namespace BackupAssistant.ViewModels
             {
                 _logService.AddToLogEntry($"Failed to get files in directory '{directory}', Exception: {e.Message}");
 
-                return new ReadOnlyCollection<string>(Array.Empty<string>());
+                return new ReadOnlyCollection<string>([]);
             }
         }
 
@@ -156,7 +156,7 @@ namespace BackupAssistant.ViewModels
             {
                 _logService.AddToLogEntry($"Failed to get directories in directory '{directory}', Exception: {e.Message}");
 
-                return new ReadOnlyCollection<string>(Array.Empty<string>());
+                return new ReadOnlyCollection<string>([]);
             }
         }
 
