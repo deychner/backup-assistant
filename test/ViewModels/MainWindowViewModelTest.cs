@@ -51,76 +51,18 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
-        public void Constructor_LoadSource_Valid()
-        {
-            this.FileSystemMock.AddDirectory(@"c:\source");
-
-            this.SettingsServiceMock.SetupProperty(f => f.Filters, null);
-            this.SettingsServiceMock.SetupProperty(s => s.Source, @"c:\source");
-            this.SettingsServiceMock.SetupProperty(d => d.Destination, null);
-            this.SettingsServiceMock.SetupProperty(b => b.BackupType, 0);
-            this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
-
-            MainWindowViewModel instance = new(this.SettingsServiceMock.Object, this.DialogServiceMock.Object, this.LogServiceMock.Object, this.FileSystemMock);
-
-            Assert.Equal(@"c:\source", instance.Model.Source);
-        }
-
-        [Fact]
-        public void Constructor_LoadSource_Invalid()
+        public void Constructor_Load_BackupSettings()
         {
             this.SettingsServiceMock.SetupProperty(f => f.Filters, null);
             this.SettingsServiceMock.SetupProperty(s => s.Source, @"c:\source");
-            this.SettingsServiceMock.SetupProperty(d => d.Destination, null);
-            this.SettingsServiceMock.SetupProperty(b => b.BackupType, 0);
-            this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
-
-            MainWindowViewModel instance = new(this.SettingsServiceMock.Object, this.DialogServiceMock.Object, this.LogServiceMock.Object, this.FileSystemMock);
-
-            Assert.Equal(string.Empty, instance.Model.Source);
-        }
-
-        [Fact]
-        public void Constructor_LoadDestination_Valid()
-        {
-            this.FileSystemMock.AddDirectory(@"c:\destination");
-
-            this.SettingsServiceMock.SetupProperty(f => f.Filters, null);
-            this.SettingsServiceMock.SetupProperty(s => s.Source, null);
             this.SettingsServiceMock.SetupProperty(d => d.Destination, @"c:\destination");
-            this.SettingsServiceMock.SetupProperty(b => b.BackupType, 0);
-            this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
-
-            MainWindowViewModel instance = new(this.SettingsServiceMock.Object, this.DialogServiceMock.Object, this.LogServiceMock.Object, this.FileSystemMock);
-
-            Assert.Equal(@"c:\destination", instance.Model.Destination);
-        }
-
-        [Fact]
-        public void Constructor_LoadDestination_Invalid()
-        {
-            this.SettingsServiceMock.SetupProperty(f => f.Filters, null);
-            this.SettingsServiceMock.SetupProperty(s => s.Source, null);
-            this.SettingsServiceMock.SetupProperty(d => d.Destination, @"c:\destination");
-            this.SettingsServiceMock.SetupProperty(b => b.BackupType, 0);
-            this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
-
-            MainWindowViewModel instance = new(this.SettingsServiceMock.Object, this.DialogServiceMock.Object, this.LogServiceMock.Object, this.FileSystemMock);
-
-            Assert.Equal(string.Empty, instance.Model.Destination);
-        }
-
-        [Fact]
-        public void Constructor_LoadBackupType()
-        {
-            this.SettingsServiceMock.SetupProperty(f => f.Filters, null);
-            this.SettingsServiceMock.SetupProperty(s => s.Source, null);
-            this.SettingsServiceMock.SetupProperty(d => d.Destination, null);
             this.SettingsServiceMock.SetupProperty(b => b.BackupType, 1);
             this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
 
             MainWindowViewModel instance = new(this.SettingsServiceMock.Object, this.DialogServiceMock.Object, this.LogServiceMock.Object, this.FileSystemMock);
 
+            Assert.Equal(@"c:\source", instance.Model.Source);
+            Assert.Equal(@"c:\destination", instance.Model.Destination);
             Assert.Equal(1, (int)instance.Model.BackupType);
         }
     }
