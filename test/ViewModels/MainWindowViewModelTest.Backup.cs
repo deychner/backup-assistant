@@ -35,7 +35,7 @@ namespace BackupAssistant.Test.ViewModels
 
             Assert.Equal("The destination directory does not exist.", this.ViewModelInstance.Status);
         }
-        
+
         [Fact]
         public void SafeGetFileInfo()
         {
