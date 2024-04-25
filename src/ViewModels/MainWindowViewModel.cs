@@ -43,16 +43,10 @@ namespace BackupAssistant.ViewModels
                 }
             }
 
-            // Load other settings
-            if (_fileSystem.Directory.Exists(_settingsService.Source))
-            {
-                this.Source = _settingsService.Source;
-            }
-
-            if (_fileSystem.Directory.Exists(_settingsService.Destination))
-            {
-                this.Destination = _settingsService.Destination;
-            }
+            // Load source and destination from settings, regardless of whether they exist.
+            // Their existence will be checked when the user tries to backup.
+            this.Source = _settingsService.Source;
+            this.Destination = _settingsService.Destination;
 
             this.BackupType = (BackupType)_settingsService.BackupType;
         }
