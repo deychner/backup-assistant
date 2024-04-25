@@ -6,13 +6,13 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AssemblyVersion>2024.3.28.1</AssemblyVersion>
+    <AssemblyVersion>2024.4.25.1</AssemblyVersion>
     <StartupObject>BackupAssistant.App</StartupObject>
     <ApplicationIcon>assets\icon.ico</ApplicationIcon>
     <Authors>Darryl Eychner</Authors>
     <Company>Anaheim Electronics</Company>
     <Copyright>Copyright © Darryl Eychner 2024</Copyright>
-    <FileVersion>2024.3.28.1</FileVersion>
+    <FileVersion>2024.4.25.1</FileVersion>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>Deploy\signingkey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
