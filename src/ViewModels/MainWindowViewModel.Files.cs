@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System;
 
 namespace BackupAssistant.ViewModels
 {
@@ -54,7 +55,8 @@ namespace BackupAssistant.ViewModels
 
         public void AddEditSource()
         {
-            (bool? dialogResult, string selectedPath) = _dialogService.ShowOpenFolderDialog(this.Source);
+            string initialPath = GetOpenFolderDialogInitialPath(this.Source);
+            (bool? dialogResult, string selectedPath) = _dialogService.ShowOpenFolderDialog(initialPath);
 
             if (dialogResult == true)
             {
@@ -64,12 +66,23 @@ namespace BackupAssistant.ViewModels
 
         public void AddEditDestination()
         {
-            (bool? dialogResult, string selectedPath) = _dialogService.ShowOpenFolderDialog(this.Destination);
+            string initialPath = GetOpenFolderDialogInitialPath(this.Destination);
+            (bool? dialogResult, string selectedPath) = _dialogService.ShowOpenFolderDialog(initialPath);
 
             if (dialogResult == true)
             {
                 this.Destination = selectedPath;
             }
+        }
+
+        internal string GetOpenFolderDialogInitialPath(string suggestedPath)
+        {
+            if (!_fileSystem.Directory.Exists(suggestedPath))
+            {
+                return _fileSystem.Path.GetPathRoot(Environment.SystemDirectory) ?? @"C:\";
+            }
+
+            return suggestedPath;
         }
     }
 }
