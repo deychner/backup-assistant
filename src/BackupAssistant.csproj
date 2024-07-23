@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AssemblyVersion>2024.4.25.1</AssemblyVersion>
+    <AssemblyVersion>2024.7.23.1</AssemblyVersion>
     <StartupObject>BackupAssistant.App</StartupObject>
     <ApplicationIcon>assets\icon.ico</ApplicationIcon>
     <Authors>Darryl Eychner</Authors>
