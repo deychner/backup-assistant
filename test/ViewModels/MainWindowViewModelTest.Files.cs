@@ -46,7 +46,7 @@ namespace BackupAssistant.Test.ViewModels
         public void AddEditDestination()
         {
             this.FileSystemMock.AddDirectory(@"c:\old\destination");
-            
+
             this.ViewModelInstance!.Model.Destination = @"c:\old\destination";
             // Use c:\old\destination as the initial path to ensure that the default path for an existing directory is used
             this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"c:\old\destination")).Returns(() => (true, @"c:\new\destination"));
