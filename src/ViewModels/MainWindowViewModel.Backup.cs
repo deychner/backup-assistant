@@ -1,4 +1,5 @@
 ﻿using BackupAssistant.DataModels;
+using BackupAssistant.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -235,6 +236,7 @@ namespace BackupAssistant.ViewModels
         {
             return GetFullFileName(fileName, this.Source);
         }
+
         string ExpandDestinationFileName(string fileName)
         {
             return GetFullFileName(fileName, this.Destination);
@@ -242,12 +244,12 @@ namespace BackupAssistant.ViewModels
 
         static string GetFullFileName(string abbreviatedFileName, string lengthenString)
         {
-            return abbreviatedFileName.Replace("...", lengthenString);
+            return abbreviatedFileName.ReplaceFirst("...", lengthenString);
         }
 
         static string GetAbbreviatedFileName(string fileName, string shortenString)
         {
-            return fileName.Replace(shortenString, "...");
+            return fileName.ReplaceFirst(shortenString, "...");
         }
 
         #endregion

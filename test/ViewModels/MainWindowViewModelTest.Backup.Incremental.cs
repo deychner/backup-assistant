@@ -6,6 +6,8 @@ namespace BackupAssistant.Test.ViewModels
 {
     public class MainWindowViewModelTestBackupIncremental : MainWindowViewModelTestBase
     {
+        #region GetCombinedFileList
+
         [Fact]
         public void GetCombinedFileList_SingleLevel_SourceOnly()
         {
@@ -125,6 +127,10 @@ namespace BackupAssistant.Test.ViewModels
             Assert.Contains(fileList, (f) => f.Key == @"...\L1F1\L2F1\file4.txt");
             Assert.Contains(fileList, (f) => f.Key == @"...\L1F1\file5.txt");
         }
+
+        #endregion
+
+        #region RunIncrementalBackupInternal
 
         [Fact]
         public void RunIncrementalBackupInternal_SingleLevel_NoAction()
@@ -268,6 +274,26 @@ namespace BackupAssistant.Test.ViewModels
             Assert.True(this.FileSystemMock.File.Exists(@"c:\Multi_Backup\L1F2\file3.txt"), "File 3 not found.");
             Assert.True(destinationLastModified >= sourceLastModified, "File 3 was not updated.");
         }
+
+        [Fact]
+        public void RunIncrementalBackupInternal_EllipsisInFileName()
+        {
+            // Create file system artifacts
+            MockFileData mockFileData = new("Sample data");
+            this.FileSystemMock.AddFile(@"c:\Source\file... with ellipsis.txt", mockFileData);
+            this.FileSystemMock.Directory.CreateDirectory(@"c:\Destination");
+
+            this.ViewModelInstance!.Model.Source = @"c:\Source";
+            this.ViewModelInstance.Model.Destination = @"c:\Destination";
+            this.ViewModelInstance.Model.Filters = [];
+
+            this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
+
+            // Verify successful backup
+            Assert.True(this.FileSystemMock.File.Exists(@"c:\Destination\file... with ellipsis.txt"));
+        }
+
+        #endregion
 
         private void CreateMockFiles()
         {
