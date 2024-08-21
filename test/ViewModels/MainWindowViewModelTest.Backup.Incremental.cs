@@ -276,6 +276,23 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
+        public void RunIncrementalBackupInternal_RootSource()
+        {
+            // Create file system artifacts
+            MockFileData mockFileData = new("Sample data");
+            this.FileSystemMock.AddFile(@"c:\file.txt", mockFileData);
+            this.FileSystemMock.Directory.CreateDirectory(@"c:\backup");
+
+            this.ViewModelInstance!.Model.Source = @"c:\";
+            this.ViewModelInstance.Model.Destination = @"c:\backup";
+
+            this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
+
+            // Verify successful backup
+            Assert.True(this.FileSystemMock.File.Exists(@"c:\backup\file.txt"));
+        }
+
+        [Fact]
         public void RunIncrementalBackupInternal_EllipsisInFileName()
         {
             // Create file system artifacts

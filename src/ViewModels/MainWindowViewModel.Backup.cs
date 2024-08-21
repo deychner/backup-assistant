@@ -14,6 +14,8 @@ namespace BackupAssistant.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
     {
+        private const string FilePathAbbreviation = "...";
+
         private AsyncRelayCommand? _runBackupCommand;
         public IAsyncRelayCommand RunBackupCommand => _runBackupCommand ??= new AsyncRelayCommand(async (CancellationToken token) => await RunBackupAsync(token), CanRunBackup);
 
@@ -242,14 +244,22 @@ namespace BackupAssistant.ViewModels
             return GetFullFileName(fileName, this.Destination);
         }
 
-        static string GetFullFileName(string abbreviatedFileName, string lengthenString)
+        static string GetFullFileName(string abbreviatedFileName, string prefix)
         {
-            return abbreviatedFileName.ReplaceFirst("...", lengthenString);
+            return abbreviatedFileName.ReplaceFirst(FilePathAbbreviation, prefix).Replace(@"\\", @"\");
         }
 
-        static string GetAbbreviatedFileName(string fileName, string shortenString)
+        static string GetAbbreviatedFileName(string fileName, string prefix)
         {
-            return fileName.ReplaceFirst(shortenString, "...");
+            // Ensure all shortened file names start with "...\"
+            if (prefix.EndsWith('\\'))
+            {
+                return fileName.ReplaceFirst(prefix, $@"{FilePathAbbreviation}\");
+            }
+            else
+            {
+                return fileName.ReplaceFirst(prefix, FilePathAbbreviation);
+            }
         }
 
         #endregion
