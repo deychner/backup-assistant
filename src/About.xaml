@@ -6,7 +6,7 @@
         xmlns:viewmodels="clr-namespace:BackupAssistant.ViewModels"
         mc:Ignorable="d"
         Title="About"
-        WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight"
         ResizeMode="NoResize" Icon="/assets/icon.ico">
     <Window.Background>

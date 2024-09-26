@@ -1,6 +1,6 @@
 ﻿using BackupAssistant.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
-using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 
 namespace BackupAssistant
@@ -8,28 +8,21 @@ namespace BackupAssistant
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
             InitializeComponent();
 
-            this.DataContext = App.Current.Services.GetService<MainWindowViewModel>();
-        }
-
-        private void Exit_Click(object sender, RoutedEventArgs e)
-        {
-            Environment.Exit(0);
-        }
-
-        private void About_Click(object sender, RoutedEventArgs e)
-        {
-            var window = new About
+            if (Properties.Settings.Default.UpgradeRequired)
             {
-                Owner = this
-            };
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.UpgradeRequired = false;
+                Properties.Settings.Default.Save();
+            }
 
-            window.ShowDialog();
+            this.DataContext = App.Current.Services.GetService<MainWindowViewModel>();
         }
     }
 }

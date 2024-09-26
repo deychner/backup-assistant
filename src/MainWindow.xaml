@@ -19,10 +19,10 @@
         <DockPanel Grid.Column="0" Grid.Row="0">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="File">
-                    <MenuItem Header="Exit" Click="Exit_Click" />
+                    <MenuItem Header="Exit" Command="{Binding ExitCommand}" />
                 </MenuItem>
                 <MenuItem Header="Help">
-                    <MenuItem Header="About" Click="About_Click">
+                    <MenuItem Header="About" Command="{Binding AboutCommand}">
                         <MenuItem.Icon>
                             <Image Source="/assets/help.png"/>
                         </MenuItem.Icon>
