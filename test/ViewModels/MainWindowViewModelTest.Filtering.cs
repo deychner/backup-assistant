@@ -12,10 +12,10 @@ namespace BackupAssistant.Test.ViewModels
         public void FilterImageSource()
         {
             this.ViewModelInstance!.Model.Filters = [];
-            Assert.Equal("/assets/filter.png", this.ViewModelInstance.FilterImageSource);
+            Assert.Equal("/assets/filter-circle-xmark-solid.png", this.ViewModelInstance.FilterImageSource);
 
             this.ViewModelInstance!.Model.Filters = ["test"];
-            Assert.Equal("/assets/filter_apply.png", this.ViewModelInstance.FilterImageSource);
+            Assert.Equal("/assets/filter-solid.png", this.ViewModelInstance.FilterImageSource);
         }
 
         [Fact]

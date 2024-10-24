@@ -19,12 +19,16 @@
         <DockPanel Grid.Column="0" Grid.Row="0">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="File">
-                    <MenuItem Header="Exit" Command="{Binding ExitCommand}" />
+                    <MenuItem Header="Exit" Command="{Binding ExitCommand}">
+                        <MenuItem.Icon>
+                            <Image Source="/assets/right-from-bracket-solid.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Help">
                     <MenuItem Header="About" Command="{Binding AboutCommand}">
                         <MenuItem.Icon>
-                            <Image Source="/assets/help.png"/>
+                            <Image Source="/assets/circle-question-solid.png"/>
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
@@ -62,16 +66,16 @@
 
                 <Button Grid.Column="4" Grid.Row="0"
                         Command="{Binding AddEditSourceCommand}"
-                        Height="23" Width="23">
-                    <Image Source="/assets/view.png" Stretch="None"/>
+                        Height="25" Width="25">
+                    <Image Source="/assets/binoculars-solid.png" Stretch="None"/>
                 </Button>
                 <Button Grid.Column="4" Grid.Row="1"
                         Command="{Binding AddEditDestinationCommand}"
-                        Height="23" Width="23">
-                    <Image Source="/assets/view.png" Stretch="None"/>
+                        Height="25" Width="25">
+                    <Image Source="/assets/binoculars-solid.png" Stretch="None"/>
                 </Button>
                 <Button Grid.Column="5" Grid.Row="0" Grid.RowSpan="2"
-                        Command="{Binding EditFiltersCommand}" Width="23">
+                        Command="{Binding EditFiltersCommand}" Width="25">
                     <Image Source="{Binding FilterImageSource}" Stretch="None"/>
                 </Button>
 
