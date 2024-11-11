@@ -34,11 +34,11 @@ namespace BackupAssistant.ViewModels
             {
                 if (_model.Filters.Count > 0)
                 {
-                    return "/assets/filter-solid.png";
+                    return "/assets/filter_16_filled.png";
                 }
                 else
                 {
-                    return "/assets/filter-circle-xmark-solid.png";
+                    return "/assets/filter_16_regular.png";
                 }
             }
         }
