@@ -19,7 +19,7 @@ namespace BackupAssistant.Test.ViewModels
 
             IDictionary<string, FileListing> fileList = this.ViewModelInstance.GetCombinedFileList(@"c:\Single", @"c:\Single_Backup", CancellationToken.None);
 
-            Assert.Equal(3, fileList.Count);
+            Assert.Equal(4, fileList.Count);
             Assert.Contains(fileList, (f) => f.Key == @"...\file1.txt");
             Assert.True(fileList[@"...\file1.txt"].IsInSource);
             Assert.False(fileList[@"...\file1.txt"].IsInDestination);
@@ -36,7 +36,7 @@ namespace BackupAssistant.Test.ViewModels
 
             IDictionary<string, FileListing> fileList = this.ViewModelInstance.GetCombinedFileList(@"c:\Single", @"c:\Single_Backup", CancellationToken.None);
 
-            Assert.Equal(3, fileList.Count);
+            Assert.Equal(4, fileList.Count);
             Assert.Contains(fileList, (f) => f.Key == @"...\file2.txt");
             Assert.True(fileList[@"...\file2.txt"].IsInSource);
             Assert.True(fileList[@"...\file2.txt"].IsInDestination);
@@ -53,7 +53,7 @@ namespace BackupAssistant.Test.ViewModels
 
             IDictionary<string, FileListing> fileList = this.ViewModelInstance.GetCombinedFileList(@"c:\Single", @"c:\Single_Backup", CancellationToken.None);
 
-            Assert.Equal(3, fileList.Count);
+            Assert.Equal(4, fileList.Count);
             Assert.Contains(fileList, (f) => f.Key == @"...\file3.txt");
             Assert.False(fileList[@"...\file3.txt"].IsInSource);
             Assert.True(fileList[@"...\file3.txt"].IsInDestination);
@@ -137,13 +137,23 @@ namespace BackupAssistant.Test.ViewModels
         {
             CreateMockFiles();
 
+            // Check dates
+            DateTime sourceLastModified = this.FileSystemMock.FileInfo.New(@"c:\Single\file4.txt").LastWriteTime;
+            DateTime destinationLastModified = this.FileSystemMock.FileInfo.New(@"c:\Single_Backup\file4.txt").LastWriteTime;
+
+            if (sourceLastModified > destinationLastModified)
+            {
+                Assert.Fail("The test did not make a source file that is the same age or older than the destination file.");
+            }
+
             this.ViewModelInstance!.Model.Source = @"c:\Single";
             this.ViewModelInstance.Model.Destination = @"c:\Single_Backup";
             this.ViewModelInstance.Model.Filters = [];
 
             this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
 
-            Assert.True(this.FileSystemMock.File.Exists(@"c:\Single_Backup\file2.txt"));
+            Assert.True(this.FileSystemMock.File.Exists(@"c:\Single_Backup\file4.txt"));
+            Assert.True(destinationLastModified == this.FileSystemMock.FileInfo.New(@"c:\Single_Backup\file4.txt").LastWriteTime, "The file was updated.");
         }
 
         [Fact]
@@ -207,6 +217,15 @@ namespace BackupAssistant.Test.ViewModels
         {
             CreateMockFiles();
 
+            // Check dates
+            DateTime sourceLastModified = this.FileSystemMock.FileInfo.New(@"c:\Multi\file3.txt").LastWriteTime;
+            DateTime destinationLastModified = this.FileSystemMock.FileInfo.New(@"c:\Multi_Backup\file3.txt").LastWriteTime;
+
+            if (sourceLastModified > destinationLastModified)
+            {
+                Assert.Fail("The test did not make a source file that is the same age or older than the destination file.");
+            }
+
             this.ViewModelInstance!.Model.Source = @"c:\Multi";
             this.ViewModelInstance.Model.Destination = @"c:\Multi_Backup";
             this.ViewModelInstance.Model.Filters = [];
@@ -214,6 +233,7 @@ namespace BackupAssistant.Test.ViewModels
             this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
 
             Assert.True(this.FileSystemMock.File.Exists(@"c:\Multi_Backup\L1F2\file3.txt"));
+            Assert.True(destinationLastModified == this.FileSystemMock.FileInfo.New(@"c:\Multi_Backup\file3.txt").LastWriteTime, "The file was updated.");
         }
 
         [Fact]
@@ -315,18 +335,23 @@ namespace BackupAssistant.Test.ViewModels
         private void CreateMockFiles()
         {
             MockFileData mockFileData = new("Sample data");
+            DateTimeOffset now = DateTimeOffset.Now;
 
             // Add source files
             this.FileSystemMock.AddFile(@"c:\Single\file1.txt", mockFileData);
-            this.FileSystemMock.AddFile(@"c:\Single\file2.txt", new MockFileData("Sample data") { LastWriteTime = DateTimeOffset.Now });
+            this.FileSystemMock.AddFile(@"c:\Single\file2.txt", new MockFileData("Sample data") { LastWriteTime = now });
+            this.FileSystemMock.AddFile(@"c:\Single\file4.txt", mockFileData);
+
             this.FileSystemMock.AddFile(@"c:\Multi\file1.txt", mockFileData);
             this.FileSystemMock.AddFile(@"c:\Multi\L1F1\file2.txt", mockFileData);
             this.FileSystemMock.AddFile(@"c:\Multi\L1F2\file3.txt", mockFileData);
             this.FileSystemMock.AddFile(@"c:\Multi\L1F1\L2F1\file4.txt", mockFileData);
 
             // Add destination files
-            this.FileSystemMock.AddFile(@"c:\Single_Backup\file2.txt", new MockFileData("Sample data") { LastWriteTime = DateTimeOffset.Now.AddDays(-1) });
+            this.FileSystemMock.AddFile(@"c:\Single_Backup\file2.txt", new MockFileData("Sample data") { LastWriteTime = now.AddMinutes(-1) });
             this.FileSystemMock.AddFile(@"c:\Single_Backup\file3.txt", mockFileData);
+            this.FileSystemMock.AddFile(@"c:\Single_Backup\file4.txt", mockFileData);
+
             this.FileSystemMock.AddFile(@"c:\Multi_Backup\file1.txt", mockFileData);
             this.FileSystemMock.AddFile(@"c:\Multi_Backup\L1F2\file3.txt", mockFileData);
             this.FileSystemMock.AddFile(@"c:\Multi_Backup\L1F1\L2F1\file4.txt", mockFileData);
