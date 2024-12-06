@@ -6,7 +6,7 @@ namespace BackupAssistant.Test.DataModels
     public class FileListingTest
     {
         [Fact]
-        public void NotSource_NotDestination()
+        public void GetBackupAction_None()
         {
             FileListing fileListing = new()
             {
@@ -17,10 +17,20 @@ namespace BackupAssistant.Test.DataModels
             };
 
             Assert.Equal(BackupAction.None, fileListing.GetBackupAction());
+
+            FileListing fileListing2 = new()
+            {
+                IsInSource = true,
+                IsInDestination = true,
+                SourceLastModified = DateTime.Today.AddDays(-1),
+                DestinationLastModified = DateTime.Today
+            };
+
+            Assert.Equal(BackupAction.None, fileListing2.GetBackupAction());
         }
 
         [Fact]
-        public void Source_NotDestination()
+        public void GetBackupAction_Copy()
         {
             FileListing fileListing = new()
             {
@@ -34,7 +44,7 @@ namespace BackupAssistant.Test.DataModels
         }
 
         [Fact]
-        public void NotSource_Destination()
+        public void GetBackupAction_Delete()
         {
             FileListing fileListing = new()
             {
@@ -48,7 +58,7 @@ namespace BackupAssistant.Test.DataModels
         }
 
         [Fact]
-        public void Source_Destination_SourceNewer()
+        public void GetBackupAction_Overwrite()
         {
             FileListing fileListing = new()
             {
@@ -59,20 +69,6 @@ namespace BackupAssistant.Test.DataModels
             };
 
             Assert.Equal(BackupAction.Overwrite, fileListing.GetBackupAction());
-        }
-
-        [Fact]
-        public void Source_Destination_DestinationNewer()
-        {
-            FileListing fileListing = new()
-            {
-                IsInSource = true,
-                IsInDestination = true,
-                SourceLastModified = DateTime.Today.AddDays(-1),
-                DestinationLastModified = DateTime.Today
-            };
-
-            Assert.Equal(BackupAction.None, fileListing.GetBackupAction());
         }
     }
 }

@@ -19,20 +19,20 @@ namespace BackupAssistant.ViewModels
             this.Status = "Getting file information...";
             IDictionary<string, FileListing> files = GetCombinedFileList(this.Source, this.Destination, token);
 
+            // Remove entries where BackupAction is None
+            files = files
+                .Where(f => f.Value.GetBackupAction() != BackupAction.None)
+                .ToDictionary(e => e.Key, e => e.Value);
+
             // Get total size
             float processed = 0F;
             float totalSize =
                 (from FileListing f in files.Values
-                 where f.GetBackupAction() != BackupAction.None
                  select f.Size).Sum();
-            float totalFiles =
-                (from FileListing f in files.Values
-                 where f.GetBackupAction() != BackupAction.None
-                 select 1).Count();
 
             // Process files
             this.ProgressBarIsIndeterminate = false;
-            this.Status = $"Processing {totalFiles} files...";
+            this.Status = $"Processing {files.Keys.Count} files...";
             foreach (string key in files.Keys)
             {
                 // Check for cancellation
@@ -44,25 +44,22 @@ namespace BackupAssistant.ViewModels
 
                 switch (listing.GetBackupAction())
                 {
-                    case BackupAction.None:
-                        // Do nothing
-                        break;
                     case BackupAction.Copy:
                         SafeCopyFile(sourceFile, destinationFile, false);
-                        processed += listing.Size;
                         break;
                     case BackupAction.Overwrite:
                         SafeCopyFile(sourceFile, destinationFile, true);
-                        processed += listing.Size;
                         break;
                     case BackupAction.Delete:
                         SafeDeleteFile(destinationFile);
-                        processed += listing.Size;
                         break;
                     default:
                         // Do nothing
                         break;
                 }
+
+                // File was processed, so add it to the running total
+                processed += listing.Size;
 
                 // Handle edge case where all files eligible for backup are empty
                 if (totalSize > 0)
