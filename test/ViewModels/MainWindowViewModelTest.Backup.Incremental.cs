@@ -1,5 +1,6 @@
 ﻿using BackupAssistant.DataModels;
 using BackupAssistant.Test.ViewModels.Base;
+using System.Collections.ObjectModel;
 using System.IO.Abstractions.TestingHelpers;
 
 namespace BackupAssistant.Test.ViewModels
@@ -11,121 +12,122 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public void GetCombinedFileList_SingleLevel_SourceOnly()
         {
-            CreateMockFiles();
+            this.FileSystemMock.AddEmptyFile(@"c:\Source\file.txt");
+            this.FileSystemMock.Directory.CreateDirectory(@"c:\Destination");
 
-            this.ViewModelInstance!.Model.Source = @"c:\Single";
-            this.ViewModelInstance.Model.Destination = @"c:\Single_Backup";
-            this.ViewModelInstance.Model.Filters = [];
+            IDictionary<string, FileListing> fileList = GetCombinedFileList();
 
-            IDictionary<string, FileListing> fileList = this.ViewModelInstance.GetCombinedFileList(@"c:\Single", @"c:\Single_Backup", CancellationToken.None);
-
-            Assert.Equal(4, fileList.Count);
-            Assert.Contains(fileList, (f) => f.Key == @"...\file1.txt");
-            Assert.True(fileList[@"...\file1.txt"].IsInSource);
-            Assert.False(fileList[@"...\file1.txt"].IsInDestination);
-        }
-
-        [Fact]
-        public void GetCombinedFileList_SingleLevel_Overlap()
-        {
-            CreateMockFiles();
-
-            this.ViewModelInstance!.Model.Source = @"c:\Single";
-            this.ViewModelInstance.Model.Destination = @"c:\Single_Backup";
-            this.ViewModelInstance.Model.Filters = [];
-
-            IDictionary<string, FileListing> fileList = this.ViewModelInstance.GetCombinedFileList(@"c:\Single", @"c:\Single_Backup", CancellationToken.None);
-
-            Assert.Equal(4, fileList.Count);
-            Assert.Contains(fileList, (f) => f.Key == @"...\file2.txt");
-            Assert.True(fileList[@"...\file2.txt"].IsInSource);
-            Assert.True(fileList[@"...\file2.txt"].IsInDestination);
+            Assert.Single(fileList);
+            Assert.Contains(fileList, (f) => f.Key == @"...\file.txt");
+            Assert.True(fileList[@"...\file.txt"].IsInSource);
+            Assert.False(fileList[@"...\file.txt"].IsInDestination);
         }
 
         [Fact]
         public void GetCombinedFileList_SingleLevel_DestinationOnly()
         {
-            CreateMockFiles();
+            this.FileSystemMock.AddEmptyFile(@"c:\Destination\file.txt");
+            this.FileSystemMock.Directory.CreateDirectory(@"c:\Source");
 
-            this.ViewModelInstance!.Model.Source = @"c:\Single";
-            this.ViewModelInstance.Model.Destination = @"c:\Single_Backup";
-            this.ViewModelInstance.Model.Filters = [];
+            IDictionary<string, FileListing> fileList = GetCombinedFileList();
 
-            IDictionary<string, FileListing> fileList = this.ViewModelInstance.GetCombinedFileList(@"c:\Single", @"c:\Single_Backup", CancellationToken.None);
+            Assert.Single(fileList);
+            Assert.Contains(fileList, (f) => f.Key == @"...\file.txt");
+            Assert.False(fileList[@"...\file.txt"].IsInSource);
+            Assert.True(fileList[@"...\file.txt"].IsInDestination);
+        }
 
-            Assert.Equal(4, fileList.Count);
-            Assert.Contains(fileList, (f) => f.Key == @"...\file3.txt");
-            Assert.False(fileList[@"...\file3.txt"].IsInSource);
-            Assert.True(fileList[@"...\file3.txt"].IsInDestination);
+        [Fact]
+        public void GetCombinedFileList_SingleLevel_Both()
+        {
+            this.FileSystemMock.AddEmptyFile(@"c:\Source\file.txt");
+            this.FileSystemMock.AddEmptyFile(@"c:\Destination\file.txt");
+
+            IDictionary<string, FileListing> fileList = GetCombinedFileList();
+
+            Assert.Single(fileList);
+            Assert.Contains(fileList, (f) => f.Key == @"...\file.txt");
+            Assert.True(fileList[@"...\file.txt"].IsInSource);
+            Assert.True(fileList[@"...\file.txt"].IsInDestination);
         }
 
         [Fact]
         public void GetCombinedFileList_MultiLevel_SourceOnly()
         {
-            CreateMockFiles();
+            this.FileSystemMock.AddEmptyFile(@"c:\Source\SubDirectory\file.txt");
+            this.FileSystemMock.Directory.CreateDirectory(@"c:\Destination");
 
-            this.ViewModelInstance!.Model.Source = @"c:\Multi";
-            this.ViewModelInstance.Model.Destination = @"c:\Multi_Backup";
-            this.ViewModelInstance.Model.Filters = [];
+            IDictionary<string, FileListing> fileList = GetCombinedFileList();
 
-            IDictionary<string, FileListing> fileList = this.ViewModelInstance.GetCombinedFileList(@"c:\Multi", @"c:\Multi_Backup", CancellationToken.None);
-
-            Assert.Equal(5, fileList.Count);
-            Assert.Contains(fileList, (f) => f.Key == @"...\L1F1\file2.txt");
-            Assert.True(fileList[@"...\L1F1\file2.txt"].IsInSource);
-            Assert.False(fileList[@"...\L1F1\file2.txt"].IsInDestination);
-        }
-
-        [Fact]
-        public void GetCombinedFileList_MultiLevel_Overlap()
-        {
-            CreateMockFiles();
-
-            this.ViewModelInstance!.Model.Source = @"c:\Multi";
-            this.ViewModelInstance.Model.Destination = @"c:\Multi_Backup";
-            this.ViewModelInstance.Model.Filters = [];
-
-            IDictionary<string, FileListing> fileList = this.ViewModelInstance.GetCombinedFileList(@"c:\Multi", @"c:\Multi_Backup", CancellationToken.None);
-
-            Assert.Equal(5, fileList.Count);
-            Assert.Contains(fileList, (f) => f.Key == @"...\L1F2\file3.txt");
-            Assert.True(fileList[@"...\L1F2\file3.txt"].IsInSource);
-            Assert.True(fileList[@"...\L1F2\file3.txt"].IsInDestination);
+            Assert.Single(fileList);
+            Assert.Contains(fileList, (f) => f.Key == @"...\SubDirectory\file.txt");
+            Assert.True(fileList[@"...\SubDirectory\file.txt"].IsInSource);
+            Assert.False(fileList[@"...\SubDirectory\file.txt"].IsInDestination);
         }
 
         [Fact]
         public void GetCombinedFileList_MultiLevel_DestinationOnly()
         {
-            CreateMockFiles();
+            this.FileSystemMock.AddEmptyFile(@"c:\Destination\SubDirectory\file.txt");
+            this.FileSystemMock.Directory.CreateDirectory(@"c:\Source");
 
-            this.ViewModelInstance!.Model.Source = @"c:\Multi";
-            this.ViewModelInstance.Model.Destination = @"c:\Multi_Backup";
-            this.ViewModelInstance.Model.Filters = [];
+            IDictionary<string, FileListing> fileList = GetCombinedFileList();
 
-            IDictionary<string, FileListing> fileList = this.ViewModelInstance.GetCombinedFileList(@"c:\Multi", @"c:\Multi_Backup", CancellationToken.None);
-
-            Assert.Equal(5, fileList.Count);
-            Assert.Contains(fileList, (f) => f.Key == @"...\L1F1\file5.txt");
-            Assert.False(fileList[@"...\L1F1\file5.txt"].IsInSource);
-            Assert.True(fileList[@"...\L1F1\file5.txt"].IsInDestination);
+            Assert.Single(fileList);
+            Assert.Contains(fileList, (f) => f.Key == @"...\SubDirectory\file.txt");
+            Assert.False(fileList[@"...\SubDirectory\file.txt"].IsInSource);
+            Assert.True(fileList[@"...\SubDirectory\file.txt"].IsInDestination);
         }
 
         [Fact]
-        public void GetCombinedFileList_MultiLevel_Filters()
+        public void GetCombinedFileList_MultiLevel_Both()
         {
-            CreateMockFiles();
+            this.FileSystemMock.AddEmptyFile(@"c:\Source\SubDirectory\file.txt");
+            this.FileSystemMock.AddEmptyFile(@"c:\Destination\SubDirectory\file.txt");
 
-            this.ViewModelInstance!.Model.Source = @"c:\Multi";
-            this.ViewModelInstance.Model.Destination = @"c:\Multi_Backup";
-            this.ViewModelInstance.Model.Filters = [@"...\L1F1"];
+            IDictionary<string, FileListing> fileList = GetCombinedFileList();
 
-            IDictionary<string, FileListing> fileList = this.ViewModelInstance.GetCombinedFileList(@"c:\Multi", @"c:\Multi_Backup", CancellationToken.None);
+            Assert.Single(fileList);
+            Assert.Contains(fileList, (f) => f.Key == @"...\SubDirectory\file.txt");
+            Assert.True(fileList[@"...\SubDirectory\file.txt"].IsInSource);
+            Assert.True(fileList[@"...\SubDirectory\file.txt"].IsInDestination);
+        }
 
-            Assert.Equal(4, fileList.Count);
-            Assert.Contains(fileList, (f) => f.Key == @"...\file1.txt");
-            Assert.Contains(fileList, (f) => f.Key == @"...\L1F1\file2.txt");
-            Assert.Contains(fileList, (f) => f.Key == @"...\L1F1\L2F1\file4.txt");
-            Assert.Contains(fileList, (f) => f.Key == @"...\L1F1\file5.txt");
+        [Fact]
+        public void GetCombinedFileList_Filters()
+        {
+            this.FileSystemMock.AddEmptyFile(@"c:\Source\file.txt");
+            this.FileSystemMock.AddEmptyFile(@"c:\Source\Search\file.txt");
+            this.FileSystemMock.AddEmptyFile(@"c:\Source\Ignore\file.txt");
+            this.FileSystemMock.AddEmptyFile(@"c:\Destination\file.txt");
+            this.FileSystemMock.AddEmptyFile(@"c:\Destination\Search\file.txt");
+            this.FileSystemMock.AddEmptyFile(@"c:\Destination\Ignore\file.txt");
+
+            IDictionary<string, FileListing> fileList = GetCombinedFileList([@"...\Search"]);
+
+            Assert.Equal(2, fileList.Count);
+
+            Assert.Contains(fileList, (f) => f.Key == @"...\file.txt");
+            Assert.True(fileList[@"...\file.txt"].IsInSource);
+            Assert.True(fileList[@"...\file.txt"].IsInDestination);
+
+            Assert.Contains(fileList, (f) => f.Key == @"...\Search\file.txt");
+            Assert.True(fileList[@"...\Search\file.txt"].IsInSource);
+            Assert.True(fileList[@"...\Search\file.txt"].IsInDestination);
+        }
+
+        private IDictionary<string, FileListing> GetCombinedFileList()
+        {
+            return GetCombinedFileList([]);
+        }
+
+        private IDictionary<string, FileListing> GetCombinedFileList(ObservableCollection<string> filters)
+        {
+            this.ViewModelInstance!.Model.Source = @"c:\Source";
+            this.ViewModelInstance.Model.Destination = @"c:\Destination";
+            this.ViewModelInstance.Model.Filters = filters;
+
+            return this.ViewModelInstance.GetCombinedFileList(@"c:\Source", @"c:\Destination", CancellationToken.None);
         }
 
         #endregion
@@ -133,229 +135,64 @@ namespace BackupAssistant.Test.ViewModels
         #region RunIncrementalBackupInternal
 
         [Fact]
-        public void RunIncrementalBackupInternal_SingleLevel_NoAction()
+        public void RunIncrementalBackupInternal_NoAction()
         {
-            CreateMockFiles();
+            DateTimeOffset now = DateTimeOffset.Now;
+            this.FileSystemMock.AddFile(@"c:\Source\file.txt", new MockFileData("Sample data") { LastWriteTime = now });
+            this.FileSystemMock.AddFile(@"c:\Destination\file.txt", new MockFileData("Sample data") { LastWriteTime = now });
 
-            // Check dates
-            DateTime sourceLastModified = this.FileSystemMock.FileInfo.New(@"c:\Single\file4.txt").LastWriteTime;
-            DateTime destinationLastModified = this.FileSystemMock.FileInfo.New(@"c:\Single_Backup\file4.txt").LastWriteTime;
+            RunIncrementalBackup();
 
-            if (sourceLastModified > destinationLastModified)
-            {
-                Assert.Fail("The test did not make a source file that is the same age or older than the destination file.");
-            }
-
-            this.ViewModelInstance!.Model.Source = @"c:\Single";
-            this.ViewModelInstance.Model.Destination = @"c:\Single_Backup";
-            this.ViewModelInstance.Model.Filters = [];
-
-            this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
-
-            Assert.True(this.FileSystemMock.File.Exists(@"c:\Single_Backup\file4.txt"));
-            Assert.True(destinationLastModified == this.FileSystemMock.FileInfo.New(@"c:\Single_Backup\file4.txt").LastWriteTime, "The file was updated.");
+            // Check that the file was not touched
+            Assert.True(now == this.FileSystemMock.FileInfo.New(@"c:\Destination\file.txt").LastWriteTime, "The file was updated.");
         }
 
         [Fact]
-        public void RunIncrementalBackupInternal_SingleLevel_Copy()
+        public void RunIncrementalBackupInternal_Copy()
         {
-            CreateMockFiles();
-
-            this.ViewModelInstance!.Model.Source = @"c:\Single";
-            this.ViewModelInstance.Model.Destination = @"c:\Single_Backup";
-            this.ViewModelInstance.Model.Filters = [];
-
-            this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
-
-            Assert.True(this.FileSystemMock.File.Exists(@"c:\Single_Backup\file1.txt"));
-        }
-
-        [Fact]
-        public void RunIncrementalBackupInternal_SingleLevel_Delete()
-        {
-            CreateMockFiles();
-
-            this.ViewModelInstance!.Model.Source = @"c:\Single";
-            this.ViewModelInstance.Model.Destination = @"c:\Single_Backup";
-            this.ViewModelInstance.Model.Filters = [];
-
-            this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
-
-            Assert.False(this.FileSystemMock.File.Exists(@"c:\Single_Backup\file3.txt"));
-        }
-
-        [Fact]
-        public void RunIncrementalBackupInternal_SingleLevel_Overwrite()
-        {
-            CreateMockFiles();
-
-            this.ViewModelInstance!.Model.Source = @"c:\Single";
-            this.ViewModelInstance.Model.Destination = @"c:\Single_Backup";
-            this.ViewModelInstance.Model.Filters = [];
-
-            // Check dates
-            DateTime sourceLastModified = this.FileSystemMock.FileInfo.New(@"c:\Single\file2.txt").LastWriteTime;
-            DateTime destinationLastModified = this.FileSystemMock.FileInfo.New(@"c:\Single_Backup\file2.txt").LastWriteTime;
-
-            if (sourceLastModified <= destinationLastModified)
-            {
-                Assert.Fail("The test did not make a source file that is newer than the destination file.");
-            }
-
-            this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
-
-            // Refresh dates
-            sourceLastModified = this.FileSystemMock.FileInfo.New(@"c:\Single\file2.txt").LastWriteTime;
-            destinationLastModified = this.FileSystemMock.FileInfo.New(@"c:\Single_Backup\file2.txt").LastWriteTime;
-
-            Assert.True(this.FileSystemMock.File.Exists(@"c:\Single_Backup\file2.txt"));
-            Assert.True(destinationLastModified >= sourceLastModified);
-        }
-
-        [Fact]
-        public void RunIncrementalBackupInternal_MultiLevel_NoAction()
-        {
-            CreateMockFiles();
-
-            // Check dates
-            DateTime sourceLastModified = this.FileSystemMock.FileInfo.New(@"c:\Multi\file3.txt").LastWriteTime;
-            DateTime destinationLastModified = this.FileSystemMock.FileInfo.New(@"c:\Multi_Backup\file3.txt").LastWriteTime;
-
-            if (sourceLastModified > destinationLastModified)
-            {
-                Assert.Fail("The test did not make a source file that is the same age or older than the destination file.");
-            }
-
-            this.ViewModelInstance!.Model.Source = @"c:\Multi";
-            this.ViewModelInstance.Model.Destination = @"c:\Multi_Backup";
-            this.ViewModelInstance.Model.Filters = [];
-
-            this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
-
-            Assert.True(this.FileSystemMock.File.Exists(@"c:\Multi_Backup\L1F2\file3.txt"));
-            Assert.True(destinationLastModified == this.FileSystemMock.FileInfo.New(@"c:\Multi_Backup\file3.txt").LastWriteTime, "The file was updated.");
-        }
-
-        [Fact]
-        public void RunIncrementalBackupInternal_MultiLevel_Copy()
-        {
-            CreateMockFiles();
-
-            this.ViewModelInstance!.Model.Source = @"c:\Multi";
-            this.ViewModelInstance.Model.Destination = @"c:\Multi_Backup";
-            this.ViewModelInstance.Model.Filters = [];
-
-            this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
-
-            Assert.True(this.FileSystemMock.File.Exists(@"c:\Multi_Backup\L1F1\file2.txt"), "File 2 not found.");
-        }
-
-        [Fact]
-        public void RunIncrementalBackupInternal_MultiLevel_Delete()
-        {
-            CreateMockFiles();
-
-            this.ViewModelInstance!.Model.Source = @"c:\Multi";
-            this.ViewModelInstance.Model.Destination = @"c:\Multi_Backup";
-            this.ViewModelInstance.Model.Filters = [];
-
-            this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
-
-            Assert.False(this.FileSystemMock.File.Exists(@"c:\Multi_Backup\L1F1\file5.txt"), "File 5 was found.");
-        }
-
-        [Fact]
-        public void RunIncrementalBackupInternal_MultiLevel_Overwrite()
-        {
-            CreateMockFiles();
-
-            this.ViewModelInstance!.Model.Source = @"c:\Multi";
-            this.ViewModelInstance.Model.Destination = @"c:\Multi_Backup";
-            this.ViewModelInstance.Model.Filters = [];
-
-            // Touch file3.txt in source to make it more recent
-            this.FileSystemMock.File.WriteAllText(@"c:\Multi\L1F2\file3.txt", "New content");
-
-            // Check dates
-            DateTime sourceLastModified = this.FileSystemMock.FileInfo.New(@"c:\Multi\L1F2\file3.txt").LastWriteTime;
-            DateTime destinationLastModified = this.FileSystemMock.FileInfo.New(@"c:\Multi_Backup\L1F2\file3.txt").LastWriteTime;
-
-            if (sourceLastModified < destinationLastModified)
-            {
-                Assert.Fail("The test did not make a source file that is newer than the destination file.");
-            }
-
-            this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
-
-            // Refresh dates
-            sourceLastModified = this.FileSystemMock.FileInfo.New(@"c:\Multi\L1F2\file3.txt").LastWriteTime;
-            destinationLastModified = this.FileSystemMock.FileInfo.New(@"c:\Multi_Backup\L1F2\file3.txt").LastWriteTime;
-
-            Assert.True(this.FileSystemMock.File.Exists(@"c:\Multi_Backup\L1F2\file3.txt"), "File 3 not found.");
-            Assert.True(destinationLastModified >= sourceLastModified, "File 3 was not updated.");
-        }
-
-        [Fact]
-        public void RunIncrementalBackupInternal_RootSource()
-        {
-            // Create file system artifacts
-            MockFileData mockFileData = new("Sample data");
-            this.FileSystemMock.AddFile(@"c:\file.txt", mockFileData);
-            this.FileSystemMock.Directory.CreateDirectory(@"c:\backup");
-
-            this.ViewModelInstance!.Model.Source = @"c:\";
-            this.ViewModelInstance.Model.Destination = @"c:\backup";
-
-            this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
-
-            // Verify successful backup
-            Assert.True(this.FileSystemMock.File.Exists(@"c:\backup\file.txt"));
-        }
-
-        [Fact]
-        public void RunIncrementalBackupInternal_EllipsisInFileName()
-        {
-            // Create file system artifacts
-            MockFileData mockFileData = new("Sample data");
-            this.FileSystemMock.AddFile(@"c:\Source\file... with ellipsis.txt", mockFileData);
+            this.FileSystemMock.AddEmptyFile(@"c:\Source\file.txt");
             this.FileSystemMock.Directory.CreateDirectory(@"c:\Destination");
 
+            RunIncrementalBackup();
+
+            // Check that the file was copied
+            Assert.True(this.FileSystemMock.FileExists(@"c:\Destination\file.txt"), "The file was not copied.");
+        }
+
+        [Fact]
+        public void RunIncrementalBackupInternal_Overwrite()
+        {
+            DateTimeOffset now = DateTimeOffset.Now;
+            this.FileSystemMock.AddFile(@"c:\Source\file.txt", new MockFileData("Sample data") { LastWriteTime = now });
+            this.FileSystemMock.AddFile(@"c:\Destination\file.txt", new MockFileData("Sample data") { LastWriteTime = now.AddMinutes(-1) });
+
+            RunIncrementalBackup();
+
+            // Check that the file was touched
+            Assert.True(now == this.FileSystemMock.FileInfo.New(@"c:\Destination\file.txt").LastWriteTime, "The file was not updated.");
+        }
+
+        [Fact]
+        public void RunIncrementalBackupInternal_Delete()
+        {
+            this.FileSystemMock.Directory.CreateDirectory(@"c:\Source");
+            this.FileSystemMock.AddEmptyFile(@"c:\Destination\file.txt");
+
+            RunIncrementalBackup();
+
+            // Check that the file was deleted
+            Assert.False(this.FileSystemMock.FileExists(@"c:\Destination\file.txt"), "The file was not deleted.");
+        }
+
+        private void RunIncrementalBackup()
+        {
             this.ViewModelInstance!.Model.Source = @"c:\Source";
             this.ViewModelInstance.Model.Destination = @"c:\Destination";
             this.ViewModelInstance.Model.Filters = [];
 
             this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
-
-            // Verify successful backup
-            Assert.True(this.FileSystemMock.File.Exists(@"c:\Destination\file... with ellipsis.txt"));
         }
 
         #endregion
-
-        private void CreateMockFiles()
-        {
-            MockFileData mockFileData = new("Sample data");
-            DateTimeOffset now = DateTimeOffset.Now;
-
-            // Add source files
-            this.FileSystemMock.AddFile(@"c:\Single\file1.txt", mockFileData);
-            this.FileSystemMock.AddFile(@"c:\Single\file2.txt", new MockFileData("Sample data") { LastWriteTime = now });
-            this.FileSystemMock.AddFile(@"c:\Single\file4.txt", mockFileData);
-
-            this.FileSystemMock.AddFile(@"c:\Multi\file1.txt", mockFileData);
-            this.FileSystemMock.AddFile(@"c:\Multi\L1F1\file2.txt", mockFileData);
-            this.FileSystemMock.AddFile(@"c:\Multi\L1F2\file3.txt", mockFileData);
-            this.FileSystemMock.AddFile(@"c:\Multi\L1F1\L2F1\file4.txt", mockFileData);
-
-            // Add destination files
-            this.FileSystemMock.AddFile(@"c:\Single_Backup\file2.txt", new MockFileData("Sample data") { LastWriteTime = now.AddMinutes(-1) });
-            this.FileSystemMock.AddFile(@"c:\Single_Backup\file3.txt", mockFileData);
-            this.FileSystemMock.AddFile(@"c:\Single_Backup\file4.txt", mockFileData);
-
-            this.FileSystemMock.AddFile(@"c:\Multi_Backup\file1.txt", mockFileData);
-            this.FileSystemMock.AddFile(@"c:\Multi_Backup\L1F2\file3.txt", mockFileData);
-            this.FileSystemMock.AddFile(@"c:\Multi_Backup\L1F1\L2F1\file4.txt", mockFileData);
-            this.FileSystemMock.AddFile(@"c:\Multi_Backup\L1F1\file5.txt", mockFileData);
-        }
     }
 }
