@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace BackupAssistant.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
     {
-
-        internal void RunIncrementalBackupInternal(CancellationToken token)
+        internal async Task RunIncrementalBackupInternalAsync(CancellationToken token)
         {
             this.Progress = 0;
 
@@ -33,7 +33,8 @@ namespace BackupAssistant.ViewModels
             // Process files
             this.ProgressBarIsIndeterminate = false;
             this.Status = $"Processing {files.Keys.Count} files...";
-            foreach (string key in files.Keys)
+
+            var tasks = files.Keys.Select(async key =>
             {
                 // Check for cancellation
                 token.ThrowIfCancellationRequested();
@@ -45,13 +46,13 @@ namespace BackupAssistant.ViewModels
                 switch (listing.GetBackupAction())
                 {
                     case BackupAction.Copy:
-                        SafeCopyFile(sourceFile, destinationFile, false);
+                        await SafeCopyFileAsync(sourceFile, destinationFile, false);
                         break;
                     case BackupAction.Overwrite:
-                        SafeCopyFile(sourceFile, destinationFile, true);
+                        await SafeCopyFileAsync(sourceFile, destinationFile, true);
                         break;
                     case BackupAction.Delete:
-                        SafeDeleteFile(destinationFile);
+                        await SafeDeleteFileAsync(destinationFile);
                         break;
                     default:
                         // Do nothing
@@ -59,7 +60,7 @@ namespace BackupAssistant.ViewModels
                 }
 
                 // File was processed, so add it to the running total
-                processed += listing.Size;
+                Extensions.Interlocked.Add(ref processed, listing.Size);
 
                 // Handle edge case where all files eligible for backup are empty
                 if (totalSize > 0)
@@ -70,7 +71,9 @@ namespace BackupAssistant.ViewModels
                 {
                     this.Progress = 100;
                 }
-            }
+            });
+
+            await Task.WhenAll(tasks);
 
             this.Status = "Backup is complete.";
         }

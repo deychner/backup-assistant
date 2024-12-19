@@ -135,62 +135,62 @@ namespace BackupAssistant.Test.ViewModels
         #region RunIncrementalBackupInternal
 
         [Fact]
-        public void RunIncrementalBackupInternal_NoAction()
+        public async Task RunIncrementalBackupInternal_NoAction()
         {
             DateTimeOffset now = DateTimeOffset.Now;
             this.FileSystemMock.AddFile(@"c:\Source\file.txt", new MockFileData("Sample data") { LastWriteTime = now });
             this.FileSystemMock.AddFile(@"c:\Destination\file.txt", new MockFileData("Sample data") { LastWriteTime = now });
 
-            RunIncrementalBackup();
+            await RunIncrementalBackup();
 
             // Check that the file was not touched
             Assert.True(now == this.FileSystemMock.FileInfo.New(@"c:\Destination\file.txt").LastWriteTime, "The file was updated.");
         }
 
         [Fact]
-        public void RunIncrementalBackupInternal_Copy()
+        public async Task RunIncrementalBackupInternal_Copy()
         {
             this.FileSystemMock.AddEmptyFile(@"c:\Source\file.txt");
             this.FileSystemMock.Directory.CreateDirectory(@"c:\Destination");
 
-            RunIncrementalBackup();
+            await RunIncrementalBackup();
 
             // Check that the file was copied
             Assert.True(this.FileSystemMock.FileExists(@"c:\Destination\file.txt"), "The file was not copied.");
         }
 
         [Fact]
-        public void RunIncrementalBackupInternal_Overwrite()
+        public async Task RunIncrementalBackupInternal_Overwrite()
         {
             DateTimeOffset now = DateTimeOffset.Now;
             this.FileSystemMock.AddFile(@"c:\Source\file.txt", new MockFileData("Sample data") { LastWriteTime = now });
             this.FileSystemMock.AddFile(@"c:\Destination\file.txt", new MockFileData("Sample data") { LastWriteTime = now.AddMinutes(-1) });
 
-            RunIncrementalBackup();
+            await RunIncrementalBackup();
 
             // Check that the file was touched
             Assert.True(now == this.FileSystemMock.FileInfo.New(@"c:\Destination\file.txt").LastWriteTime, "The file was not updated.");
         }
 
         [Fact]
-        public void RunIncrementalBackupInternal_Delete()
+        public async Task RunIncrementalBackupInternal_Delete()
         {
             this.FileSystemMock.Directory.CreateDirectory(@"c:\Source");
             this.FileSystemMock.AddEmptyFile(@"c:\Destination\file.txt");
 
-            RunIncrementalBackup();
+            await RunIncrementalBackup();
 
             // Check that the file was deleted
             Assert.False(this.FileSystemMock.FileExists(@"c:\Destination\file.txt"), "The file was not deleted.");
         }
 
-        private void RunIncrementalBackup()
+        private async Task RunIncrementalBackup()
         {
             this.ViewModelInstance!.Model.Source = @"c:\Source";
             this.ViewModelInstance.Model.Destination = @"c:\Destination";
             this.ViewModelInstance.Model.Filters = [];
 
-            this.ViewModelInstance.RunIncrementalBackupInternal(CancellationToken.None);
+            await this.ViewModelInstance.RunIncrementalBackupInternalAsync(CancellationToken.None);
         }
 
         #endregion

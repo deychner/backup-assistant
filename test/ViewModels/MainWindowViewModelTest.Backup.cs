@@ -16,7 +16,7 @@ namespace BackupAssistant.Test.ViewModels
             this.ViewModelInstance!.Source = string.Empty;
             this.ViewModelInstance.Destination = @"c:\destination";
 
-            this.ViewModelInstance.RunBackupInternal(CancellationToken.None);
+            this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
 
             Assert.Equal("The source directory does not exist.", this.ViewModelInstance.Status);
         }
@@ -31,7 +31,7 @@ namespace BackupAssistant.Test.ViewModels
             this.ViewModelInstance!.Source = @"c:\source";
             this.ViewModelInstance.Destination = string.Empty;
 
-            this.ViewModelInstance.RunBackupInternal(CancellationToken.None);
+            this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
 
             Assert.Equal("The destination directory does not exist.", this.ViewModelInstance.Status);
         }
