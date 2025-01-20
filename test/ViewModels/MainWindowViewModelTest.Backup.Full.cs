@@ -1,6 +1,7 @@
 ﻿using BackupAssistant.Test.ViewModels.Base;
 using System.Collections.ObjectModel;
 using System.IO.Abstractions.TestingHelpers;
+using System.Runtime.CompilerServices;
 
 namespace BackupAssistant.Test.ViewModels
 {
@@ -71,26 +72,26 @@ namespace BackupAssistant.Test.ViewModels
         #region RunFullBackupInternal
 
         [Fact]
-        public void RunFullBackupInternal_Basic()
+        public async Task RunFullBackupInternal_Basic()
         {
             this.FileSystemMock.AddEmptyFile(@"c:\Source\file1.txt");
             this.FileSystemMock.AddEmptyFile(@"c:\Source\file2.txt");
             this.FileSystemMock.AddEmptyFile(@"c:\Destination\file3.txt");
 
-            RunFullBackupInternal();
+            await RunFullBackupInternal();
 
             Assert.True(this.FileSystemMock.File.Exists(@"c:\Destination\file1.txt"));
             Assert.True(this.FileSystemMock.File.Exists(@"c:\Destination\file2.txt"));
             Assert.False(this.FileSystemMock.File.Exists(@"c:\Destination\file3.txt"));
         }
 
-        private void RunFullBackupInternal()
+        private async Task RunFullBackupInternal()
         {
             this.ViewModelInstance!.Model.Source = @"c:\Source";
             this.ViewModelInstance.Model.Destination = @"c:\Destination";
             this.ViewModelInstance.Model.Filters = [];
 
-            this.ViewModelInstance.RunFullBackupInternal(CancellationToken.None);
+            await this.ViewModelInstance.RunFullBackupInternalAsync(CancellationToken.None);
         }
 
         #endregion
