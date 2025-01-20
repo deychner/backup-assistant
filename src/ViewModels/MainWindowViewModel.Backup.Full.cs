@@ -1,12 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace BackupAssistant.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
     {
-        internal void RunFullBackupInternal(CancellationToken token)
+        internal async Task RunFullBackupInternalAsync(CancellationToken token)
         {
             this.Progress = 0;
 
@@ -25,16 +27,22 @@ namespace BackupAssistant.ViewModels
             // Copy files
             this.ProgressBarIsIndeterminate = false;
             this.Status = $"Copying {sourceFiles.Count} files...";
-            for (int i = 0; i < sourceFiles.Count; i++)
+
+            int processed = 0;
+            var tasks = sourceFiles.Select(async (sourceFile) =>
             {
                 // Check for cancellation
                 token.ThrowIfCancellationRequested();
 
-                string destinationFile = sourceFiles[i].Replace(this.Source, this.Destination);
-                SafeCopyFile(sourceFiles[i], destinationFile);
+                string destinationFile = sourceFile.Replace(this.Source, this.Destination);
+                await SafeCopyFileAsync(sourceFile, destinationFile, false);
 
-                this.Progress = 100 * (i + 1) / sourceFiles.Count;
-            }
+                // Update progress
+                Interlocked.Increment(ref processed);
+                this.Progress = 100 * (processed) / sourceFiles.Count;
+            });
+
+            await Task.WhenAll(tasks);
 
             this.Status = "Backup is complete.";
         }

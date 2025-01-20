@@ -46,7 +46,7 @@ namespace BackupAssistant.ViewModels
                 switch (this.BackupType)
                 {
                     case BackupType.Full:
-                        await Task.Run(() => RunFullBackupInternal(token), token);
+                        await Task.Run(async () => await RunFullBackupInternalAsync(token), token);
                         break;
                     case BackupType.Incremental:
                         await Task.Run(async () => await RunIncrementalBackupInternalAsync(token), token);
