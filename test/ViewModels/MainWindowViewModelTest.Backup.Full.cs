@@ -1,7 +1,5 @@
 ﻿using BackupAssistant.Test.ViewModels.Base;
 using System.Collections.ObjectModel;
-using System.IO.Abstractions.TestingHelpers;
-using System.Runtime.CompilerServices;
 
 namespace BackupAssistant.Test.ViewModels
 {

@@ -7,7 +7,7 @@ namespace BackupAssistant.Test.Extensions
         One,
         Two
     }
-    
+
     public class EnumCollectionExtensionTest
     {
         [Fact]
