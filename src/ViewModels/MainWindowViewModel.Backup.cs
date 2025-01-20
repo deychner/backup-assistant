@@ -174,11 +174,6 @@ namespace BackupAssistant.ViewModels
             }
         }
 
-        public void SafeCopyFile(string sourceFileName, string destinationFileName)
-        {
-            SafeCopyFile(sourceFileName, destinationFileName, false);
-        }
-
         public void EnsureDirectoryPathExists(string path)
         {
             string? directory = _fileSystem.Path.GetDirectoryName(path);
@@ -186,20 +181,6 @@ namespace BackupAssistant.ViewModels
             if (!string.IsNullOrEmpty(directory) && !_fileSystem.Directory.Exists(directory))
             {
                 _fileSystem.Directory.CreateDirectory(directory);
-            }
-        }
-
-        public void SafeCopyFile(string sourceFileName, string destinationFileName, bool overwrite)
-        {
-            try
-            {
-                EnsureDirectoryPathExists(destinationFileName);
-
-                _fileSystem.File.Copy(sourceFileName, destinationFileName, overwrite);
-            }
-            catch (Exception e)
-            {
-                _logService.AddToLogEntry($"Copy file failed for file '{sourceFileName}', Exception: {e.Message}");
             }
         }
 
@@ -214,18 +195,6 @@ namespace BackupAssistant.ViewModels
             catch (Exception e)
             {
                 _logService.AddToLogEntry($"Copy file failed for file '{sourceFileName}', Exception: {e.Message}");
-            }
-        }
-
-        public void SafeDeleteFile(string file)
-        {
-            try
-            {
-                _fileSystem.File.Delete(file);
-            }
-            catch (Exception e)
-            {
-                _logService.AddToLogEntry($"Delete file failed for file '{file}', Exception: {e.Message}");
             }
         }
 

@@ -113,13 +113,13 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
-        public void SafeCopyFile()
+        public async Task SafeCopyFile()
         {
             this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
 
             try
             {
-                this.ViewModelInstance!.SafeCopyFile(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), true);
+                await this.ViewModelInstance!.SafeCopyFileAsync(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), true);
             }
             catch (Exception e)
             {
@@ -128,13 +128,13 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
-        public void SafeDeleteFile()
+        public async Task SafeDeleteFile()
         {
             this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
 
             try
             {
-                this.ViewModelInstance!.SafeDeleteFile(string.Empty);
+                await this.ViewModelInstance!.SafeDeleteFileAsync(string.Empty);
             }
             catch (Exception e)
             {
