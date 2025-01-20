@@ -7,8 +7,9 @@ namespace BackupAssistant.Test.ViewModels
     public class MainWindowViewModelTestBackup : MainWindowViewModelTestBase
     {
         [Fact]
-        public void RunBackupInternal_SourceDoesNotExist()
+        public async Task RunBackupInternal_SourceDoesNotExist()
         {
+            this.LogServiceMock.Setup(c => c.ClearLog());
             this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
 
             this.FileSystemMock.AddDirectory(@"c:\destination");
@@ -16,14 +17,15 @@ namespace BackupAssistant.Test.ViewModels
             this.ViewModelInstance!.Source = string.Empty;
             this.ViewModelInstance.Destination = @"c:\destination";
 
-            this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
+            await this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
 
             Assert.Equal("The source directory does not exist.", this.ViewModelInstance.Status);
         }
 
         [Fact]
-        public void RunBackupInternal_DestinationDoesNotExist()
+        public async Task RunBackupInternal_DestinationDoesNotExist()
         {
+            this.LogServiceMock.Setup(c => c.ClearLog());
             this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
 
             this.FileSystemMock.AddDirectory(@"c:\source");
@@ -31,7 +33,7 @@ namespace BackupAssistant.Test.ViewModels
             this.ViewModelInstance!.Source = @"c:\source";
             this.ViewModelInstance.Destination = string.Empty;
 
-            this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
+            await this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
 
             Assert.Equal("The destination directory does not exist.", this.ViewModelInstance.Status);
         }
