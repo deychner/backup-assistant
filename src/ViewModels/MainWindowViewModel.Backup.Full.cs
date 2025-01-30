@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -15,7 +16,7 @@ namespace BackupAssistant.ViewModels
             // Get file list
             this.ProgressBarIsIndeterminate = true;
             this.Status = "Getting source file list...";
-            IList<string> sourceFiles = GetFileList(this.Source, token);
+            ICollection<string> sourceFiles = await GetFileListAsync(this.Source, token);
 
             // Delete destination directory
             this.Status = "Deleting destination directory...";
@@ -47,9 +48,9 @@ namespace BackupAssistant.ViewModels
             this.Status = "Backup is complete.";
         }
 
-        public IList<string> GetFileList(string rootDirectory, CancellationToken token)
+        public async Task<ICollection<string>> GetFileListAsync(string rootDirectory, CancellationToken token)
         {
-            List<string> files = [];
+            ConcurrentBag<string> files = [];
 
             if (this.FilterItems.Count > 0)
             {
@@ -57,39 +58,45 @@ namespace BackupAssistant.ViewModels
                 GetFilesInDirectory(rootDirectory, files, token);
 
                 // Get files in filtered directories and all subdirectories
-                foreach (string f in this.FilterItems)
+                var tasks = this.FilterItems.Select(async f =>
                 {
                     // Check for cancellation
                     token.ThrowIfCancellationRequested();
 
                     string d = GetFullFileName(f, rootDirectory);
-                    DirectorySearch(d, files, token);
-                }
+                    await DirectorySearchAsync(d, files, token);
+                });
+
+                await Task.WhenAll(tasks);
             }
             else
             {
-                DirectorySearch(rootDirectory, files, token);
+                await DirectorySearchAsync(rootDirectory, files, token);
             }
 
-            return files;
+            return [.. files];
         }
 
-        private void DirectorySearch(string directory, IList<string> fileList, CancellationToken token)
+        private async Task DirectorySearchAsync(string directory, ConcurrentBag<string> fileList, CancellationToken token)
         {
             GetFilesInDirectory(directory, fileList, token);
 
-            foreach (string d in SafeGetDirectories(directory))
+            var tasks = SafeGetDirectories(directory).Select(async d =>
             {
                 // Check for cancellation
                 token.ThrowIfCancellationRequested();
 
-                DirectorySearch(d, fileList, token);
-            }
+                await DirectorySearchAsync(d, fileList, token);
+            });
+
+            await Task.WhenAll(tasks);
         }
 
-        private void GetFilesInDirectory(string directory, IList<string> fileList, CancellationToken token)
+        private void GetFilesInDirectory(string directory, ConcurrentBag<string> fileList, CancellationToken token)
         {
-            foreach (string f in SafeGetFiles(directory))
+            var files = SafeGetFiles(directory);
+
+            foreach (string f in files)
             {
                 // Check for cancellation
                 token.ThrowIfCancellationRequested();

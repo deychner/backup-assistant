@@ -8,12 +8,12 @@ namespace BackupAssistant.Test.ViewModels
         #region GetFileList
 
         [Fact]
-        public void GetFileList_SingleLevel()
+        public async Task GetFileList_SingleLevel()
         {
             this.FileSystemMock.AddEmptyFile(@"c:\Source\file1.txt");
             this.FileSystemMock.AddEmptyFile(@"c:\Source\file2.txt");
 
-            IList<string> fileList = GetFileList();
+            ICollection<string> fileList = await GetFileListAsync();
 
             Assert.Equal(2, fileList.Count);
             Assert.Contains(@"c:\Source\file1.txt", fileList);
@@ -21,14 +21,14 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
-        public void GetFileList_MultiLevel()
+        public async Task GetFileList_MultiLevel()
         {
             this.FileSystemMock.AddEmptyFile(@"c:\Source\file1.txt");
             this.FileSystemMock.AddEmptyFile(@"c:\Source\L1F1\file2.txt");
             this.FileSystemMock.AddEmptyFile(@"c:\Source\L1F1\L2F1\file4.txt");
             this.FileSystemMock.AddEmptyFile(@"c:\Source\L1F2\file3.txt");
 
-            IList<string> fileList = GetFileList();
+            ICollection<string> fileList = await GetFileListAsync();
 
             Assert.Equal(4, fileList.Count);
             Assert.Contains(@"c:\Source\file1.txt", fileList);
@@ -38,14 +38,14 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
-        public void GetFileList_MultiLevel_Filters()
+        public async Task GetFileList_MultiLevel_Filters()
         {
             this.FileSystemMock.AddEmptyFile(@"c:\Source\file1.txt");
             this.FileSystemMock.AddEmptyFile(@"c:\Source\L1F1\file2.txt");
             this.FileSystemMock.AddEmptyFile(@"c:\Source\L1F1\L2F1\file4.txt");
             this.FileSystemMock.AddEmptyFile(@"c:\Source\L1F2\file3.txt");
 
-            IList<string> fileList = GetFileList([@"...\L1F1"]);
+            ICollection<string> fileList = await GetFileListAsync([@"...\L1F1"]);
 
             Assert.Equal(3, fileList.Count);
             Assert.Contains(@"c:\Source\file1.txt", fileList);
@@ -53,16 +53,16 @@ namespace BackupAssistant.Test.ViewModels
             Assert.Contains(@"c:\Source\L1F1\L2F1\file4.txt", fileList);
         }
 
-        private IList<string> GetFileList()
+        private async Task<ICollection<string>> GetFileListAsync()
         {
-            return GetFileList([]);
+            return await GetFileListAsync([]);
         }
 
-        private IList<string> GetFileList(ObservableCollection<string> filters)
+        private async Task<ICollection<string>> GetFileListAsync(ObservableCollection<string> filters)
         {
             this.ViewModelInstance!.Model.Filters = filters;
 
-            return this.ViewModelInstance!.GetFileList(@"c:\Source", CancellationToken.None);
+            return await this.ViewModelInstance!.GetFileListAsync(@"c:\Source", CancellationToken.None);
         }
 
         #endregion
@@ -73,13 +73,20 @@ namespace BackupAssistant.Test.ViewModels
         public async Task RunFullBackupInternal_Basic()
         {
             this.FileSystemMock.AddEmptyFile(@"c:\Source\file1.txt");
-            this.FileSystemMock.AddEmptyFile(@"c:\Source\file2.txt");
-            this.FileSystemMock.AddEmptyFile(@"c:\Destination\file3.txt");
 
             await RunFullBackupInternal();
 
             Assert.True(this.FileSystemMock.File.Exists(@"c:\Destination\file1.txt"));
-            Assert.True(this.FileSystemMock.File.Exists(@"c:\Destination\file2.txt"));
+        }
+
+        [Fact]
+        public async Task RunFullBackupInternal_BackupDeleted()
+        {
+            this.FileSystemMock.AddDirectory(@"c:\Source");
+            this.FileSystemMock.AddEmptyFile(@"c:\Destination\file3.txt");
+
+            await RunFullBackupInternal();
+
             Assert.False(this.FileSystemMock.File.Exists(@"c:\Destination\file3.txt"));
         }
 
