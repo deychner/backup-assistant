@@ -7,8 +7,9 @@ namespace BackupAssistant.Test.ViewModels
     public class MainWindowViewModelTestBackup : MainWindowViewModelTestBase
     {
         [Fact]
-        public void RunBackupInternal_SourceDoesNotExist()
+        public async Task RunBackupInternal_SourceDoesNotExist()
         {
+            this.LogServiceMock.Setup(c => c.ClearLog());
             this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
 
             this.FileSystemMock.AddDirectory(@"c:\destination");
@@ -16,14 +17,15 @@ namespace BackupAssistant.Test.ViewModels
             this.ViewModelInstance!.Source = string.Empty;
             this.ViewModelInstance.Destination = @"c:\destination";
 
-            this.ViewModelInstance.RunBackupInternal(CancellationToken.None);
+            await this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
 
             Assert.Equal("The source directory does not exist.", this.ViewModelInstance.Status);
         }
 
         [Fact]
-        public void RunBackupInternal_DestinationDoesNotExist()
+        public async Task RunBackupInternal_DestinationDoesNotExist()
         {
+            this.LogServiceMock.Setup(c => c.ClearLog());
             this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
 
             this.FileSystemMock.AddDirectory(@"c:\source");
@@ -31,7 +33,7 @@ namespace BackupAssistant.Test.ViewModels
             this.ViewModelInstance!.Source = @"c:\source";
             this.ViewModelInstance.Destination = string.Empty;
 
-            this.ViewModelInstance.RunBackupInternal(CancellationToken.None);
+            await this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
 
             Assert.Equal("The destination directory does not exist.", this.ViewModelInstance.Status);
         }
@@ -111,13 +113,13 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
-        public void SafeCopyFile()
+        public async Task SafeCopyFile()
         {
             this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
 
             try
             {
-                this.ViewModelInstance!.SafeCopyFile(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), true);
+                await this.ViewModelInstance!.SafeCopyFileAsync(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), true);
             }
             catch (Exception e)
             {
@@ -126,13 +128,13 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
-        public void SafeDeleteFile()
+        public async Task SafeDeleteFile()
         {
             this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
 
             try
             {
-                this.ViewModelInstance!.SafeDeleteFile(string.Empty);
+                await this.ViewModelInstance!.SafeDeleteFileAsync(string.Empty);
             }
             catch (Exception e)
             {

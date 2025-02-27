@@ -25,27 +25,6 @@ namespace BackupAssistant.ViewModels
         {
             _logService.ClearLog();
 
-            try
-            {
-                await Task.Run(() => RunBackupInternal(token), token);
-            }
-            catch (OperationCanceledException)
-            {
-                this.Status = "Backup was canceled.";
-            }
-            finally
-            {
-                _logService.WriteLogEntry();
-            }
-        }
-
-        public bool CanRunBackup()
-        {
-            return !string.IsNullOrEmpty(this.Source) && !string.IsNullOrEmpty(this.Destination) && !_runBackupCommand!.IsRunning;
-        }
-
-        internal void RunBackupInternal(CancellationToken token)
-        {
             if (!_fileSystem.Directory.Exists(this.Source))
             {
                 _logService.AddToLogEntry($"Backup failed. The source directory '{this.Source}' does not exist.");
@@ -62,18 +41,34 @@ namespace BackupAssistant.ViewModels
                 return;
             }
 
-            switch (this.BackupType)
+            try
             {
-                case BackupType.Full:
-                    RunFullBackupInternal(token);
-                    break;
-                case BackupType.Incremental:
-                    RunIncrementalBackupInternal(token);
-                    break;
-                default:
-                    // do nothing
-                    break;
+                switch (this.BackupType)
+                {
+                    case BackupType.Full:
+                        await Task.Run(async () => await RunFullBackupInternalAsync(token), token);
+                        break;
+                    case BackupType.Incremental:
+                        await Task.Run(async () => await RunIncrementalBackupInternalAsync(token), token);
+                        break;
+                    default:
+                        // do nothing
+                        break;
+                }
             }
+            catch (OperationCanceledException)
+            {
+                this.Status = "Backup was canceled.";
+            }
+            finally
+            {
+                _logService.WriteLogEntry();
+            }
+        }
+
+        public bool CanRunBackup()
+        {
+            return !string.IsNullOrEmpty(this.Source) && !string.IsNullOrEmpty(this.Destination) && !_runBackupCommand!.IsRunning;
         }
 
         public BackupType BackupType
@@ -179,11 +174,6 @@ namespace BackupAssistant.ViewModels
             }
         }
 
-        public void SafeCopyFile(string sourceFileName, string destinationFileName)
-        {
-            SafeCopyFile(sourceFileName, destinationFileName, false);
-        }
-
         public void EnsureDirectoryPathExists(string path)
         {
             string? directory = _fileSystem.Path.GetDirectoryName(path);
@@ -194,13 +184,13 @@ namespace BackupAssistant.ViewModels
             }
         }
 
-        public void SafeCopyFile(string sourceFileName, string destinationFileName, bool overwrite)
+        public async Task SafeCopyFileAsync(string sourceFileName, string destinationFileName, bool overwrite)
         {
             try
             {
                 EnsureDirectoryPathExists(destinationFileName);
 
-                _fileSystem.File.Copy(sourceFileName, destinationFileName, overwrite);
+                await Task.Run(() => _fileSystem.File.Copy(sourceFileName, destinationFileName, overwrite));
             }
             catch (Exception e)
             {
@@ -208,11 +198,11 @@ namespace BackupAssistant.ViewModels
             }
         }
 
-        public void SafeDeleteFile(string file)
+        public async Task SafeDeleteFileAsync(string file)
         {
             try
             {
-                _fileSystem.File.Delete(file);
+                await Task.Run(() => _fileSystem.File.Delete(file));
             }
             catch (Exception e)
             {
