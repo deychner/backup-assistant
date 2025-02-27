@@ -6,13 +6,13 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AssemblyVersion>2025.1.30.0</AssemblyVersion>
+    <AssemblyVersion>2025.2.27.0</AssemblyVersion>
     <StartupObject>BackupAssistant.App</StartupObject>
     <ApplicationIcon>assets\icon.ico</ApplicationIcon>
     <Authors>Darryl Eychner</Authors>
     <Company>Anaheim Electronics</Company>
     <Copyright>Copyright © Darryl Eychner 2025</Copyright>
-    <FileVersion>2025.1.30.0</FileVersion>
+    <FileVersion>2025.2.27.0</FileVersion>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>Deploy\signingkey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
@@ -31,8 +31,8 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
-    <PackageReference Include="System.IO.Abstractions" Version="21.3.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
+    <PackageReference Include="System.IO.Abstractions" Version="22.0.10" />
   </ItemGroup>
 
   <ItemGroup>
