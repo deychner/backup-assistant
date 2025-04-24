@@ -21,9 +21,7 @@ namespace BackupAssistant.Extensions
 
         private static List<object> CreateEnumValueList(Type enumType)
         {
-            return Enum.GetNames(enumType)
-                .Select(name => Enum.Parse(enumType, name))
-                .ToList();
+            return [.. Enum.GetNames(enumType).Select(name => Enum.Parse(enumType, name))];
         }
     }
 }
