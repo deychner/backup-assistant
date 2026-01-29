@@ -11,12 +11,7 @@ namespace BackupAssistant.Extensions
 
         public override object? ProvideValue(IServiceProvider _)
         {
-            if (EnumType != null)
-            {
-                return CreateEnumValueList(EnumType);
-            }
-
-            return default;
+            return EnumType != null ? CreateEnumValueList(EnumType) : (object?)default;
         }
 
         private static List<object> CreateEnumValueList(Type enumType)

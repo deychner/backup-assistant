@@ -12,8 +12,8 @@ namespace BackupAssistant.ViewModels
         private RelayCommand? _aboutCommand;
         public IRelayCommand AboutCommand => _aboutCommand ??= new RelayCommand(() =>
         {
-            var window = new About();
-            window.ShowDialog();
+            About window = new();
+            _ = window.ShowDialog();
         });
     }
 }

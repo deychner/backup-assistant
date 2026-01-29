@@ -35,7 +35,7 @@ namespace BackupAssistant.ViewModels
             this.ProgressBarIsIndeterminate = false;
             this.Status = $"Processing {files.Keys.Count} files...";
 
-            var tasks = files.Keys.Select(async key =>
+            IEnumerable<Task> tasks = files.Keys.Select(async key =>
             {
                 // Check for cancellation
                 token.ThrowIfCancellationRequested();
@@ -61,17 +61,10 @@ namespace BackupAssistant.ViewModels
                 }
 
                 // File was processed, so add it to the running total
-                Extensions.Interlocked.Add(ref processed, listing.Size);
+                _ = Extensions.Interlocked.Add(ref processed, listing.Size);
 
                 // Handle edge case where all files eligible for backup are empty
-                if (totalSize > 0)
-                {
-                    this.Progress = (int)(100F * (processed / totalSize));
-                }
-                else
-                {
-                    this.Progress = 100;
-                }
+                this.Progress = totalSize > 0 ? (int)(100F * (processed / totalSize)) : 100;
             });
 
             await Task.WhenAll(tasks);
@@ -90,7 +83,7 @@ namespace BackupAssistant.ViewModels
                 CollectFilesForSourceListing(sourceDirectory, files, token);
 
                 // Get files in filtered source directories and all subdirectories
-                var sourceTasks = this.FilterItems.Select(async f =>
+                IEnumerable<Task> sourceTasks = this.FilterItems.Select(async f =>
                 {
                     // Check for cancellation
                     token.ThrowIfCancellationRequested();
@@ -107,7 +100,7 @@ namespace BackupAssistant.ViewModels
                 CollectFilesForDestinationListing(destinationDirectory, files, token);
 
                 // Get files in filtered destination directories and all subdirectories
-                var destinationTasks = this.FilterItems.Select(async f =>
+                IEnumerable<Task> destinationTasks = this.FilterItems.Select(async f =>
                 {
                     // Check for cancellation
                     token.ThrowIfCancellationRequested();
@@ -135,7 +128,7 @@ namespace BackupAssistant.ViewModels
         {
             CollectFilesForSourceListing(directory, fileList, token);
 
-            var tasks = SafeGetDirectories(directory).Select(async d =>
+            IEnumerable<Task> tasks = SafeGetDirectories(directory).Select(async d =>
             {
                 // Check for cancellation
                 token.ThrowIfCancellationRequested();
@@ -148,9 +141,9 @@ namespace BackupAssistant.ViewModels
 
         private void CollectFilesForSourceListing(string directory, ConcurrentDictionary<string, FileListing> fileList, CancellationToken token)
         {
-            var files = SafeGetFiles(directory);
+            IReadOnlyCollection<string> files = SafeGetFiles(directory);
 
-            foreach (var f in files)
+            foreach (string f in files)
             {
                 // Check for cancellation
                 token.ThrowIfCancellationRequested();
@@ -160,7 +153,7 @@ namespace BackupAssistant.ViewModels
 
                 if (info != null)
                 {
-                    fileList.AddOrUpdate(fileName, new FileListing
+                    _ = fileList.AddOrUpdate(fileName, new FileListing
                     {
                         IsInSource = true,
                         SourceLastModified = info.LastWriteTime,
@@ -180,7 +173,7 @@ namespace BackupAssistant.ViewModels
         {
             CollectFilesForDestinationListing(directory, fileList, token);
 
-            var tasks = SafeGetDirectories(directory).Select(async d =>
+            IEnumerable<Task> tasks = SafeGetDirectories(directory).Select(async d =>
             {
                 // Check for cancellation
                 token.ThrowIfCancellationRequested();
@@ -193,9 +186,9 @@ namespace BackupAssistant.ViewModels
 
         private void CollectFilesForDestinationListing(string directory, ConcurrentDictionary<string, FileListing> fileList, CancellationToken token)
         {
-            var files = SafeGetFiles(directory);
+            IReadOnlyCollection<string> files = SafeGetFiles(directory);
 
-            foreach (var f in files)
+            foreach (string f in files)
             {
                 // Check for cancellation
                 token.ThrowIfCancellationRequested();
@@ -205,7 +198,7 @@ namespace BackupAssistant.ViewModels
 
                 if (info != null)
                 {
-                    fileList.AddOrUpdate(fileName, new FileListing
+                    _ = fileList.AddOrUpdate(fileName, new FileListing
                     {
                         IsInDestination = true,
                         DestinationLastModified = info.LastWriteTime,
