@@ -23,10 +23,10 @@ namespace BackupAssistant.Test.ViewModels.Base
 
             if (createInstance)
             {
-                SettingsServiceMock.SetupProperty(f => f.Filters, []);
-                SettingsServiceMock.SetupProperty(s => s.Source, null);
-                SettingsServiceMock.SetupProperty(d => d.Destination, null);
-                SettingsServiceMock.SetupProperty(b => b.BackupType);
+                _ = SettingsServiceMock.SetupProperty(f => f.Filters, []);
+                _ = SettingsServiceMock.SetupProperty(s => s.Source, null);
+                _ = SettingsServiceMock.SetupProperty(d => d.Destination, null);
+                _ = SettingsServiceMock.SetupProperty(b => b.BackupType);
                 SettingsServiceMock.Setup(s => s.Save()).Verifiable();
 
                 ViewModelInstance = new MainWindowViewModel(SettingsServiceMock.Object, DialogServiceMock.Object, LogServiceMock.Object, FileSystemMock);

@@ -48,7 +48,7 @@ namespace BackupAssistant.Test.ViewModels
             });
 
             ObservableCollection<string> actual = (ObservableCollection<string>)this.ViewModelInstance.Output;
-            Assert.Single(actual);
+            _ = Assert.Single(actual);
             Assert.Equal("test1", actual[0]);
         }
 
@@ -98,7 +98,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance.PopulateFilterList([]);
 
-            Assert.Single(this.ViewModelInstance.Model.FilterItems);
+            _ = Assert.Single(this.ViewModelInstance.Model.FilterItems);
             Assert.Contains(this.ViewModelInstance.Model.FilterItems, (f) => f.Path.Equals(@"...\dir1") && !f.IsChecked);
             Assert.DoesNotContain(this.ViewModelInstance.Model.FilterItems, (f) => f.Path.Equals(@"...\dir2"));
         }

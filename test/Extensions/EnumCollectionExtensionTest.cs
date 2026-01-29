@@ -17,7 +17,7 @@ namespace BackupAssistant.Test.Extensions
             object? value = collection.ProvideValue(null!);
 
             Assert.NotNull(value);
-            Assert.IsType<List<object>>(value);
+            _ = Assert.IsType<List<object>>(value);
 
             List<object> list = (List<object>)value;
             Assert.Equal(2, list.Count);

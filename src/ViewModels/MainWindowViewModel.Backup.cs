@@ -90,18 +90,7 @@ namespace BackupAssistant.ViewModels
             get { return _model.Progress; }
             set
             {
-                if (value < 0)
-                {
-                    _model.Progress = 0;
-                }
-                else if (value > 100)
-                {
-                    _model.Progress = 100;
-                }
-                else
-                {
-                    _model.Progress = value;
-                }
+                _model.Progress = value < 0 ? 0 : value > 100 ? 100 : value;
 
                 OnPropertyChanged(nameof(Progress));
             }
@@ -180,7 +169,7 @@ namespace BackupAssistant.ViewModels
 
             if (!string.IsNullOrEmpty(directory) && !_fileSystem.Directory.Exists(directory))
             {
-                _fileSystem.Directory.CreateDirectory(directory);
+                _ = _fileSystem.Directory.CreateDirectory(directory);
             }
         }
 
@@ -242,14 +231,9 @@ namespace BackupAssistant.ViewModels
         static string GetAbbreviatedFileName(string fileName, string prefix)
         {
             // Ensure all shortened file names start with "...\"
-            if (prefix.EndsWith('\\'))
-            {
-                return fileName.ReplaceFirst(prefix, $@"{FilePathAbbreviation}\");
-            }
-            else
-            {
-                return fileName.ReplaceFirst(prefix, FilePathAbbreviation);
-            }
+            return prefix.EndsWith('\\')
+                ? fileName.ReplaceFirst(prefix, $@"{FilePathAbbreviation}\")
+                : fileName.ReplaceFirst(prefix, FilePathAbbreviation);
         }
 
         #endregion

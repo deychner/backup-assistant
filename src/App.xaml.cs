@@ -23,7 +23,7 @@ namespace BackupAssistant
         /// <summary>
         /// Gets the current <see cref="App"/> instance in use
         /// </summary>
-        public new static App Current => (App)Application.Current;
+        public static new App Current => (App)Application.Current;
 
         /// <summary>
         /// Gets the <see cref="IServiceProvider"/> instance to resolve application services.
@@ -35,15 +35,15 @@ namespace BackupAssistant
         /// </summary>
         private static ServiceProvider ConfigureServices()
         {
-            var services = new ServiceCollection();
+            ServiceCollection services = new();
 
             // Services
-            services.AddSingleton<ISettingsService, SettingsService>();
-            services.AddSingleton<IDialogService, DialogService>();
-            services.AddSingleton<ILogService, LogService>();
+            _ = services.AddSingleton<ISettingsService, SettingsService>();
+            _ = services.AddSingleton<IDialogService, DialogService>();
+            _ = services.AddSingleton<ILogService, LogService>();
 
             // View models
-            services.AddTransient<MainWindowViewModel>();
+            _ = services.AddTransient<MainWindowViewModel>();
 
             return services.BuildServiceProvider();
         }

@@ -32,14 +32,7 @@ namespace BackupAssistant.ViewModels
         {
             get
             {
-                if (_model.Filters.Count > 0)
-                {
-                    return "/assets/filter_16_filled.png";
-                }
-                else
-                {
-                    return "/assets/filter_16_regular.png";
-                }
+                return _model.Filters.Count > 0 ? "/assets/filter_16_filled.png" : "/assets/filter_16_regular.png";
             }
         }
 

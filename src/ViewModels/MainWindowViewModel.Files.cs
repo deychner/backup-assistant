@@ -77,12 +77,9 @@ namespace BackupAssistant.ViewModels
 
         internal string GetOpenFolderDialogInitialPath(string suggestedPath)
         {
-            if (!_fileSystem.Directory.Exists(suggestedPath))
-            {
-                return _fileSystem.Path.GetPathRoot(Environment.SystemDirectory) ?? @"C:\";
-            }
-
-            return suggestedPath;
+            return !_fileSystem.Directory.Exists(suggestedPath)
+                ? _fileSystem.Path.GetPathRoot(Environment.SystemDirectory) ?? @"C:\"
+                : suggestedPath;
         }
     }
 }

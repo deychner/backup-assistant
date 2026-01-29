@@ -17,12 +17,12 @@ namespace BackupAssistant.Services
 
         public void AddToLogEntry(string message)
         {
-            _logMessage?.AppendLine(message);
+            _ = (_logMessage?.AppendLine(message));
         }
 
         public void ClearLog()
         {
-            _logMessage?.Clear();
+            _ = (_logMessage?.Clear());
         }
 
         [SupportedOSPlatformGuard("windows")]
@@ -34,7 +34,7 @@ namespace BackupAssistant.Services
                 log.Source = Source;
                 log.WriteEntry(_logMessage.ToString(), EventLogEntryType.Error);
 
-                _logMessage.Clear();
+                _ = _logMessage.Clear();
             }
         }
     }

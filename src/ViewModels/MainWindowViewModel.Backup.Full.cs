@@ -30,7 +30,7 @@ namespace BackupAssistant.ViewModels
             this.Status = $"Copying {sourceFiles.Count} files...";
 
             int processed = 0;
-            var tasks = sourceFiles.Select(async (sourceFile) =>
+            IEnumerable<Task> tasks = sourceFiles.Select(async (sourceFile) =>
             {
                 // Check for cancellation
                 token.ThrowIfCancellationRequested();
@@ -39,8 +39,8 @@ namespace BackupAssistant.ViewModels
                 await SafeCopyFileAsync(sourceFile, destinationFile, false);
 
                 // Update progress
-                Interlocked.Increment(ref processed);
-                this.Progress = 100 * (processed) / sourceFiles.Count;
+                _ = Interlocked.Increment(ref processed);
+                this.Progress = 100 * processed / sourceFiles.Count;
             });
 
             await Task.WhenAll(tasks);
@@ -58,7 +58,7 @@ namespace BackupAssistant.ViewModels
                 GetFilesInDirectory(rootDirectory, files, token);
 
                 // Get files in filtered directories and all subdirectories
-                var tasks = this.FilterItems.Select(async f =>
+                IEnumerable<Task> tasks = this.FilterItems.Select(async f =>
                 {
                     // Check for cancellation
                     token.ThrowIfCancellationRequested();
@@ -81,7 +81,7 @@ namespace BackupAssistant.ViewModels
         {
             GetFilesInDirectory(directory, fileList, token);
 
-            var tasks = SafeGetDirectories(directory).Select(async d =>
+            IEnumerable<Task> tasks = SafeGetDirectories(directory).Select(async d =>
             {
                 // Check for cancellation
                 token.ThrowIfCancellationRequested();
@@ -94,7 +94,7 @@ namespace BackupAssistant.ViewModels
 
         private void GetFilesInDirectory(string directory, ConcurrentBag<string> fileList, CancellationToken token)
         {
-            var files = SafeGetFiles(directory);
+            IReadOnlyCollection<string> files = SafeGetFiles(directory);
 
             foreach (string f in files)
             {

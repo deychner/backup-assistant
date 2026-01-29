@@ -9,8 +9,8 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public async Task RunBackupInternal_SourceDoesNotExist()
         {
-            this.LogServiceMock.Setup(c => c.ClearLog());
-            this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
+            _ = this.LogServiceMock.Setup(c => c.ClearLog());
+            _ = this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
 
             this.FileSystemMock.AddDirectory(@"c:\destination");
 
@@ -25,8 +25,8 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public async Task RunBackupInternal_DestinationDoesNotExist()
         {
-            this.LogServiceMock.Setup(c => c.ClearLog());
-            this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
+            _ = this.LogServiceMock.Setup(c => c.ClearLog());
+            _ = this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
 
             this.FileSystemMock.AddDirectory(@"c:\source");
 
@@ -42,7 +42,7 @@ namespace BackupAssistant.Test.ViewModels
         public void SafeGetFileInfo()
         {
             IFileInfo? fileInfo = null;
-            this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
+            _ = this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
 
             try
             {
@@ -60,7 +60,7 @@ namespace BackupAssistant.Test.ViewModels
         public void SafeGetFiles()
         {
             IReadOnlyCollection<string>? files = null;
-            this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
+            _ = this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
 
             try
             {
@@ -79,7 +79,7 @@ namespace BackupAssistant.Test.ViewModels
         public void SafeGetDirectories()
         {
             IReadOnlyCollection<string>? directories = null;
-            this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
+            _ = this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
 
             try
             {
@@ -115,7 +115,7 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public async Task SafeCopyFile()
         {
-            this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
+            _ = this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
 
             try
             {
@@ -130,7 +130,7 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public async Task SafeDeleteFile()
         {
-            this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
+            _ = this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
 
             try
             {
