@@ -13,11 +13,11 @@ namespace BackupAssistant.Test.ViewModels
         public async Task GetCombinedFileList_SingleLevel_SourceOnly()
         {
             this.FileSystemMock.AddEmptyFile(@"c:\Source\file.txt");
-            this.FileSystemMock.Directory.CreateDirectory(@"c:\Destination");
+            _ = this.FileSystemMock.Directory.CreateDirectory(@"c:\Destination");
 
             IDictionary<string, FileListing> fileList = await GetCombinedFileListAsync();
 
-            Assert.Single(fileList);
+            _ = Assert.Single(fileList);
             Assert.Contains(fileList, (f) => f.Key == @"...\file.txt");
             Assert.True(fileList[@"...\file.txt"].IsInSource);
             Assert.False(fileList[@"...\file.txt"].IsInDestination);
@@ -27,11 +27,11 @@ namespace BackupAssistant.Test.ViewModels
         public async Task GetCombinedFileList_SingleLevel_DestinationOnly()
         {
             this.FileSystemMock.AddEmptyFile(@"c:\Destination\file.txt");
-            this.FileSystemMock.Directory.CreateDirectory(@"c:\Source");
+            _ = this.FileSystemMock.Directory.CreateDirectory(@"c:\Source");
 
             IDictionary<string, FileListing> fileList = await GetCombinedFileListAsync();
 
-            Assert.Single(fileList);
+            _ = Assert.Single(fileList);
             Assert.Contains(fileList, (f) => f.Key == @"...\file.txt");
             Assert.False(fileList[@"...\file.txt"].IsInSource);
             Assert.True(fileList[@"...\file.txt"].IsInDestination);
@@ -45,7 +45,7 @@ namespace BackupAssistant.Test.ViewModels
 
             IDictionary<string, FileListing> fileList = await GetCombinedFileListAsync();
 
-            Assert.Single(fileList);
+            _ = Assert.Single(fileList);
             Assert.Contains(fileList, (f) => f.Key == @"...\file.txt");
             Assert.True(fileList[@"...\file.txt"].IsInSource);
             Assert.True(fileList[@"...\file.txt"].IsInDestination);
@@ -55,11 +55,11 @@ namespace BackupAssistant.Test.ViewModels
         public async Task GetCombinedFileList_MultiLevel_SourceOnly()
         {
             this.FileSystemMock.AddEmptyFile(@"c:\Source\SubDirectory\file.txt");
-            this.FileSystemMock.Directory.CreateDirectory(@"c:\Destination");
+            _ = this.FileSystemMock.Directory.CreateDirectory(@"c:\Destination");
 
             IDictionary<string, FileListing> fileList = await GetCombinedFileListAsync();
 
-            Assert.Single(fileList);
+            _ = Assert.Single(fileList);
             Assert.Contains(fileList, (f) => f.Key == @"...\SubDirectory\file.txt");
             Assert.True(fileList[@"...\SubDirectory\file.txt"].IsInSource);
             Assert.False(fileList[@"...\SubDirectory\file.txt"].IsInDestination);
@@ -69,11 +69,11 @@ namespace BackupAssistant.Test.ViewModels
         public async Task GetCombinedFileList_MultiLevel_DestinationOnly()
         {
             this.FileSystemMock.AddEmptyFile(@"c:\Destination\SubDirectory\file.txt");
-            this.FileSystemMock.Directory.CreateDirectory(@"c:\Source");
+            _ = this.FileSystemMock.Directory.CreateDirectory(@"c:\Source");
 
             IDictionary<string, FileListing> fileList = await GetCombinedFileListAsync();
 
-            Assert.Single(fileList);
+            _ = Assert.Single(fileList);
             Assert.Contains(fileList, (f) => f.Key == @"...\SubDirectory\file.txt");
             Assert.False(fileList[@"...\SubDirectory\file.txt"].IsInSource);
             Assert.True(fileList[@"...\SubDirectory\file.txt"].IsInDestination);
@@ -87,7 +87,7 @@ namespace BackupAssistant.Test.ViewModels
 
             IDictionary<string, FileListing> fileList = await GetCombinedFileListAsync();
 
-            Assert.Single(fileList);
+            _ = Assert.Single(fileList);
             Assert.Contains(fileList, (f) => f.Key == @"...\SubDirectory\file.txt");
             Assert.True(fileList[@"...\SubDirectory\file.txt"].IsInSource);
             Assert.True(fileList[@"...\SubDirectory\file.txt"].IsInDestination);
@@ -151,7 +151,7 @@ namespace BackupAssistant.Test.ViewModels
         public async Task RunIncrementalBackupInternal_Copy()
         {
             this.FileSystemMock.AddEmptyFile(@"c:\Source\file.txt");
-            this.FileSystemMock.Directory.CreateDirectory(@"c:\Destination");
+            _ = this.FileSystemMock.Directory.CreateDirectory(@"c:\Destination");
 
             await RunIncrementalBackup();
 
@@ -175,7 +175,7 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public async Task RunIncrementalBackupInternal_Delete()
         {
-            this.FileSystemMock.Directory.CreateDirectory(@"c:\Source");
+            _ = this.FileSystemMock.Directory.CreateDirectory(@"c:\Source");
             this.FileSystemMock.AddEmptyFile(@"c:\Destination\file.txt");
 
             await RunIncrementalBackup();

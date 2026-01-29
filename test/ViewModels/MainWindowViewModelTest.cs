@@ -11,10 +11,10 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public void Constructor_InitializeFilters()
         {
-            this.SettingsServiceMock.SetupProperty(f => f.Filters, null);
-            this.SettingsServiceMock.SetupProperty(s => s.Source, null);
-            this.SettingsServiceMock.SetupProperty(d => d.Destination, null);
-            this.SettingsServiceMock.SetupProperty(b => b.BackupType, 0);
+            _ = this.SettingsServiceMock.SetupProperty(f => f.Filters, null);
+            _ = this.SettingsServiceMock.SetupProperty(s => s.Source, null);
+            _ = this.SettingsServiceMock.SetupProperty(d => d.Destination, null);
+            _ = this.SettingsServiceMock.SetupProperty(b => b.BackupType, 0);
             this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
 
             MainWindowViewModel instance = new(this.SettingsServiceMock.Object, this.DialogServiceMock.Object, this.LogServiceMock.Object, this.FileSystemMock);
@@ -34,10 +34,10 @@ namespace BackupAssistant.Test.ViewModels
                 null
             ];
 
-            this.SettingsServiceMock.SetupProperty(f => f.Filters, filters);
-            this.SettingsServiceMock.SetupProperty(s => s.Source, null);
-            this.SettingsServiceMock.SetupProperty(d => d.Destination, null);
-            this.SettingsServiceMock.SetupProperty(b => b.BackupType, 0);
+            _ = this.SettingsServiceMock.SetupProperty(f => f.Filters, filters);
+            _ = this.SettingsServiceMock.SetupProperty(s => s.Source, null);
+            _ = this.SettingsServiceMock.SetupProperty(d => d.Destination, null);
+            _ = this.SettingsServiceMock.SetupProperty(b => b.BackupType, 0);
             this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
 
             MainWindowViewModel instance = new(this.SettingsServiceMock.Object, this.DialogServiceMock.Object, this.LogServiceMock.Object, this.FileSystemMock);
@@ -53,10 +53,10 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public void Constructor_Load_BackupSettings()
         {
-            this.SettingsServiceMock.SetupProperty(f => f.Filters, null);
-            this.SettingsServiceMock.SetupProperty(s => s.Source, @"c:\source");
-            this.SettingsServiceMock.SetupProperty(d => d.Destination, @"c:\destination");
-            this.SettingsServiceMock.SetupProperty(b => b.BackupType, 1);
+            _ = this.SettingsServiceMock.SetupProperty(f => f.Filters, null);
+            _ = this.SettingsServiceMock.SetupProperty(s => s.Source, @"c:\source");
+            _ = this.SettingsServiceMock.SetupProperty(d => d.Destination, @"c:\destination");
+            _ = this.SettingsServiceMock.SetupProperty(b => b.BackupType, 1);
             this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
 
             MainWindowViewModel instance = new(this.SettingsServiceMock.Object, this.DialogServiceMock.Object, this.LogServiceMock.Object, this.FileSystemMock);

@@ -11,7 +11,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.Model.Source = @"c:\old\source";
             // Use c:\old\source as the initial path to ensure that the default path for an existing directory is used
-            this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"c:\old\source")).Returns(() => (true, @"c:\new\source"));
+            _ = this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"c:\old\source")).Returns(() => (true, @"c:\new\source"));
 
             this.ViewModelInstance.AddEditSource();
 
@@ -23,7 +23,7 @@ namespace BackupAssistant.Test.ViewModels
         {
             this.ViewModelInstance!.Model.Source = @"c:\old\source";
             // Use C:\ as the initial path to ensure that the default path for a non-existent directory is used
-            this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"C:\")).Returns(() => (true, @"c:\new\source"));
+            _ = this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"C:\")).Returns(() => (true, @"c:\new\source"));
 
             this.ViewModelInstance.AddEditSource();
 
@@ -35,7 +35,7 @@ namespace BackupAssistant.Test.ViewModels
         {
             this.ViewModelInstance!.Model.Source = @"c:\old\source";
             // Use C:\ as the initial path to ensure that the default path for a non-existent directory is used
-            this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"C:\")).Returns(() => (false, @"c:\new\source"));
+            _ = this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"C:\")).Returns(() => (false, @"c:\new\source"));
 
             this.ViewModelInstance.AddEditSource();
 
@@ -49,7 +49,7 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.Model.Destination = @"c:\old\destination";
             // Use c:\old\destination as the initial path to ensure that the default path for an existing directory is used
-            this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"c:\old\destination")).Returns(() => (true, @"c:\new\destination"));
+            _ = this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"c:\old\destination")).Returns(() => (true, @"c:\new\destination"));
 
             this.ViewModelInstance.AddEditDestination();
 
@@ -61,7 +61,7 @@ namespace BackupAssistant.Test.ViewModels
         {
             this.ViewModelInstance!.Model.Destination = @"c:\old\destination";
             // Use C:\ as the initial path to ensure that the default path for a non-existent directory is used
-            this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"C:\")).Returns(() => (true, @"c:\new\destination"));
+            _ = this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"C:\")).Returns(() => (true, @"c:\new\destination"));
 
             this.ViewModelInstance.AddEditDestination();
 
@@ -73,7 +73,7 @@ namespace BackupAssistant.Test.ViewModels
         {
             this.ViewModelInstance!.Model.Destination = @"c:\old\destination";
             // Use C:\ as the initial path to ensure that the default path for a non-existent directory is used
-            this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"C:\")).Returns(() => (false, @"c:\new\destination"));
+            _ = this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"C:\")).Returns(() => (false, @"c:\new\destination"));
 
             this.ViewModelInstance.AddEditDestination();
 

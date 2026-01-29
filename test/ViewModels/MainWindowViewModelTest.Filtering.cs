@@ -21,11 +21,11 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public void EditFilters()
         {
-            this.DialogServiceMock.Setup(s => s.ShowDialog<FilterSelection>(It.IsAny<IDialogViewModel>())).Returns(true);
+            _ = this.DialogServiceMock.Setup(s => s.ShowDialog<FilterSelection>(It.IsAny<IDialogViewModel>())).Returns(true);
 
             Mock<IDialogViewModel> dialogViewModelMock = new(MockBehavior.Strict);
             dialogViewModelMock.SetupSet(i => i.Input = It.IsAny<FilterSelectionInput>()).Verifiable();
-            dialogViewModelMock.SetupGet(o => o.Output).Returns(new ObservableCollection<string> { "edited_filter" });
+            _ = dialogViewModelMock.SetupGet(o => o.Output).Returns(new ObservableCollection<string> { "edited_filter" });
 
             // Add existing information
             this.ViewModelInstance!.Model.Source = "original";
@@ -35,16 +35,16 @@ namespace BackupAssistant.Test.ViewModels
             this.ViewModelInstance.EditFilters(dialogViewModelMock.Object);
 
             // Verify results
-            Assert.Single(this.ViewModelInstance.Model.Filters);
+            _ = Assert.Single(this.ViewModelInstance.Model.Filters);
             Assert.Equal("edited_filter", this.ViewModelInstance.Model.Filters[0]);
-            Assert.Single(this.SettingsServiceMock.Object.Filters);
+            _ = Assert.Single(this.SettingsServiceMock.Object.Filters);
             Assert.Equal("edited_filter", this.SettingsServiceMock.Object.Filters[0]);
         }
 
         [Fact]
         public void EditFilters_NoAction()
         {
-            this.DialogServiceMock.Setup(s => s.ShowDialog<FilterSelection>(It.IsAny<IDialogViewModel>())).Returns(false);
+            _ = this.DialogServiceMock.Setup(s => s.ShowDialog<FilterSelection>(It.IsAny<IDialogViewModel>())).Returns(false);
 
             Mock<IDialogViewModel> dialogViewModelMock = new(MockBehavior.Strict);
             dialogViewModelMock.SetupSet(i => i.Input = It.IsAny<FilterSelectionInput>()).Verifiable();
@@ -57,9 +57,9 @@ namespace BackupAssistant.Test.ViewModels
             this.ViewModelInstance.EditFilters(dialogViewModelMock.Object);
 
             // Verify results
-            Assert.Single(this.ViewModelInstance.Model.Filters);
+            _ = Assert.Single(this.ViewModelInstance.Model.Filters);
             Assert.Equal("original_filter", this.ViewModelInstance.Model.Filters[0]);
-            Assert.Single(this.SettingsServiceMock.Object.Filters);
+            _ = Assert.Single(this.SettingsServiceMock.Object.Filters);
             Assert.Equal("original_filter", this.SettingsServiceMock.Object.Filters[0]);
         }
 
