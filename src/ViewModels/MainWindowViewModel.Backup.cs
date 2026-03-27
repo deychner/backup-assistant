@@ -23,6 +23,7 @@ namespace BackupAssistant.ViewModels
             if (!_fileSystem.Directory.Exists(this.Source))
             {
                 _logService.AddToLogEntry($"Backup failed. The source directory '{this.Source}' does not exist.");
+                _logService.WriteLogEntry();
 
                 this.Status = "The source directory does not exist.";
                 return;
@@ -31,6 +32,7 @@ namespace BackupAssistant.ViewModels
             if (!_fileSystem.Directory.Exists(this.Destination))
             {
                 _logService.AddToLogEntry($"Backup failed. The destination directory '{this.Destination}' does not exist.");
+                _logService.WriteLogEntry();
 
                 this.Status = "The destination directory does not exist.";
                 return;
