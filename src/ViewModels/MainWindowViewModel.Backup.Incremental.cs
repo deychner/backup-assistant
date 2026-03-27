@@ -37,34 +37,44 @@ namespace BackupAssistant.ViewModels
 
             IEnumerable<Task> tasks = files.Keys.Select(async key =>
             {
-                // Check for cancellation
-                token.ThrowIfCancellationRequested();
-
-                FileListing listing = files[key];
-                string sourceFile = ExpandSourceFileName(key);
-                string destinationFile = ExpandDestinationFileName(key);
-
-                switch (listing.GetBackupAction())
+                // Wait for concurrency slot to become available
+                await _concurrencyLimiter.WaitAsync(token);
+                try
                 {
-                    case BackupAction.Copy:
-                        await SafeCopyFileAsync(sourceFile, destinationFile, false);
-                        break;
-                    case BackupAction.Overwrite:
-                        await SafeCopyFileAsync(sourceFile, destinationFile, true);
-                        break;
-                    case BackupAction.Delete:
-                        await SafeDeleteFileAsync(destinationFile);
-                        break;
-                    default:
-                        // Do nothing
-                        break;
+                    // Check for cancellation
+                    token.ThrowIfCancellationRequested();
+
+                    FileListing listing = files[key];
+                    string sourceFile = ExpandSourceFileName(key);
+                    string destinationFile = ExpandDestinationFileName(key);
+
+                    switch (listing.GetBackupAction())
+                    {
+                        case BackupAction.Copy:
+                            await SafeCopyFileAsync(sourceFile, destinationFile, false);
+                            break;
+                        case BackupAction.Overwrite:
+                            await SafeCopyFileAsync(sourceFile, destinationFile, true);
+                            break;
+                        case BackupAction.Delete:
+                            await SafeDeleteFileAsync(destinationFile);
+                            break;
+                        default:
+                            // Do nothing
+                            break;
+                    }
+
+                    // File was processed, so add it to the running total
+                    _ = Extensions.Interlocked.Add(ref processed, listing.Size);
+
+                    // Handle edge case where all files eligible for backup are empty
+                    this.Progress = totalSize > 0 ? (int)(100F * (processed / totalSize)) : 100;
                 }
-
-                // File was processed, so add it to the running total
-                _ = Extensions.Interlocked.Add(ref processed, listing.Size);
-
-                // Handle edge case where all files eligible for backup are empty
-                this.Progress = totalSize > 0 ? (int)(100F * (processed / totalSize)) : 100;
+                finally
+                {
+                    // Release the concurrency slot
+                    _concurrencyLimiter.Release();
+                }
             });
 
             await Task.WhenAll(tasks);
@@ -85,12 +95,22 @@ namespace BackupAssistant.ViewModels
                 // Get files in filtered source directories and all subdirectories
                 IEnumerable<Task> sourceTasks = this.FilterItems.Select(async f =>
                 {
-                    // Check for cancellation
-                    token.ThrowIfCancellationRequested();
+                    // Wait for concurrency slot to become available
+                    await _concurrencyLimiter.WaitAsync(token);
+                    try
+                    {
+                        // Check for cancellation
+                        token.ThrowIfCancellationRequested();
 
-                    // Each filter directory is a relative path
-                    string d = GetFullFileName(f, sourceDirectory);
-                    await SourceDirectorySearchAsync(d, files, token);
+                        // Each filter directory is a relative path
+                        string d = GetFullFileName(f, sourceDirectory);
+                        await SourceDirectorySearchAsync(d, files, token);
+                    }
+                    finally
+                    {
+                        // Release the concurrency slot
+                        _concurrencyLimiter.Release();
+                    }
                 });
 
                 await Task.WhenAll(sourceTasks);
@@ -102,12 +122,22 @@ namespace BackupAssistant.ViewModels
                 // Get files in filtered destination directories and all subdirectories
                 IEnumerable<Task> destinationTasks = this.FilterItems.Select(async f =>
                 {
-                    // Check for cancellation
-                    token.ThrowIfCancellationRequested();
+                    // Wait for concurrency slot to become available
+                    await _concurrencyLimiter.WaitAsync(token);
+                    try
+                    {
+                        // Check for cancellation
+                        token.ThrowIfCancellationRequested();
 
-                    // Each filter directory is a relative path
-                    string d = GetFullFileName(f, destinationDirectory);
-                    await DestinationDirectorySearchAsync(d, files, token);
+                        // Each filter directory is a relative path
+                        string d = GetFullFileName(f, destinationDirectory);
+                        await DestinationDirectorySearchAsync(d, files, token);
+                    }
+                    finally
+                    {
+                        // Release the concurrency slot
+                        _concurrencyLimiter.Release();
+                    }
                 });
 
                 await Task.WhenAll(destinationTasks);
@@ -130,10 +160,20 @@ namespace BackupAssistant.ViewModels
 
             IEnumerable<Task> tasks = SafeEnumerateDirectories(directory).Select(async d =>
             {
-                // Check for cancellation
-                token.ThrowIfCancellationRequested();
+                // Wait for concurrency slot to become available
+                await _concurrencyLimiter.WaitAsync(token);
+                try
+                {
+                    // Check for cancellation
+                    token.ThrowIfCancellationRequested();
 
-                await SourceDirectorySearchAsync(d, fileList, token);
+                    await SourceDirectorySearchAsync(d, fileList, token);
+                }
+                finally
+                {
+                    // Always release the concurrency slot
+                    _concurrencyLimiter.Release();
+                }
             });
 
             await Task.WhenAll(tasks);
@@ -173,10 +213,20 @@ namespace BackupAssistant.ViewModels
 
             IEnumerable<Task> tasks = SafeEnumerateDirectories(directory).Select(async d =>
             {
-                // Check for cancellation
-                token.ThrowIfCancellationRequested();
+                // Wait for concurrency slot to become available
+                await _concurrencyLimiter.WaitAsync(token);
+                try
+                {
+                    // Check for cancellation
+                    token.ThrowIfCancellationRequested();
 
-                await DestinationDirectorySearchAsync(d, fileList, token);
+                    await DestinationDirectorySearchAsync(d, fileList, token);
+                }
+                finally
+                {
+                    // Always release the concurrency slot
+                    _concurrencyLimiter.Release();
+                }
             });
 
             await Task.WhenAll(tasks);
