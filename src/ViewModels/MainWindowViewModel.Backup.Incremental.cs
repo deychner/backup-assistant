@@ -128,7 +128,7 @@ namespace BackupAssistant.ViewModels
         {
             CollectFilesForSourceListing(directory, fileList, token);
 
-            IEnumerable<Task> tasks = SafeGetDirectories(directory).Select(async d =>
+            IEnumerable<Task> tasks = SafeEnumerateDirectories(directory).Select(async d =>
             {
                 // Check for cancellation
                 token.ThrowIfCancellationRequested();
@@ -141,9 +141,7 @@ namespace BackupAssistant.ViewModels
 
         private void CollectFilesForSourceListing(string directory, ConcurrentDictionary<string, FileListing> fileList, CancellationToken token)
         {
-            IReadOnlyCollection<string> files = SafeGetFiles(directory);
-
-            foreach (string f in files)
+            foreach (string f in SafeEnumerateFiles(directory))
             {
                 // Check for cancellation
                 token.ThrowIfCancellationRequested();
@@ -173,7 +171,7 @@ namespace BackupAssistant.ViewModels
         {
             CollectFilesForDestinationListing(directory, fileList, token);
 
-            IEnumerable<Task> tasks = SafeGetDirectories(directory).Select(async d =>
+            IEnumerable<Task> tasks = SafeEnumerateDirectories(directory).Select(async d =>
             {
                 // Check for cancellation
                 token.ThrowIfCancellationRequested();
@@ -186,9 +184,7 @@ namespace BackupAssistant.ViewModels
 
         private void CollectFilesForDestinationListing(string directory, ConcurrentDictionary<string, FileListing> fileList, CancellationToken token)
         {
-            IReadOnlyCollection<string> files = SafeGetFiles(directory);
-
-            foreach (string f in files)
+            foreach (string f in SafeEnumerateFiles(directory))
             {
                 // Check for cancellation
                 token.ThrowIfCancellationRequested();
