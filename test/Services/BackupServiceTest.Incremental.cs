@@ -1,11 +1,10 @@
 ﻿using BackupAssistant.DataModels;
-using BackupAssistant.Test.ViewModels.Base;
-using System.Collections.ObjectModel;
+using BackupAssistant.Test.Services.Base;
 using System.IO.Abstractions.TestingHelpers;
 
-namespace BackupAssistant.Test.ViewModels
+namespace BackupAssistant.Test.Services
 {
-    public class MainWindowViewModelTestBackupIncremental : MainWindowViewModelTestBase
+    public class BackupServiceTestIncremental : BackupServiceTestBase
     {
         #region GetCombinedFileList
 
@@ -17,10 +16,10 @@ namespace BackupAssistant.Test.ViewModels
 
             IDictionary<string, FileListing> fileList = await GetCombinedFileListAsync();
 
-            _ = Assert.Single(fileList);
-            Assert.Contains(fileList, (f) => f.Key == @"...\file.txt");
-            Assert.True(fileList[@"...\file.txt"].IsInSource);
-            Assert.False(fileList[@"...\file.txt"].IsInDestination);
+            KeyValuePair<string, FileListing> kvp = Assert.Single(fileList);
+            Assert.Equal(@"...\file.txt", kvp.Key);
+            Assert.True(kvp.Value.IsInSource);
+            Assert.False(kvp.Value.IsInDestination);
         }
 
         [Fact]
@@ -31,10 +30,10 @@ namespace BackupAssistant.Test.ViewModels
 
             IDictionary<string, FileListing> fileList = await GetCombinedFileListAsync();
 
-            _ = Assert.Single(fileList);
-            Assert.Contains(fileList, (f) => f.Key == @"...\file.txt");
-            Assert.False(fileList[@"...\file.txt"].IsInSource);
-            Assert.True(fileList[@"...\file.txt"].IsInDestination);
+            KeyValuePair<string, FileListing> kvp = Assert.Single(fileList);
+            Assert.Equal(@"...\file.txt", kvp.Key);
+            Assert.False(kvp.Value.IsInSource);
+            Assert.True(kvp.Value.IsInDestination);
         }
 
         [Fact]
@@ -45,10 +44,10 @@ namespace BackupAssistant.Test.ViewModels
 
             IDictionary<string, FileListing> fileList = await GetCombinedFileListAsync();
 
-            _ = Assert.Single(fileList);
-            Assert.Contains(fileList, (f) => f.Key == @"...\file.txt");
-            Assert.True(fileList[@"...\file.txt"].IsInSource);
-            Assert.True(fileList[@"...\file.txt"].IsInDestination);
+            KeyValuePair<string, FileListing> kvp = Assert.Single(fileList);
+            Assert.Equal(@"...\file.txt", kvp.Key);
+            Assert.True(kvp.Value.IsInSource);
+            Assert.True(kvp.Value.IsInDestination);
         }
 
         [Fact]
@@ -59,10 +58,10 @@ namespace BackupAssistant.Test.ViewModels
 
             IDictionary<string, FileListing> fileList = await GetCombinedFileListAsync();
 
-            _ = Assert.Single(fileList);
-            Assert.Contains(fileList, (f) => f.Key == @"...\SubDirectory\file.txt");
-            Assert.True(fileList[@"...\SubDirectory\file.txt"].IsInSource);
-            Assert.False(fileList[@"...\SubDirectory\file.txt"].IsInDestination);
+            KeyValuePair<string, FileListing> kvp = Assert.Single(fileList);
+            Assert.Equal(@"...\SubDirectory\file.txt", kvp.Key);
+            Assert.True(kvp.Value.IsInSource);
+            Assert.False(kvp.Value.IsInDestination);
         }
 
         [Fact]
@@ -73,10 +72,10 @@ namespace BackupAssistant.Test.ViewModels
 
             IDictionary<string, FileListing> fileList = await GetCombinedFileListAsync();
 
-            _ = Assert.Single(fileList);
-            Assert.Contains(fileList, (f) => f.Key == @"...\SubDirectory\file.txt");
-            Assert.False(fileList[@"...\SubDirectory\file.txt"].IsInSource);
-            Assert.True(fileList[@"...\SubDirectory\file.txt"].IsInDestination);
+            KeyValuePair<string, FileListing> kvp = Assert.Single(fileList);
+            Assert.Equal(@"...\SubDirectory\file.txt", kvp.Key);
+            Assert.False(kvp.Value.IsInSource);
+            Assert.True(kvp.Value.IsInDestination);
         }
 
         [Fact]
@@ -87,10 +86,10 @@ namespace BackupAssistant.Test.ViewModels
 
             IDictionary<string, FileListing> fileList = await GetCombinedFileListAsync();
 
-            _ = Assert.Single(fileList);
-            Assert.Contains(fileList, (f) => f.Key == @"...\SubDirectory\file.txt");
-            Assert.True(fileList[@"...\SubDirectory\file.txt"].IsInSource);
-            Assert.True(fileList[@"...\SubDirectory\file.txt"].IsInDestination);
+            KeyValuePair<string, FileListing> kvp = Assert.Single(fileList);
+            Assert.Equal(@"...\SubDirectory\file.txt", kvp.Key);
+            Assert.True(kvp.Value.IsInSource);
+            Assert.True(kvp.Value.IsInDestination);
         }
 
         [Fact]
@@ -107,11 +106,11 @@ namespace BackupAssistant.Test.ViewModels
 
             Assert.Equal(2, fileList.Count);
 
-            Assert.Contains(fileList, (f) => f.Key == @"...\file.txt");
+            Assert.Contains(fileList.Keys, (f) => f == @"...\file.txt");
             Assert.True(fileList[@"...\file.txt"].IsInSource);
             Assert.True(fileList[@"...\file.txt"].IsInDestination);
 
-            Assert.Contains(fileList, (f) => f.Key == @"...\Search\file.txt");
+            Assert.Contains(fileList.Keys, (f) => f == @"...\Search\file.txt");
             Assert.True(fileList[@"...\Search\file.txt"].IsInSource);
             Assert.True(fileList[@"...\Search\file.txt"].IsInDestination);
         }
@@ -121,21 +120,17 @@ namespace BackupAssistant.Test.ViewModels
             return await GetCombinedFileListAsync([]);
         }
 
-        private async Task<IDictionary<string, FileListing>> GetCombinedFileListAsync(ObservableCollection<string> filters)
+        private async Task<IDictionary<string, FileListing>> GetCombinedFileListAsync(ICollection<string> filters)
         {
-            this.ViewModelInstance!.Model.Source = @"c:\Source";
-            this.ViewModelInstance.Model.Destination = @"c:\Destination";
-            this.ViewModelInstance.Model.Filters = filters;
-
-            return await this.ViewModelInstance.GetCombinedFileListAsync(@"c:\Source", @"c:\Destination", CancellationToken.None);
+            return await this.BackupServiceInstance.GetCombinedFileListAsync(@"c:\Source", @"c:\Destination", filters, CancellationToken.None);
         }
 
         #endregion
 
-        #region RunIncrementalBackupInternal
+        #region RunIncrementalBackup
 
         [Fact]
-        public async Task RunIncrementalBackupInternal_NoAction()
+        public async Task RunIncrementalBackup_NoAction()
         {
             DateTimeOffset now = DateTimeOffset.Now;
             this.FileSystemMock.AddFile(@"c:\Source\file.txt", new MockFileData("Sample data") { LastWriteTime = now });
@@ -148,7 +143,7 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
-        public async Task RunIncrementalBackupInternal_Copy()
+        public async Task RunIncrementalBackup_Copy()
         {
             this.FileSystemMock.AddEmptyFile(@"c:\Source\file.txt");
             _ = this.FileSystemMock.Directory.CreateDirectory(@"c:\Destination");
@@ -160,7 +155,7 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
-        public async Task RunIncrementalBackupInternal_Overwrite()
+        public async Task RunIncrementalBackup_Overwrite()
         {
             DateTimeOffset now = DateTimeOffset.Now;
             this.FileSystemMock.AddFile(@"c:\Source\file.txt", new MockFileData("Sample data") { LastWriteTime = now });
@@ -173,7 +168,7 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
-        public async Task RunIncrementalBackupInternal_Delete()
+        public async Task RunIncrementalBackup_Delete()
         {
             _ = this.FileSystemMock.Directory.CreateDirectory(@"c:\Source");
             this.FileSystemMock.AddEmptyFile(@"c:\Destination\file.txt");
@@ -186,11 +181,8 @@ namespace BackupAssistant.Test.ViewModels
 
         private async Task RunIncrementalBackup()
         {
-            this.ViewModelInstance!.Model.Source = @"c:\Source";
-            this.ViewModelInstance.Model.Destination = @"c:\Destination";
-            this.ViewModelInstance.Model.Filters = [];
-
-            await this.ViewModelInstance.RunIncrementalBackupInternalAsync(CancellationToken.None);
+            var progress = new Progress<BackupAssistant.Services.BackupProgress>();
+            await this.BackupServiceInstance.RunIncrementalBackupAsync(@"c:\Source", @"c:\Destination", [], progress, CancellationToken.None);
         }
 
         #endregion

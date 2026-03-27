@@ -1,9 +1,9 @@
-﻿using BackupAssistant.Test.ViewModels.Base;
-using System.Collections.ObjectModel;
+﻿using BackupAssistant.Services;
+using BackupAssistant.Test.Services.Base;
 
-namespace BackupAssistant.Test.ViewModels
+namespace BackupAssistant.Test.Services
 {
-    public class MainWindowViewModelTestBackupFull : MainWindowViewModelTestBase
+    public class BackupServiceTestFull : BackupServiceTestBase
     {
         #region GetFileList
 
@@ -58,45 +58,41 @@ namespace BackupAssistant.Test.ViewModels
             return await GetFileListAsync([]);
         }
 
-        private async Task<ICollection<string>> GetFileListAsync(ObservableCollection<string> filters)
+        private async Task<ICollection<string>> GetFileListAsync(ICollection<string> filters)
         {
-            this.ViewModelInstance!.Model.Filters = filters;
-
-            return await this.ViewModelInstance!.GetFileListAsync(@"c:\Source", CancellationToken.None);
+            return await this.BackupServiceInstance.GetFileListAsync(@"c:\Source", filters, CancellationToken.None);
         }
 
         #endregion
 
-        #region RunFullBackupInternal
+        #region RunFullBackup
 
         [Fact]
-        public async Task RunFullBackupInternal_Basic()
+        public async Task RunFullBackup_Basic()
         {
             this.FileSystemMock.AddEmptyFile(@"c:\Source\file1.txt");
+            _ = this.FileSystemMock.Directory.CreateDirectory(@"c:\Destination");
 
-            await RunFullBackupInternal();
+            await RunFullBackup();
 
             Assert.True(this.FileSystemMock.File.Exists(@"c:\Destination\file1.txt"));
         }
 
         [Fact]
-        public async Task RunFullBackupInternal_BackupDeleted()
+        public async Task RunFullBackup_BackupDeleted()
         {
             this.FileSystemMock.AddDirectory(@"c:\Source");
             this.FileSystemMock.AddEmptyFile(@"c:\Destination\file3.txt");
 
-            await RunFullBackupInternal();
+            await RunFullBackup();
 
             Assert.False(this.FileSystemMock.File.Exists(@"c:\Destination\file3.txt"));
         }
 
-        private async Task RunFullBackupInternal()
+        private async Task RunFullBackup()
         {
-            this.ViewModelInstance!.Model.Source = @"c:\Source";
-            this.ViewModelInstance.Model.Destination = @"c:\Destination";
-            this.ViewModelInstance.Model.Filters = [];
-
-            await this.ViewModelInstance.RunFullBackupInternalAsync(CancellationToken.None);
+            var progress = new Progress<BackupProgress>();
+            await this.BackupServiceInstance.RunFullBackupAsync(@"c:\Source", @"c:\Destination", [], progress, CancellationToken.None);
         }
 
         #endregion
