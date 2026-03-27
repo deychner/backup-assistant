@@ -147,6 +147,19 @@ namespace BackupAssistant.ViewModels
             }
         }
 
+        public IEnumerable<string> SafeEnumerateFiles(string directory)
+        {
+            try
+            {
+                return _fileSystem.Directory.EnumerateFiles(directory);
+            }
+            catch (Exception e)
+            {
+                _logService.AddToLogEntry($"Failed to get files in directory '{directory}', Exception: {e.Message}");
+                return [];
+            }
+        }
+
         public IReadOnlyCollection<string> SafeGetDirectories(string directory)
 
         {
@@ -160,6 +173,19 @@ namespace BackupAssistant.ViewModels
                 _logService.AddToLogEntry($"Failed to get directories in directory '{directory}', Exception: {e.Message}");
 
                 return new ReadOnlyCollection<string>([]);
+            }
+        }
+
+        public IEnumerable<string> SafeEnumerateDirectories(string directory)
+        {
+            try
+            {
+                return _fileSystem.Directory.EnumerateDirectories(directory);
+            }
+            catch (Exception e)
+            {
+                _logService.AddToLogEntry($"Failed to get directories in directory '{directory}', Exception: {e.Message}");
+                return [];
             }
         }
 
