@@ -14,7 +14,7 @@ namespace BackupAssistant.Test.Services.Base
         {
             LogServiceMock = new Mock<ILogService>(MockBehavior.Strict);
             FileSystemMock = new MockFileSystem();
-            
+
             BackupServiceInstance = new BackupService(FileSystemMock, LogServiceMock.Object);
         }
 
