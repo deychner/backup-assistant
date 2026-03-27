@@ -57,14 +57,14 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
-        public void SafeGetFiles()
+        public void SafeEnumerateFiles()
         {
-            IReadOnlyCollection<string>? files = null;
+            ICollection<string>? files = null;
             _ = this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
 
             try
             {
-                files = this.ViewModelInstance!.SafeGetFiles(Guid.NewGuid().ToString());
+                files = [.. this.ViewModelInstance!.SafeEnumerateFiles(Guid.NewGuid().ToString())];
             }
             catch (Exception e)
             {
@@ -76,14 +76,14 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
-        public void SafeGetDirectories()
+        public void SafeEnumerateDirectories()
         {
-            IReadOnlyCollection<string>? directories = null;
+            ICollection<string>? directories = null;
             _ = this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
 
             try
             {
-                directories = this.ViewModelInstance!.SafeGetDirectories(Guid.NewGuid().ToString());
+                directories = [.. this.ViewModelInstance!.SafeEnumerateDirectories(Guid.NewGuid().ToString())];
             }
             catch (Exception e)
             {
