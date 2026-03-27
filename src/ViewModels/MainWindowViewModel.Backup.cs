@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO.Abstractions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,6 +14,9 @@ namespace BackupAssistant.ViewModels
     public partial class MainWindowViewModel : ObservableObject
     {
         private const string FilePathAbbreviation = "...";
+
+        // Using 2x processor cores as a conservative limit for I/O bound operations
+        private readonly SemaphoreSlim _concurrencyLimiter = new(Environment.ProcessorCount * 2, Environment.ProcessorCount * 2);
 
         private AsyncRelayCommand? _runBackupCommand;
         public IAsyncRelayCommand RunBackupCommand => _runBackupCommand ??= new AsyncRelayCommand(async (CancellationToken token) => await RunBackupAsync(token), CanRunBackup);
