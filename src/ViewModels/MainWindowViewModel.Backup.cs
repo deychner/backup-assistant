@@ -132,34 +132,29 @@ namespace BackupAssistant.ViewModels
             }
         }
 
-        public IReadOnlyCollection<string> SafeGetFiles(string directory)
+        public IEnumerable<string> SafeEnumerateFiles(string directory)
         {
             try
             {
-                string[] files = _fileSystem.Directory.GetFiles(directory);
-                return new ReadOnlyCollection<string>(files);
+                return _fileSystem.Directory.EnumerateFiles(directory);
             }
             catch (Exception e)
             {
                 _logService.AddToLogEntry($"Failed to get files in directory '{directory}', Exception: {e.Message}");
-
-                return new ReadOnlyCollection<string>([]);
+                return [];
             }
         }
 
-        public IReadOnlyCollection<string> SafeGetDirectories(string directory)
-
+        public IEnumerable<string> SafeEnumerateDirectories(string directory)
         {
             try
             {
-                string[] directories = _fileSystem.Directory.GetDirectories(directory);
-                return new ReadOnlyCollection<string>(directories);
+                return _fileSystem.Directory.EnumerateDirectories(directory);
             }
             catch (Exception e)
             {
                 _logService.AddToLogEntry($"Failed to get directories in directory '{directory}', Exception: {e.Message}");
-
-                return new ReadOnlyCollection<string>([]);
+                return [];
             }
         }
 

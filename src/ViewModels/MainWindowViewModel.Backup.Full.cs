@@ -81,7 +81,7 @@ namespace BackupAssistant.ViewModels
         {
             GetFilesInDirectory(directory, fileList, token);
 
-            IEnumerable<Task> tasks = SafeGetDirectories(directory).Select(async d =>
+            IEnumerable<Task> tasks = SafeEnumerateDirectories(directory).Select(async d =>
             {
                 // Check for cancellation
                 token.ThrowIfCancellationRequested();
@@ -94,9 +94,7 @@ namespace BackupAssistant.ViewModels
 
         private void GetFilesInDirectory(string directory, ConcurrentBag<string> fileList, CancellationToken token)
         {
-            IReadOnlyCollection<string> files = SafeGetFiles(directory);
-
-            foreach (string f in files)
+            foreach (string f in SafeEnumerateFiles(directory))
             {
                 // Check for cancellation
                 token.ThrowIfCancellationRequested();
