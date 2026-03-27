@@ -154,7 +154,7 @@ namespace BackupAssistant.Services
             progress?.Report(new BackupProgress { Status = "Backup is complete." });
         }
 
-        public async Task<ICollection<string>> GetFileListAsync(string rootDirectory, ICollection<string> filterItems, CancellationToken token)
+        internal async Task<ICollection<string>> GetFileListAsync(string rootDirectory, ICollection<string> filterItems, CancellationToken token)
         {
             ConcurrentBag<string> files = [];
 
@@ -193,7 +193,7 @@ namespace BackupAssistant.Services
             return [.. files];
         }
 
-        public async Task<IDictionary<string, FileListing>> GetCombinedFileListAsync(string sourceDirectory, string destinationDirectory, ICollection<string> filterItems, CancellationToken token)
+        internal async Task<IDictionary<string, FileListing>> GetCombinedFileListAsync(string sourceDirectory, string destinationDirectory, ICollection<string> filterItems, CancellationToken token)
         {
             ConcurrentDictionary<string, FileListing> files = new();
 
