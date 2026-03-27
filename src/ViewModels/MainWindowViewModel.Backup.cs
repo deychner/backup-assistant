@@ -1,10 +1,8 @@
 ﻿using BackupAssistant.DataModels;
-using BackupAssistant.Extensions;
+using BackupAssistant.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Collections.Generic;
-using System.IO.Abstractions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -13,13 +11,8 @@ namespace BackupAssistant.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
     {
-        private const string FilePathAbbreviation = "...";
-
-        // Using 2x processor cores as a conservative limit for I/O bound operations
-        private readonly SemaphoreSlim _concurrencyLimiter = new(Environment.ProcessorCount * 2, Environment.ProcessorCount * 2);
-
         private AsyncRelayCommand? _runBackupCommand;
-        public IAsyncRelayCommand RunBackupCommand => _runBackupCommand ??= new AsyncRelayCommand(async (CancellationToken token) => await RunBackupAsync(token), CanRunBackup);
+        public IAsyncRelayCommand RunBackupCommand => _runBackupCommand ??= new AsyncRelayCommand(async token => await RunBackupAsync(token), CanRunBackup);
 
         public ICommand CancelRunBackupCommand => this.RunBackupCommand.CreateCancelCommand();
 
@@ -30,6 +23,7 @@ namespace BackupAssistant.ViewModels
             if (!_fileSystem.Directory.Exists(this.Source))
             {
                 _logService.AddToLogEntry($"Backup failed. The source directory '{this.Source}' does not exist.");
+                _logService.WriteLogEntry();
 
                 this.Status = "The source directory does not exist.";
                 return;
@@ -38,20 +32,33 @@ namespace BackupAssistant.ViewModels
             if (!_fileSystem.Directory.Exists(this.Destination))
             {
                 _logService.AddToLogEntry($"Backup failed. The destination directory '{this.Destination}' does not exist.");
+                _logService.WriteLogEntry();
 
                 this.Status = "The destination directory does not exist.";
                 return;
             }
+
+            IProgress<BackupProgress> progress = new Progress<BackupProgress>(p =>
+            {
+                if (p.Progress.HasValue)
+                    this.Progress = p.Progress.Value;
+
+                if (p.IsIndeterminate.HasValue)
+                    this.ProgressBarIsIndeterminate = p.IsIndeterminate.Value;
+
+                if (!string.IsNullOrEmpty(p.Status))
+                    this.Status = p.Status;
+            });
 
             try
             {
                 switch (this.BackupType)
                 {
                     case BackupType.Full:
-                        await Task.Run(async () => await RunFullBackupInternalAsync(token), token);
+                        await Task.Run(async () => await _backupService.RunFullBackupAsync(this.Source, this.Destination, this.FilterItems, progress, token), token);
                         break;
                     case BackupType.Incremental:
-                        await Task.Run(async () => await RunIncrementalBackupInternalAsync(token), token);
+                        await Task.Run(async () => await _backupService.RunIncrementalBackupAsync(this.Source, this.Destination, this.FilterItems, progress, token), token);
                         break;
                     default:
                         // do nothing
@@ -117,122 +124,5 @@ namespace BackupAssistant.ViewModels
                 OnPropertyChanged(nameof(Status));
             }
         }
-
-        #region Safety
-
-        public IFileInfo? SafeGetFileInfo(string file)
-        {
-            try
-            {
-                return _fileSystem.FileInfo.New(file);
-            }
-            catch (Exception e)
-            {
-                _logService.AddToLogEntry($"Failed to get file information for file '{file}', Exception: {e.Message}");
-
-                return null;
-            }
-        }
-
-        public IEnumerable<string> SafeEnumerateFiles(string directory)
-        {
-            try
-            {
-                return _fileSystem.Directory.EnumerateFiles(directory);
-            }
-            catch (Exception e)
-            {
-                _logService.AddToLogEntry($"Failed to get files in directory '{directory}', Exception: {e.Message}");
-                return [];
-            }
-        }
-
-        public IEnumerable<string> SafeEnumerateDirectories(string directory)
-        {
-            try
-            {
-                return _fileSystem.Directory.EnumerateDirectories(directory);
-            }
-            catch (Exception e)
-            {
-                _logService.AddToLogEntry($"Failed to get directories in directory '{directory}', Exception: {e.Message}");
-                return [];
-            }
-        }
-
-        public void EnsureDirectoryPathExists(string path)
-        {
-            string? directory = _fileSystem.Path.GetDirectoryName(path);
-
-            if (!string.IsNullOrEmpty(directory) && !_fileSystem.Directory.Exists(directory))
-            {
-                _ = _fileSystem.Directory.CreateDirectory(directory);
-            }
-        }
-
-        public async Task SafeCopyFileAsync(string sourceFileName, string destinationFileName, bool overwrite)
-        {
-            try
-            {
-                EnsureDirectoryPathExists(destinationFileName);
-
-                await Task.Run(() => _fileSystem.File.Copy(sourceFileName, destinationFileName, overwrite));
-            }
-            catch (Exception e)
-            {
-                _logService.AddToLogEntry($"Copy file failed for file '{sourceFileName}', Exception: {e.Message}");
-            }
-        }
-
-        public async Task SafeDeleteFileAsync(string file)
-        {
-            try
-            {
-                await Task.Run(() => _fileSystem.File.Delete(file));
-            }
-            catch (Exception e)
-            {
-                _logService.AddToLogEntry($"Delete file failed for file '{file}', Exception: {e.Message}");
-            }
-        }
-
-        #endregion
-
-        #region Compression
-
-        string ShrinkSourceFileName(string fileName)
-        {
-            return GetAbbreviatedFileName(fileName, this.Source);
-        }
-
-        string ShrinkDestinationFileName(string fileName)
-        {
-            return GetAbbreviatedFileName(fileName, this.Destination);
-        }
-
-        string ExpandSourceFileName(string fileName)
-        {
-            return GetFullFileName(fileName, this.Source);
-        }
-
-        string ExpandDestinationFileName(string fileName)
-        {
-            return GetFullFileName(fileName, this.Destination);
-        }
-
-        static string GetFullFileName(string abbreviatedFileName, string prefix)
-        {
-            return abbreviatedFileName.ReplaceFirst(FilePathAbbreviation, prefix).Replace(@"\\", @"\");
-        }
-
-        static string GetAbbreviatedFileName(string fileName, string prefix)
-        {
-            // Ensure all shortened file names start with "...\"
-            return prefix.EndsWith('\\')
-                ? fileName.ReplaceFirst(prefix, $@"{FilePathAbbreviation}\")
-                : fileName.ReplaceFirst(prefix, FilePathAbbreviation);
-        }
-
-        #endregion
     }
 }
