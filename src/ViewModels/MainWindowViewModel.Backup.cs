@@ -132,21 +132,6 @@ namespace BackupAssistant.ViewModels
             }
         }
 
-        public IReadOnlyCollection<string> SafeGetFiles(string directory)
-        {
-            try
-            {
-                string[] files = _fileSystem.Directory.GetFiles(directory);
-                return new ReadOnlyCollection<string>(files);
-            }
-            catch (Exception e)
-            {
-                _logService.AddToLogEntry($"Failed to get files in directory '{directory}', Exception: {e.Message}");
-
-                return new ReadOnlyCollection<string>([]);
-            }
-        }
-
         public IEnumerable<string> SafeEnumerateFiles(string directory)
         {
             try
@@ -157,22 +142,6 @@ namespace BackupAssistant.ViewModels
             {
                 _logService.AddToLogEntry($"Failed to get files in directory '{directory}', Exception: {e.Message}");
                 return [];
-            }
-        }
-
-        public IReadOnlyCollection<string> SafeGetDirectories(string directory)
-
-        {
-            try
-            {
-                string[] directories = _fileSystem.Directory.GetDirectories(directory);
-                return new ReadOnlyCollection<string>(directories);
-            }
-            catch (Exception e)
-            {
-                _logService.AddToLogEntry($"Failed to get directories in directory '{directory}', Exception: {e.Message}");
-
-                return new ReadOnlyCollection<string>([]);
             }
         }
 
