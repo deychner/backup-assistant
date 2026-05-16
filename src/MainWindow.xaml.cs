@@ -1,7 +1,7 @@
-﻿using BackupAssistant.ViewModels;
+using BackupAssistant.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
 using System.Diagnostics.CodeAnalysis;
-using System.Windows;
 
 namespace BackupAssistant
 {
@@ -9,11 +9,11 @@ namespace BackupAssistant
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public partial class MainWindow : Window
+    public sealed partial class MainWindow : Window
     {
         public MainWindow()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             if (Properties.Settings.Default.UpgradeRequired)
             {
@@ -23,6 +23,9 @@ namespace BackupAssistant
             }
 
             this.DataContext = App.Current.Services.GetService<MainWindowViewModel>();
+
+            ExtendsContentIntoTitleBar = true;
+            SetTitleBar(null);
         }
     }
 }

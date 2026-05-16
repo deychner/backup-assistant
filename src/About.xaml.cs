@@ -1,18 +1,21 @@
-﻿using System.Windows;
+using Microsoft.UI.Xaml;
 
 namespace BackupAssistant
 {
     /// <summary>
     /// Interaction logic for About.xaml
     /// </summary>
-    public partial class About : Window
+    public sealed partial class About : Window
     {
         public About()
         {
-            InitializeComponent();
+            this.InitializeComponent();
+
+            ExtendsContentIntoTitleBar = true;
+            SetTitleBar(null);
         }
 
-        private void OK_Click(object sender, RoutedEventArgs e)
+        private void Close_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }

@@ -1,8 +1,14 @@
-﻿namespace BackupAssistant.DataModels
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace BackupAssistant.DataModels
 {
-    public class FilterItem
+    public partial class FilterItem : ObservableObject
     {
-        public bool IsChecked { get; set; } = false;
-        public string Path { get; set; } = string.Empty;
+        [ObservableProperty]
+        public bool isChecked = false;
+        
+        [ObservableProperty]
+        public string path = string.Empty;
     }
 }
+

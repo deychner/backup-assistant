@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Markup;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Markup;
 
 namespace BackupAssistant.Extensions
 {
@@ -9,7 +9,7 @@ namespace BackupAssistant.Extensions
     {
         public Type? EnumType { get; set; }
 
-        public override object? ProvideValue(IServiceProvider _)
+        protected override object? ProvideValue()
         {
             return EnumType != null ? CreateEnumValueList(EnumType) : (object?)default;
         }
@@ -20,3 +20,4 @@ namespace BackupAssistant.Extensions
         }
     }
 }
+

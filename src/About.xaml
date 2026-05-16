@@ -1,30 +1,50 @@
-﻿<Window x:Class="BackupAssistant.About"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:viewmodels="clr-namespace:BackupAssistant.ViewModels"
-        mc:Ignorable="d"
-        Title="About"
-        WindowStartupLocation="CenterScreen"
-        SizeToContent="WidthAndHeight"
-        ResizeMode="NoResize" Icon="/assets/icon.ico">
-    <Window.Background>
-        <SolidColorBrush Color="WhiteSmoke"/>
-    </Window.Background>
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="BackupAssistant.About"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:BackupAssistant.ViewModels"
+    mc:Ignorable="d"
+    Title="About Backup Assistant"
+    Width="400"
+    Height="250"
+    IsMaximizeButtonVisible="False"
+    IsMinimizeButtonVisible="False">
     <Window.DataContext>
         <viewmodels:AboutViewModel/>
     </Window.DataContext>
-    <Window.Resources>
-        <Style TargetType="{x:Type TextBlock}">
-            <Setter Property="Margin" Value="20,10,20,10"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
-    </Window.Resources>
-    <StackPanel>
-        <TextBlock Text="Backup Assistant" FontSize="24"/>
-        <TextBlock Text="{Binding ApplicationVersion}" FontSize="12"/>
-        <Button Content="OK" Click="OK_Click" Width="85"/>
-    </StackPanel>
+
+    <Grid Padding="32" RowSpacing="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="Backup Assistant"
+                   FontSize="28"
+                   FontWeight="SemiBold"/>
+
+        <TextBlock Grid.Row="1"
+                   Text="{Binding ApplicationVersion}"
+                   FontSize="14"
+                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+
+        <TextBlock Grid.Row="2"
+                   Text="A simple tool to back up your files on Windows."
+                   FontSize="13"
+                   Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                   TextWrapping="Wrap"
+                   Margin="0,8,0,0"/>
+
+        <Button Grid.Row="3"
+                Content="Close"
+                HorizontalAlignment="Right"
+                Click="Close_Click"
+                Padding="32,8"/>
+    </Grid>
 </Window>

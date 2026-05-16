@@ -13,10 +13,8 @@ namespace BackupAssistant.Models
         public int Progress { get; set; } = 0;
         public bool ProgressBarIsIndeterminate { get; set; } = false;
         public string Status { get; set; } = string.Empty;
-
-        public MainWindowModel()
-        {
-
-        }
+        
+        public bool IsFiltersPaneOpen { get; set; } = false;
     }
+
 }

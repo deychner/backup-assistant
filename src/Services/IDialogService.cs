@@ -1,12 +1,14 @@
 ﻿using BackupAssistant.ViewModels;
-using System.Windows;
+using System.Threading.Tasks;
 
 namespace BackupAssistant.Services
 {
     public interface IDialogService
     {
-        (bool?, string) ShowOpenFolderDialog(string selectedPath = "");
+        Task<(bool?, string)> ShowOpenFolderDialog(string selectedPath = "");
 
-        bool? ShowDialog<T>(IDialogViewModel viewModel) where T : Window, new();
+        bool? ShowDialog<T>(IDialogViewModel viewModel) where T : new();
     }
 }
+
+

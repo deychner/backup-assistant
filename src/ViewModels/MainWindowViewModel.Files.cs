@@ -1,16 +1,17 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
+using System.Threading.Tasks;
 
 namespace BackupAssistant.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
     {
-        private RelayCommand? _addEditSourceCommand;
-        private RelayCommand? _addEditDestinationCommand;
+        private AsyncRelayCommand? _addEditSourceCommand;
+        private AsyncRelayCommand? _addEditDestinationCommand;
 
-        public IRelayCommand AddEditSourceCommand => _addEditSourceCommand ??= new RelayCommand(AddEditSource);
-        public IRelayCommand AddEditDestinationCommand => _addEditDestinationCommand ??= new RelayCommand(AddEditDestination);
+        public IAsyncRelayCommand AddEditSourceCommand => _addEditSourceCommand ??= new AsyncRelayCommand(AddEditSource);
+        public IAsyncRelayCommand AddEditDestinationCommand => _addEditDestinationCommand ??= new AsyncRelayCommand(AddEditDestination);
 
         public string Source
         {
@@ -53,10 +54,10 @@ namespace BackupAssistant.ViewModels
             }
         }
 
-        public void AddEditSource()
+        public async Task AddEditSource()
         {
             string initialPath = GetOpenFolderDialogInitialPath(this.Source);
-            (bool? dialogResult, string selectedPath) = _dialogService.ShowOpenFolderDialog(initialPath);
+            (bool? dialogResult, string selectedPath) = await _dialogService.ShowOpenFolderDialog(initialPath);
 
             if (dialogResult == true)
             {
@@ -64,10 +65,10 @@ namespace BackupAssistant.ViewModels
             }
         }
 
-        public void AddEditDestination()
+        public async Task AddEditDestination()
         {
             string initialPath = GetOpenFolderDialogInitialPath(this.Destination);
-            (bool? dialogResult, string selectedPath) = _dialogService.ShowOpenFolderDialog(initialPath);
+            (bool? dialogResult, string selectedPath) = await _dialogService.ShowOpenFolderDialog(initialPath);
 
             if (dialogResult == true)
             {
@@ -83,3 +84,4 @@ namespace BackupAssistant.ViewModels
         }
     }
 }
+
