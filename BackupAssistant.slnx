@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BackupAssistant.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/BackupAssistant.Test.csproj" />
+  </Folder>
+</Solution>
