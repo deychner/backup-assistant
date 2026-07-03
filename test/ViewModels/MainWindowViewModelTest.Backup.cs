@@ -1,4 +1,5 @@
 ﻿using BackupAssistant.Test.ViewModels.Base;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace BackupAssistant.Test.ViewModels
@@ -9,8 +10,6 @@ namespace BackupAssistant.Test.ViewModels
         public async Task RunBackupAsync_SourceDoesNotExist()
         {
             this.LogServiceMock.Setup(c => c.ClearLog());
-            this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
-            this.LogServiceMock.Setup(w => w.WriteLogEntry()).Verifiable();
 
             this.FileSystemMock.AddDirectory(@"c:\destination");
 
@@ -20,14 +19,13 @@ namespace BackupAssistant.Test.ViewModels
             await this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
 
             Assert.Equal("The source directory does not exist.", this.ViewModelInstance.Status);
+            VerifyLoggedError();
         }
 
         [Fact]
         public async Task RunBackupAsync_DestinationDoesNotExist()
         {
             this.LogServiceMock.Setup(c => c.ClearLog());
-            this.LogServiceMock.Setup(a => a.AddToLogEntry(It.IsAny<string>()));
-            this.LogServiceMock.Setup(w => w.WriteLogEntry()).Verifiable();
 
             this.FileSystemMock.AddDirectory(@"c:\source");
 
@@ -37,6 +35,19 @@ namespace BackupAssistant.Test.ViewModels
             await this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
 
             Assert.Equal("The destination directory does not exist.", this.ViewModelInstance.Status);
+            VerifyLoggedError();
+        }
+
+        private void VerifyLoggedError()
+        {
+            this.LoggerMock.Verify(
+                x => x.Log(
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.Once);
         }
     }
 }

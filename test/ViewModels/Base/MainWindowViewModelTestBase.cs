@@ -1,5 +1,6 @@
 ﻿using BackupAssistant.Services;
 using BackupAssistant.ViewModels;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System.IO.Abstractions.TestingHelpers;
 
@@ -10,6 +11,7 @@ namespace BackupAssistant.Test.ViewModels.Base
         protected Mock<ISettingsService> SettingsServiceMock;
         protected Mock<IDialogService> DialogServiceMock;
         protected Mock<ILogService> LogServiceMock;
+        protected Mock<ILogger<MainWindowViewModel>> LoggerMock;
         protected MockFileSystem FileSystemMock;
 
         protected MainWindowViewModel? ViewModelInstance;
@@ -19,6 +21,7 @@ namespace BackupAssistant.Test.ViewModels.Base
             SettingsServiceMock = new Mock<ISettingsService>(MockBehavior.Strict);
             DialogServiceMock = new Mock<IDialogService>(MockBehavior.Strict);
             LogServiceMock = new Mock<ILogService>(MockBehavior.Strict);
+            LoggerMock = new Mock<ILogger<MainWindowViewModel>>();
             FileSystemMock = new MockFileSystem();
 
             if (createInstance)
@@ -29,7 +32,12 @@ namespace BackupAssistant.Test.ViewModels.Base
                 _ = SettingsServiceMock.SetupProperty(b => b.BackupType);
                 SettingsServiceMock.Setup(s => s.Save()).Verifiable();
 
-                ViewModelInstance = new MainWindowViewModel(SettingsServiceMock.Object, DialogServiceMock.Object, LogServiceMock.Object, FileSystemMock);
+                ViewModelInstance = new MainWindowViewModel(
+                    SettingsServiceMock.Object,
+                    DialogServiceMock.Object,
+                    LogServiceMock.Object,
+                    LoggerMock.Object,
+                    FileSystemMock);
             }
         }
 
@@ -48,6 +56,7 @@ namespace BackupAssistant.Test.ViewModels.Base
                 SettingsServiceMock.VerifyAll();
                 DialogServiceMock.VerifyAll();
                 LogServiceMock.VerifyAll();
+                LoggerMock.VerifyAll();
             }
         }
 
