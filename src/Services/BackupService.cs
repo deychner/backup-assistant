@@ -409,7 +409,7 @@ namespace BackupAssistant.Services
 
         #region Safety
 
-        private IFileInfo? SafeGetFileInfo(string file)
+        internal IFileInfo? SafeGetFileInfo(string file)
         {
             try
             {
@@ -422,7 +422,7 @@ namespace BackupAssistant.Services
             }
         }
 
-        private IEnumerable<string> SafeEnumerateFiles(string directory)
+        internal IEnumerable<string> SafeEnumerateFiles(string directory)
         {
             try
             {
@@ -435,7 +435,7 @@ namespace BackupAssistant.Services
             }
         }
 
-        private IEnumerable<string> SafeEnumerateDirectories(string directory)
+        internal IEnumerable<string> SafeEnumerateDirectories(string directory)
         {
             try
             {
@@ -458,7 +458,7 @@ namespace BackupAssistant.Services
             }
         }
 
-        private async Task SafeCopyFileAsync(string sourceFileName, string destinationFileName, bool overwrite)
+        internal async Task SafeCopyFileAsync(string sourceFileName, string destinationFileName, bool overwrite)
         {
             try
             {
@@ -472,7 +472,7 @@ namespace BackupAssistant.Services
             }
         }
 
-        private async Task SafeDeleteFileAsync(string file)
+        internal async Task SafeDeleteFileAsync(string file)
         {
             try
             {
