@@ -7,7 +7,7 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public void AddEditSource()
         {
-            this.FileSystemMock.AddDirectory(@"c:\old\source");
+            this.InMemoryFileSystem.AddDirectory(@"c:\old\source");
 
             this.ViewModelInstance!.Model.Source = @"c:\old\source";
             // Use c:\old\source as the initial path to ensure that the default path for an existing directory is used
@@ -45,7 +45,7 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public void AddEditDestination()
         {
-            this.FileSystemMock.AddDirectory(@"c:\old\destination");
+            this.InMemoryFileSystem.AddDirectory(@"c:\old\destination");
 
             this.ViewModelInstance!.Model.Destination = @"c:\old\destination";
             // Use c:\old\destination as the initial path to ensure that the default path for an existing directory is used
@@ -83,7 +83,7 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public void GetOpenFolderDialogInitialPath_DirectoryExists()
         {
-            this.FileSystemMock.AddDirectory(@"c:\test");
+            this.InMemoryFileSystem.AddDirectory(@"c:\test");
 
             string result = this.ViewModelInstance!.GetOpenFolderDialogInitialPath(@"c:\test");
 

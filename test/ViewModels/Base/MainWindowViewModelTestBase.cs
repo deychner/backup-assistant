@@ -12,7 +12,7 @@ namespace BackupAssistant.Test.ViewModels.Base
         protected Mock<ISettingsService> SettingsServiceMock;
         protected Mock<IDialogService> DialogServiceMock;
         protected Mock<ILogger<MainWindowViewModel>> LoggerMock;
-        protected MockFileSystem FileSystemMock;
+        protected MockFileSystem InMemoryFileSystem;
 
         protected MainWindowViewModel? ViewModelInstance;
 
@@ -22,7 +22,7 @@ namespace BackupAssistant.Test.ViewModels.Base
             SettingsServiceMock = new Mock<ISettingsService>(MockBehavior.Strict);
             DialogServiceMock = new Mock<IDialogService>(MockBehavior.Strict);
             LoggerMock = new Mock<ILogger<MainWindowViewModel>>(MockBehavior.Strict);
-            FileSystemMock = new MockFileSystem();
+            InMemoryFileSystem = new MockFileSystem();
 
             if (createInstance)
             {
@@ -37,7 +37,7 @@ namespace BackupAssistant.Test.ViewModels.Base
                     SettingsServiceMock.Object,
                     DialogServiceMock.Object,
                     LoggerMock.Object,
-                    FileSystemMock);
+                    InMemoryFileSystem);
             }
         }
 

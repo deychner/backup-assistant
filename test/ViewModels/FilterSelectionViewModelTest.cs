@@ -17,10 +17,10 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public void Input()
         {
-            this.FileSystemMock.AddDirectory(@"c:\Source");
-            this.FileSystemMock.AddDirectory(@"c:\Source\dir1");
-            this.FileSystemMock.AddDirectory(@"c:\Source\dir1\dir3");
-            this.FileSystemMock.AddDirectory(@"c:\Source\dir2");
+            this.InMemoryFileSystem.AddDirectory(@"c:\Source");
+            this.InMemoryFileSystem.AddDirectory(@"c:\Source\dir1");
+            this.InMemoryFileSystem.AddDirectory(@"c:\Source\dir1\dir3");
+            this.InMemoryFileSystem.AddDirectory(@"c:\Source\dir2");
 
             this.ViewModelInstance.Input = new FilterSelectionInput()
             {
@@ -55,10 +55,10 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public void PopulateFilterList_NoFilters()
         {
-            this.FileSystemMock.AddDirectory(@"c:\Source");
-            this.FileSystemMock.AddDirectory(@"c:\Source\dir1");
-            this.FileSystemMock.AddDirectory(@"c:\Source\dir1\dir3");
-            this.FileSystemMock.AddDirectory(@"c:\Source\dir2");
+            this.InMemoryFileSystem.AddDirectory(@"c:\Source");
+            this.InMemoryFileSystem.AddDirectory(@"c:\Source\dir1");
+            this.InMemoryFileSystem.AddDirectory(@"c:\Source\dir1\dir3");
+            this.InMemoryFileSystem.AddDirectory(@"c:\Source\dir2");
 
             this.ViewModelInstance.Model.RootPath = @"c:\Source";
 
@@ -73,9 +73,9 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public void PopulateFilterList_Filters()
         {
-            this.FileSystemMock.AddDirectory(@"c:\Source");
-            this.FileSystemMock.AddDirectory(@"c:\Source\dir1");
-            this.FileSystemMock.AddDirectory(@"c:\Source\dir2");
+            this.InMemoryFileSystem.AddDirectory(@"c:\Source");
+            this.InMemoryFileSystem.AddDirectory(@"c:\Source\dir1");
+            this.InMemoryFileSystem.AddDirectory(@"c:\Source\dir2");
 
             this.ViewModelInstance.Model.RootPath = @"c:\Source";
 
@@ -89,10 +89,10 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public void PopulateFilterList_IgnoreHidden()
         {
-            this.FileSystemMock.AddDirectory(@"c:\Source");
-            this.FileSystemMock.AddDirectory(@"c:\Source\dir1");
-            this.FileSystemMock.AddDirectory(@"c:\Source\dir2");
-            this.FileSystemMock.DirectoryInfo.New(@"c:\Source\dir2").Attributes = FileAttributes.Hidden;
+            this.InMemoryFileSystem.AddDirectory(@"c:\Source");
+            this.InMemoryFileSystem.AddDirectory(@"c:\Source\dir1");
+            this.InMemoryFileSystem.AddDirectory(@"c:\Source\dir2");
+            this.InMemoryFileSystem.DirectoryInfo.New(@"c:\Source\dir2").Attributes = FileAttributes.Hidden;
 
             this.ViewModelInstance.Model.RootPath = @"c:\Source";
 

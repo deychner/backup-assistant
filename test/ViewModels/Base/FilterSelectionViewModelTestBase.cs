@@ -5,15 +5,15 @@ namespace BackupAssistant.Test.ViewModels.Base
 {
     public class FilterSelectionViewModelTestBase
     {
-        protected readonly MockFileSystem FileSystemMock;
+        protected readonly MockFileSystem InMemoryFileSystem;
 
         protected readonly FilterSelectionViewModel ViewModelInstance;
 
         public FilterSelectionViewModelTestBase()
         {
-            FileSystemMock = new MockFileSystem();
+            InMemoryFileSystem = new MockFileSystem();
 
-            ViewModelInstance = new FilterSelectionViewModel(FileSystemMock);
+            ViewModelInstance = new FilterSelectionViewModel(InMemoryFileSystem);
         }
     }
 }

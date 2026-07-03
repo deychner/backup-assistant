@@ -27,7 +27,8 @@ namespace BackupAssistant.ViewModels
                 settingsService,
                 dialogService,
                 logger,
-                new FileSystem()) { }
+                new FileSystem())
+        { }
 
         public MainWindowViewModel(
             IBackupService backupService,

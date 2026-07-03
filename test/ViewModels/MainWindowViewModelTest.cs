@@ -22,7 +22,7 @@ namespace BackupAssistant.Test.ViewModels
                 this.SettingsServiceMock.Object,
                 this.DialogServiceMock.Object,
                 this.LoggerMock.Object,
-                this.FileSystemMock);
+                this.InMemoryFileSystem);
 
             // Verify new collection was created
             Assert.NotNull(this.SettingsServiceMock.Object.Filters);
@@ -50,7 +50,7 @@ namespace BackupAssistant.Test.ViewModels
                 this.SettingsServiceMock.Object,
                 this.DialogServiceMock.Object,
                 this.LoggerMock.Object,
-                this.FileSystemMock);
+                this.InMemoryFileSystem);
 
             // Verify count
             Assert.Equal(2, instance.Model.Filters.Count);
@@ -74,7 +74,7 @@ namespace BackupAssistant.Test.ViewModels
                 this.SettingsServiceMock.Object,
                 this.DialogServiceMock.Object,
                 this.LoggerMock.Object,
-                this.FileSystemMock);
+                this.InMemoryFileSystem);
 
             Assert.Equal(@"c:\source", instance.Model.Source);
             Assert.Equal(@"c:\destination", instance.Model.Destination);

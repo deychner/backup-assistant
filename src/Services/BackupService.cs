@@ -409,7 +409,7 @@ namespace BackupAssistant.Services
 
         #region Safety
 
-        private IFileInfo? SafeGetFileInfo(string file)
+        internal IFileInfo? SafeGetFileInfo(string file)
         {
             try
             {
@@ -422,7 +422,7 @@ namespace BackupAssistant.Services
             }
         }
 
-        private IEnumerable<string> SafeEnumerateFiles(string directory)
+        internal IEnumerable<string> SafeEnumerateFiles(string directory)
         {
             try
             {
@@ -435,7 +435,7 @@ namespace BackupAssistant.Services
             }
         }
 
-        private IEnumerable<string> SafeEnumerateDirectories(string directory)
+        internal IEnumerable<string> SafeEnumerateDirectories(string directory)
         {
             try
             {
@@ -448,21 +448,16 @@ namespace BackupAssistant.Services
             }
         }
 
-        private void EnsureDirectoryPathExists(string path)
-        {
-            string? directory = _fileSystem.Path.GetDirectoryName(path);
-
-            if (!string.IsNullOrEmpty(directory) && !_fileSystem.Directory.Exists(directory))
-            {
-                _ = _fileSystem.Directory.CreateDirectory(directory);
-            }
-        }
-
-        private async Task SafeCopyFileAsync(string sourceFileName, string destinationFileName, bool overwrite)
+        internal async Task SafeCopyFileAsync(string sourceFileName, string destinationFileName, bool overwrite)
         {
             try
             {
-                EnsureDirectoryPathExists(destinationFileName);
+                // Ensure directory exists
+                string? directory = _fileSystem.Path.GetDirectoryName(destinationFileName);
+                if (!string.IsNullOrEmpty(directory) && !_fileSystem.Directory.Exists(directory))
+                {
+                    _ = _fileSystem.Directory.CreateDirectory(directory);
+                }
 
                 await Task.Run(() => _fileSystem.File.Copy(sourceFileName, destinationFileName, overwrite));
             }
@@ -472,7 +467,7 @@ namespace BackupAssistant.Services
             }
         }
 
-        private async Task SafeDeleteFileAsync(string file)
+        internal async Task SafeDeleteFileAsync(string file)
         {
             try
             {

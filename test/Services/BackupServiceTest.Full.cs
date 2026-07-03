@@ -10,8 +10,8 @@ namespace BackupAssistant.Test.Services
         [Fact]
         public async Task GetFileList_SingleLevel()
         {
-            this.FileSystemMock.AddEmptyFile(@"c:\Source\file1.txt");
-            this.FileSystemMock.AddEmptyFile(@"c:\Source\file2.txt");
+            this.InMemoryFileSystem?.AddEmptyFile(@"c:\Source\file1.txt");
+            this.InMemoryFileSystem?.AddEmptyFile(@"c:\Source\file2.txt");
 
             ICollection<string> fileList = await GetFileListAsync();
 
@@ -23,10 +23,10 @@ namespace BackupAssistant.Test.Services
         [Fact]
         public async Task GetFileList_MultiLevel()
         {
-            this.FileSystemMock.AddEmptyFile(@"c:\Source\file1.txt");
-            this.FileSystemMock.AddEmptyFile(@"c:\Source\L1F1\file2.txt");
-            this.FileSystemMock.AddEmptyFile(@"c:\Source\L1F1\L2F1\file4.txt");
-            this.FileSystemMock.AddEmptyFile(@"c:\Source\L1F2\file3.txt");
+            this.InMemoryFileSystem?.AddEmptyFile(@"c:\Source\file1.txt");
+            this.InMemoryFileSystem?.AddEmptyFile(@"c:\Source\L1F1\file2.txt");
+            this.InMemoryFileSystem?.AddEmptyFile(@"c:\Source\L1F1\L2F1\file4.txt");
+            this.InMemoryFileSystem?.AddEmptyFile(@"c:\Source\L1F2\file3.txt");
 
             ICollection<string> fileList = await GetFileListAsync();
 
@@ -40,10 +40,10 @@ namespace BackupAssistant.Test.Services
         [Fact]
         public async Task GetFileList_MultiLevel_Filters()
         {
-            this.FileSystemMock.AddEmptyFile(@"c:\Source\file1.txt");
-            this.FileSystemMock.AddEmptyFile(@"c:\Source\L1F1\file2.txt");
-            this.FileSystemMock.AddEmptyFile(@"c:\Source\L1F1\L2F1\file4.txt");
-            this.FileSystemMock.AddEmptyFile(@"c:\Source\L1F2\file3.txt");
+            this.InMemoryFileSystem?.AddEmptyFile(@"c:\Source\file1.txt");
+            this.InMemoryFileSystem?.AddEmptyFile(@"c:\Source\L1F1\file2.txt");
+            this.InMemoryFileSystem?.AddEmptyFile(@"c:\Source\L1F1\L2F1\file4.txt");
+            this.InMemoryFileSystem?.AddEmptyFile(@"c:\Source\L1F2\file3.txt");
 
             ICollection<string> fileList = await GetFileListAsync([@"...\L1F1"]);
 
@@ -70,23 +70,23 @@ namespace BackupAssistant.Test.Services
         [Fact]
         public async Task RunFullBackup_Basic()
         {
-            this.FileSystemMock.AddEmptyFile(@"c:\Source\file1.txt");
-            _ = this.FileSystemMock.Directory.CreateDirectory(@"c:\Destination");
+            this.InMemoryFileSystem?.AddEmptyFile(@"c:\Source\file1.txt");
+            _ = this.InMemoryFileSystem?.Directory.CreateDirectory(@"c:\Destination");
 
             await RunFullBackup();
 
-            Assert.True(this.FileSystemMock.File.Exists(@"c:\Destination\file1.txt"));
+            Assert.True(this.InMemoryFileSystem?.File.Exists(@"c:\Destination\file1.txt"));
         }
 
         [Fact]
         public async Task RunFullBackup_BackupDeleted()
         {
-            this.FileSystemMock.AddDirectory(@"c:\Source");
-            this.FileSystemMock.AddEmptyFile(@"c:\Destination\file3.txt");
+            this.InMemoryFileSystem?.AddDirectory(@"c:\Source");
+            this.InMemoryFileSystem?.AddEmptyFile(@"c:\Destination\file3.txt");
 
             await RunFullBackup();
 
-            Assert.False(this.FileSystemMock.File.Exists(@"c:\Destination\file3.txt"));
+            Assert.False(this.InMemoryFileSystem?.File.Exists(@"c:\Destination\file3.txt"));
         }
 
         private async Task RunFullBackup()
