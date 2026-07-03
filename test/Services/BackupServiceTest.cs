@@ -7,16 +7,17 @@ namespace BackupAssistant.Test.Services
 {
     public class BackupServiceTest : BackupServiceTestBase
     {
+        private const string TEST_FILE = @"c:\test_file.txt";
+        private const string TEST_DIRECTORY = @"c:\Source";
+
         public BackupServiceTest() : base(false) { }
 
         [Fact]
         public void SafeGetFileInfo_ThrowsException_LogsWarning()
         {
-            string testFile = "test_file.txt";
-
             Mock<IFileInfoFactory> fileInfoFactoryMock = new();
             fileInfoFactoryMock
-                .Setup(f => f.New(testFile))
+                .Setup(f => f.New(TEST_FILE))
                 .Throws(new UnauthorizedAccessException("Access denied."));
 
             this.FileSystemMock?
@@ -25,38 +26,66 @@ namespace BackupAssistant.Test.Services
 
             SetupLogger("Failed to get file information");
 
-            var fileInfo = this.BackupServiceInstance.SafeGetFileInfo(testFile);
+            var fileInfo = this.BackupServiceInstance.SafeGetFileInfo(TEST_FILE);
             Assert.Null(fileInfo);
         }
 
         [Fact]
         public void SafeEnumerateFiles_ThrowsException_LogsWarning()
         {
-            string testDirectory = @"c:\Source";
-
             this.FileSystemMock?
-                .Setup(x => x.Directory.EnumerateFiles(testDirectory))
+                .Setup(x => x.Directory.EnumerateFiles(TEST_DIRECTORY))
                 .Throws(new UnauthorizedAccessException("Access denied."));
 
             SetupLogger("Failed to get files in directory");
 
-            var files = this.BackupServiceInstance.SafeEnumerateFiles(testDirectory);
+            var files = this.BackupServiceInstance.SafeEnumerateFiles(TEST_DIRECTORY);
             Assert.Empty(files);
         }
 
         [Fact]
         public void SafeEnumerateDirectories_ThrowsException_LogsWarning()
         {
-            string testDirectory = @"c:\Source";
-
             this.FileSystemMock?
-                .Setup(x => x.Directory.EnumerateDirectories(testDirectory))
+                .Setup(x => x.Directory.EnumerateDirectories(TEST_DIRECTORY))
                 .Throws(new UnauthorizedAccessException("Access denied."));
 
             SetupLogger("Failed to get directories in directory");
 
-            var directories = this.BackupServiceInstance.SafeEnumerateDirectories(testDirectory);
+            var directories = this.BackupServiceInstance.SafeEnumerateDirectories(TEST_DIRECTORY);
             Assert.Empty(directories);
+        }
+
+        [Fact]
+        public async Task SafeCopyFileAsync_ThrowsException_LogsWarning()
+        {
+            this.FileSystemMock?
+                .Setup(x => x.Path.GetDirectoryName(TEST_FILE))
+                .Returns(TEST_DIRECTORY);
+
+            this.FileSystemMock?
+                .Setup(x => x.Directory.Exists(TEST_DIRECTORY))
+                .Returns(true);
+
+            this.FileSystemMock?
+                .Setup(x => x.File.Copy(It.IsAny<string>(), TEST_FILE, It.IsAny<bool>()))
+                .Throws(new UnauthorizedAccessException("Access denied."));
+
+            SetupLogger("Copy file failed for file");
+
+            await this.BackupServiceInstance.SafeCopyFileAsync(TEST_FILE, TEST_FILE, true);
+        }
+
+        [Fact]
+        public async Task SafeDeleteFileAsync_ThrowsException_LogsWarning()
+        {
+            this.FileSystemMock?
+                .Setup(x => x.File.Delete(TEST_FILE))
+                .Throws(new UnauthorizedAccessException("Access denied."));
+
+            SetupLogger("Delete file failed for file");
+
+            await this.BackupServiceInstance.SafeDeleteFileAsync(TEST_FILE);
         }
 
         private void SetupLogger(string messageSearchText)
