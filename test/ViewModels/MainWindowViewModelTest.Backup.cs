@@ -9,11 +9,11 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public async Task RunBackupAsync_SourceDoesNotExist()
         {
-            SetupLogger();
+            SetupLogger("Backup failed. The source directory 'invalid_directory' does not exist.");
 
             this.InMemoryFileSystem.AddDirectory(@"c:\destination");
 
-            this.ViewModelInstance!.Source = string.Empty;
+            this.ViewModelInstance!.Source = "invalid_directory";
             this.ViewModelInstance.Destination = @"c:\destination";
 
             await this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
@@ -24,24 +24,24 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public async Task RunBackupAsync_DestinationDoesNotExist()
         {
-            SetupLogger();
+            SetupLogger("Backup failed. The destination directory 'invalid_directory' does not exist.");
 
             this.InMemoryFileSystem.AddDirectory(@"c:\source");
 
             this.ViewModelInstance!.Source = @"c:\source";
-            this.ViewModelInstance.Destination = string.Empty;
+            this.ViewModelInstance.Destination = "invalid_directory";
 
             await this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
 
             Assert.Equal("The destination directory does not exist.", this.ViewModelInstance.Status);
         }
 
-        private void SetupLogger()
+        private void SetupLogger(string messageSearchText)
         {
             this.LoggerMock.Setup(l => l.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
+                It.Is<It.IsAnyType>((value, type) => value.ToString()!.Contains(messageSearchText)),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()));
         }
