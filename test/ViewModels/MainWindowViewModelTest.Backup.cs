@@ -11,7 +11,7 @@ namespace BackupAssistant.Test.ViewModels
         {
             SetupLogger();
 
-            this.FileSystemMock.AddDirectory(@"c:\destination");
+            this.InMemoryFileSystem.AddDirectory(@"c:\destination");
 
             this.ViewModelInstance!.Source = string.Empty;
             this.ViewModelInstance.Destination = @"c:\destination";
@@ -26,7 +26,7 @@ namespace BackupAssistant.Test.ViewModels
         {
             SetupLogger();
 
-            this.FileSystemMock.AddDirectory(@"c:\source");
+            this.InMemoryFileSystem.AddDirectory(@"c:\source");
 
             this.ViewModelInstance!.Source = @"c:\source";
             this.ViewModelInstance.Destination = string.Empty;
