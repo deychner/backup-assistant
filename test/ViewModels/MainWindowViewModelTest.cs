@@ -17,7 +17,12 @@ namespace BackupAssistant.Test.ViewModels
             _ = this.SettingsServiceMock.SetupProperty(b => b.BackupType, 0);
             this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
 
-            MainWindowViewModel instance = new(this.SettingsServiceMock.Object, this.DialogServiceMock.Object, this.LogServiceMock.Object, this.FileSystemMock);
+            MainWindowViewModel instance = new(
+                this.BackupServiceMock.Object,
+                this.SettingsServiceMock.Object,
+                this.DialogServiceMock.Object,
+                this.LoggerMock.Object,
+                this.FileSystemMock);
 
             // Verify new collection was created
             Assert.NotNull(this.SettingsServiceMock.Object.Filters);
@@ -40,7 +45,12 @@ namespace BackupAssistant.Test.ViewModels
             _ = this.SettingsServiceMock.SetupProperty(b => b.BackupType, 0);
             this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
 
-            MainWindowViewModel instance = new(this.SettingsServiceMock.Object, this.DialogServiceMock.Object, this.LogServiceMock.Object, this.FileSystemMock);
+            MainWindowViewModel instance = new(
+                this.BackupServiceMock.Object,
+                this.SettingsServiceMock.Object,
+                this.DialogServiceMock.Object,
+                this.LoggerMock.Object,
+                this.FileSystemMock);
 
             // Verify count
             Assert.Equal(2, instance.Model.Filters.Count);
@@ -59,7 +69,12 @@ namespace BackupAssistant.Test.ViewModels
             _ = this.SettingsServiceMock.SetupProperty(b => b.BackupType, 1);
             this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
 
-            MainWindowViewModel instance = new(this.SettingsServiceMock.Object, this.DialogServiceMock.Object, this.LogServiceMock.Object, this.FileSystemMock);
+            MainWindowViewModel instance = new(
+                this.BackupServiceMock.Object,
+                this.SettingsServiceMock.Object,
+                this.DialogServiceMock.Object,
+                this.LoggerMock.Object,
+                this.FileSystemMock);
 
             Assert.Equal(@"c:\source", instance.Model.Source);
             Assert.Equal(@"c:\destination", instance.Model.Destination);

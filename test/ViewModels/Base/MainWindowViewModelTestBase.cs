@@ -1,5 +1,6 @@
 ﻿using BackupAssistant.Services;
 using BackupAssistant.ViewModels;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System.IO.Abstractions.TestingHelpers;
 
@@ -7,18 +8,20 @@ namespace BackupAssistant.Test.ViewModels.Base
 {
     public class MainWindowViewModelTestBase : IDisposable
     {
+        protected Mock<IBackupService> BackupServiceMock;
         protected Mock<ISettingsService> SettingsServiceMock;
         protected Mock<IDialogService> DialogServiceMock;
-        protected Mock<ILogService> LogServiceMock;
+        protected Mock<ILogger<MainWindowViewModel>> LoggerMock;
         protected MockFileSystem FileSystemMock;
 
         protected MainWindowViewModel? ViewModelInstance;
 
         public MainWindowViewModelTestBase(bool createInstance = true)
         {
+            BackupServiceMock = new Mock<IBackupService>(MockBehavior.Strict);
             SettingsServiceMock = new Mock<ISettingsService>(MockBehavior.Strict);
             DialogServiceMock = new Mock<IDialogService>(MockBehavior.Strict);
-            LogServiceMock = new Mock<ILogService>(MockBehavior.Strict);
+            LoggerMock = new Mock<ILogger<MainWindowViewModel>>(MockBehavior.Strict);
             FileSystemMock = new MockFileSystem();
 
             if (createInstance)
@@ -29,7 +32,12 @@ namespace BackupAssistant.Test.ViewModels.Base
                 _ = SettingsServiceMock.SetupProperty(b => b.BackupType);
                 SettingsServiceMock.Setup(s => s.Save()).Verifiable();
 
-                ViewModelInstance = new MainWindowViewModel(SettingsServiceMock.Object, DialogServiceMock.Object, LogServiceMock.Object, FileSystemMock);
+                ViewModelInstance = new MainWindowViewModel(
+                    BackupServiceMock.Object,
+                    SettingsServiceMock.Object,
+                    DialogServiceMock.Object,
+                    LoggerMock.Object,
+                    FileSystemMock);
             }
         }
 
@@ -45,9 +53,10 @@ namespace BackupAssistant.Test.ViewModels.Base
         {
             if (disposing)
             {
+                BackupServiceMock.VerifyAll();
                 SettingsServiceMock.VerifyAll();
                 DialogServiceMock.VerifyAll();
-                LogServiceMock.VerifyAll();
+                LoggerMock.VerifyAll();
             }
         }
 

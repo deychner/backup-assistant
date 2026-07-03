@@ -6,13 +6,13 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AssemblyVersion>2026.6.25.0</AssemblyVersion>
+    <AssemblyVersion>2026.7.2.0</AssemblyVersion>
     <StartupObject>BackupAssistant.App</StartupObject>
     <ApplicationIcon>assets\icon.ico</ApplicationIcon>
     <Authors>Darryl Eychner</Authors>
     <Company>Anaheim Electronics</Company>
     <Copyright>Copyright © Darryl Eychner 2026</Copyright>
-    <FileVersion>2026.6.25.0</FileVersion>
+    <FileVersion>2026.7.2.0</FileVersion>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>Deploy\signingkey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
@@ -32,6 +32,10 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.9" />
+    <PackageReference Include="Serilog" Version="4.3.1" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageReference Include="System.IO.Abstractions" Version="22.1.1" />
   </ItemGroup>
 

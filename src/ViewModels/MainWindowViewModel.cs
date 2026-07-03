@@ -2,6 +2,7 @@
 using BackupAssistant.Models;
 using BackupAssistant.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Extensions.Logging;
 using System.IO.Abstractions;
 
 namespace BackupAssistant.ViewModels
@@ -12,22 +13,36 @@ namespace BackupAssistant.ViewModels
         private readonly IFileSystem _fileSystem;
         private readonly ISettingsService _settingsService;
         private readonly IDialogService _dialogService;
-        private readonly ILogService _logService;
-        private readonly BackupService _backupService;
+        private readonly ILogger<MainWindowViewModel> _logger;
+        private readonly IBackupService _backupService;
 
         public MainWindowModel Model => _model;
 
-        public MainWindowViewModel(ISettingsService settingsService, IDialogService dialogService, ILogService logService) : this(settingsService, dialogService, logService, new FileSystem()) { }
+        public MainWindowViewModel(
+            IBackupService backupService,
+            ISettingsService settingsService,
+            IDialogService dialogService,
+            ILogger<MainWindowViewModel> logger) : this(
+                backupService,
+                settingsService,
+                dialogService,
+                logger,
+                new FileSystem()) { }
 
-        public MainWindowViewModel(ISettingsService settingsService, IDialogService dialogService, ILogService logService, IFileSystem fileSystem)
+        public MainWindowViewModel(
+            IBackupService backupService,
+            ISettingsService settingsService,
+            IDialogService dialogService,
+            ILogger<MainWindowViewModel> logger,
+            IFileSystem fileSystem)
         {
             _model = new MainWindowModel();
 
+            _backupService = backupService;
             _settingsService = settingsService;
             _dialogService = dialogService;
-            _logService = logService;
+            _logger = logger;
             _fileSystem = fileSystem;
-            _backupService = new BackupService(fileSystem, logService);
 
             // Initialize filters if needed
             if (_settingsService.Filters == null)
