@@ -6,6 +6,7 @@ using Serilog;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.IO.Abstractions;
 using System.Windows;
 
 namespace BackupAssistant
@@ -42,8 +43,9 @@ namespace BackupAssistant
 
             // Services
             _ = services.AddSingleton<IBackupService, BackupService>();
-            _ = services.AddSingleton<ISettingsService, SettingsService>();
             _ = services.AddSingleton<IDialogService, DialogService>();
+            _ = services.AddSingleton<IFileSystem, FileSystem>();
+            _ = services.AddSingleton<ISettingsService, SettingsService>();
 
             // View models
             _ = services.AddTransient<MainWindowViewModel>();
