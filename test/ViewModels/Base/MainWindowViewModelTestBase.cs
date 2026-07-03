@@ -8,9 +8,9 @@ namespace BackupAssistant.Test.ViewModels.Base
 {
     public class MainWindowViewModelTestBase : IDisposable
     {
+        protected Mock<IBackupService> BackupServiceMock;
         protected Mock<ISettingsService> SettingsServiceMock;
         protected Mock<IDialogService> DialogServiceMock;
-        protected Mock<ILogService> LogServiceMock;
         protected Mock<ILogger<MainWindowViewModel>> LoggerMock;
         protected MockFileSystem FileSystemMock;
 
@@ -18,10 +18,10 @@ namespace BackupAssistant.Test.ViewModels.Base
 
         public MainWindowViewModelTestBase(bool createInstance = true)
         {
+            BackupServiceMock = new Mock<IBackupService>(MockBehavior.Strict);
             SettingsServiceMock = new Mock<ISettingsService>(MockBehavior.Strict);
             DialogServiceMock = new Mock<IDialogService>(MockBehavior.Strict);
-            LogServiceMock = new Mock<ILogService>(MockBehavior.Strict);
-            LoggerMock = new Mock<ILogger<MainWindowViewModel>>();
+            LoggerMock = new Mock<ILogger<MainWindowViewModel>>(MockBehavior.Strict);
             FileSystemMock = new MockFileSystem();
 
             if (createInstance)
@@ -33,9 +33,9 @@ namespace BackupAssistant.Test.ViewModels.Base
                 SettingsServiceMock.Setup(s => s.Save()).Verifiable();
 
                 ViewModelInstance = new MainWindowViewModel(
+                    BackupServiceMock.Object,
                     SettingsServiceMock.Object,
                     DialogServiceMock.Object,
-                    LogServiceMock.Object,
                     LoggerMock.Object,
                     FileSystemMock);
             }
@@ -53,9 +53,9 @@ namespace BackupAssistant.Test.ViewModels.Base
         {
             if (disposing)
             {
+                BackupServiceMock.VerifyAll();
                 SettingsServiceMock.VerifyAll();
                 DialogServiceMock.VerifyAll();
-                LogServiceMock.VerifyAll();
                 LoggerMock.VerifyAll();
             }
         }

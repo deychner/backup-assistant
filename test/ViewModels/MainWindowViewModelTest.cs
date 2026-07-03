@@ -18,9 +18,9 @@ namespace BackupAssistant.Test.ViewModels
             this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
 
             MainWindowViewModel instance = new(
+                this.BackupServiceMock.Object,
                 this.SettingsServiceMock.Object,
                 this.DialogServiceMock.Object,
-                this.LogServiceMock.Object,
                 this.LoggerMock.Object,
                 this.FileSystemMock);
 
@@ -46,9 +46,9 @@ namespace BackupAssistant.Test.ViewModels
             this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
 
             MainWindowViewModel instance = new(
+                this.BackupServiceMock.Object,
                 this.SettingsServiceMock.Object,
                 this.DialogServiceMock.Object,
-                this.LogServiceMock.Object,
                 this.LoggerMock.Object,
                 this.FileSystemMock);
 
@@ -70,9 +70,9 @@ namespace BackupAssistant.Test.ViewModels
             this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
 
             MainWindowViewModel instance = new(
+                this.BackupServiceMock.Object,
                 this.SettingsServiceMock.Object,
                 this.DialogServiceMock.Object,
-                this.LogServiceMock.Object,
                 this.LoggerMock.Object,
                 this.FileSystemMock);
 
