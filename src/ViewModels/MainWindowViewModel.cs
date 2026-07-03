@@ -13,33 +13,36 @@ namespace BackupAssistant.ViewModels
         private readonly IFileSystem _fileSystem;
         private readonly ISettingsService _settingsService;
         private readonly IDialogService _dialogService;
-        private readonly ILogService _logService;
         private readonly ILogger<MainWindowViewModel> _logger;
-        private readonly BackupService _backupService;
+        private readonly IBackupService _backupService;
 
         public MainWindowModel Model => _model;
 
         public MainWindowViewModel(
+            IBackupService backupService,
             ISettingsService settingsService,
             IDialogService dialogService,
-            ILogService logService,
-            ILogger<MainWindowViewModel> logger) : this(settingsService, dialogService, logService, logger, new FileSystem()) { }
+            ILogger<MainWindowViewModel> logger) : this(
+                backupService,
+                settingsService,
+                dialogService,
+                logger,
+                new FileSystem()) { }
 
         public MainWindowViewModel(
+            IBackupService backupService,
             ISettingsService settingsService,
             IDialogService dialogService,
-            ILogService logService,
             ILogger<MainWindowViewModel> logger,
             IFileSystem fileSystem)
         {
             _model = new MainWindowModel();
 
+            _backupService = backupService;
             _settingsService = settingsService;
             _dialogService = dialogService;
-            _logService = logService;
             _logger = logger;
             _fileSystem = fileSystem;
-            _backupService = new BackupService(fileSystem, logService);
 
             // Initialize filters if needed
             if (_settingsService.Filters == null)

@@ -19,8 +19,6 @@ namespace BackupAssistant.ViewModels
 
         public async Task RunBackupAsync(CancellationToken token)
         {
-            _logService.ClearLog();
-
             if (!_fileSystem.Directory.Exists(this.Source))
             {
                 _logger.LogError("Backup failed. The source directory '{this.Source}' does not exist.", this.Source);
@@ -67,10 +65,6 @@ namespace BackupAssistant.ViewModels
             catch (OperationCanceledException)
             {
                 this.Status = "Backup was canceled.";
-            }
-            finally
-            {
-                _logService.WriteLogEntry();
             }
         }
 

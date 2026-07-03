@@ -1,5 +1,6 @@
 using BackupAssistant.DataModels;
 using BackupAssistant.Extensions;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BackupAssistant.Services
 {
-    public class BackupService(IFileSystem fileSystem, ILogService logService) : IBackupService
+    public class BackupService(IFileSystem fileSystem, ILogger<BackupService> logger) : IBackupService
     {
         private const string FilePathAbbreviation = "...";
 
@@ -18,7 +19,7 @@ namespace BackupAssistant.Services
         private readonly SemaphoreSlim _concurrencyLimiter = new(Environment.ProcessorCount * 2, Environment.ProcessorCount * 2);
 
         private readonly IFileSystem _fileSystem = fileSystem;
-        private readonly ILogService _logService = logService;
+        private readonly ILogger<BackupService> _logger = logger;
 
         public async Task RunFullBackupAsync(
             string source,
@@ -416,8 +417,7 @@ namespace BackupAssistant.Services
             }
             catch (Exception e)
             {
-                _logService.AddToLogEntry($"Failed to get file information for file '{file}', Exception: {e.Message}");
-
+                _logger.LogWarning("Failed to get file information for file '{file}', Exception: {exception}", file, e.Message);
                 return null;
             }
         }
@@ -430,7 +430,7 @@ namespace BackupAssistant.Services
             }
             catch (Exception e)
             {
-                _logService.AddToLogEntry($"Failed to get files in directory '{directory}', Exception: {e.Message}");
+                _logger.LogWarning("Failed to get files in directory '{directory}', Exception: {exception}", directory, e.Message);
                 return [];
             }
         }
@@ -443,7 +443,7 @@ namespace BackupAssistant.Services
             }
             catch (Exception e)
             {
-                _logService.AddToLogEntry($"Failed to get directories in directory '{directory}', Exception: {e.Message}");
+                _logger.LogWarning("Failed to get directories in directory '{directory}', Exception: {exception}", directory, e.Message);
                 return [];
             }
         }
@@ -468,7 +468,7 @@ namespace BackupAssistant.Services
             }
             catch (Exception e)
             {
-                _logService.AddToLogEntry($"Copy file failed for file '{sourceFileName}', Exception: {e.Message}");
+                _logger.LogWarning("Copy file failed for file '{sourceFileName}', Exception: {exception}", sourceFileName, e.Message);
             }
         }
 
@@ -480,7 +480,7 @@ namespace BackupAssistant.Services
             }
             catch (Exception e)
             {
-                _logService.AddToLogEntry($"Delete file failed for file '{file}', Exception: {e.Message}");
+                _logger.LogWarning("Delete file failed for file '{file}', Exception: {exception}", file, e.Message);
             }
         }
 
