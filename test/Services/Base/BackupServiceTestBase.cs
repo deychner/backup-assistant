@@ -41,7 +41,7 @@ namespace BackupAssistant.Test.Services.Base
         {
             if (disposing)
             {
-                FileSystemMock?.VerifyAll(); 
+                FileSystemMock?.VerifyAll();
                 LoggerMock.VerifyAll();
             }
         }
