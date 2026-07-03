@@ -2,6 +2,7 @@
 using BackupAssistant.Models;
 using BackupAssistant.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Extensions.Logging;
 using System.IO.Abstractions;
 
 namespace BackupAssistant.ViewModels
@@ -13,19 +14,30 @@ namespace BackupAssistant.ViewModels
         private readonly ISettingsService _settingsService;
         private readonly IDialogService _dialogService;
         private readonly ILogService _logService;
+        private readonly ILogger<MainWindowViewModel> _logger;
         private readonly BackupService _backupService;
 
         public MainWindowModel Model => _model;
 
-        public MainWindowViewModel(ISettingsService settingsService, IDialogService dialogService, ILogService logService) : this(settingsService, dialogService, logService, new FileSystem()) { }
+        public MainWindowViewModel(
+            ISettingsService settingsService,
+            IDialogService dialogService,
+            ILogService logService,
+            ILogger<MainWindowViewModel> logger) : this(settingsService, dialogService, logService, logger, new FileSystem()) { }
 
-        public MainWindowViewModel(ISettingsService settingsService, IDialogService dialogService, ILogService logService, IFileSystem fileSystem)
+        public MainWindowViewModel(
+            ISettingsService settingsService,
+            IDialogService dialogService,
+            ILogService logService,
+            ILogger<MainWindowViewModel> logger,
+            IFileSystem fileSystem)
         {
             _model = new MainWindowModel();
 
             _settingsService = settingsService;
             _dialogService = dialogService;
             _logService = logService;
+            _logger = logger;
             _fileSystem = fileSystem;
             _backupService = new BackupService(fileSystem, logService);
 

@@ -2,6 +2,7 @@
 using BackupAssistant.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,8 +23,7 @@ namespace BackupAssistant.ViewModels
 
             if (!_fileSystem.Directory.Exists(this.Source))
             {
-                _logService.AddToLogEntry($"Backup failed. The source directory '{this.Source}' does not exist.");
-                _logService.WriteLogEntry();
+                _logger.LogError("Backup failed. The source directory '{this.Source}' does not exist.", this.Source);
 
                 this.Status = "The source directory does not exist.";
                 return;
@@ -31,8 +31,7 @@ namespace BackupAssistant.ViewModels
 
             if (!_fileSystem.Directory.Exists(this.Destination))
             {
-                _logService.AddToLogEntry($"Backup failed. The destination directory '{this.Destination}' does not exist.");
-                _logService.WriteLogEntry();
+                _logger.LogError("Backup failed. The destination directory '{this.Destination}' does not exist.", this.Destination);
 
                 this.Status = "The destination directory does not exist.";
                 return;
