@@ -1,0 +1,78 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    WinUI 3 (Windows App SDK) desktop app, deployed unpackaged and self-contained so that
+    it keeps working as a plain .exe / ClickOnce install with no separate runtime prerequisite.
+    This project holds only UI: XAML, code-behind and the UI-specific service implementations.
+  -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>BackupAssistant</RootNamespace>
+    <AssemblyName>BackupAssistant</AssemblyName>
+    <UseWinUI>true</UseWinUI>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>assets\icon.ico</ApplicationIcon>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <EnableMsixTooling>false</EnableMsixTooling>
+  </PropertyGroup>
+
+  <!--
+    A self-contained Windows App SDK build always needs a concrete RID. Derive it from the selected
+    platform so that choosing ARM64 or x86 in Visual Studio really does produce that architecture,
+    and fall back to x64 for an unqualified `dotnet build`. An explicit -r on the command line or in
+    a publish profile still wins.
+  -->
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == ''">
+    <RuntimeIdentifier Condition="'$(Platform)' == 'x86'">win-x86</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(Platform)' == 'x64'">win-x64</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(Platform)' == 'ARM64'">win-arm64</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.10" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.3.1" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2526" />
+    <PackageReference Include="Serilog" Version="4.4.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BackupAssistant.Core\BackupAssistant.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="assets\**" />
+    <Content Include="assets\icon.ico" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!--
+    The Windows App SDK adds compiled XAML (.xbf) and the resource index (.pri) to the build output
+    only - its AddProcessedXamlFilesToCopyLocal target hooks GetCopyToOutputDirectoryItems and has no
+    publish equivalent. Without this, publishing an unpackaged app yields an executable that dies on
+    startup with a stowed WinRT exception because it has no XAML to load. Carry those files across.
+  -->
+  <Target Name="AddWinUIXamlAndResourcesToPublish" AfterTargets="ComputeFilesToPublish">
+    <ItemGroup>
+      <!--
+        Only this project's own compiled XAML and resource index. The framework .pri files that sit
+        alongside them are already published by the SDK from obj\...\MsixContent, and globbing them
+        here would trip NETSDK1152 (duplicate publish paths).
+      -->
+      <_WinUIRuntimeAsset Include="$(OutDir)**\*.xbf" />
+      <_WinUIRuntimeAsset Include="$(OutDir)$(AssemblyName).pri" />
+      <ResolvedFileToPublish Include="@(_WinUIRuntimeAsset)">
+        <RelativePath>$([MSBuild]::MakeRelative($(OutDir), %(FullPath)))</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+
+</Project>

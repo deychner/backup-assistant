@@ -250,6 +250,8 @@ Generated_Code/
 _UpgradeReport_Files/
 Backup*/
 !Backup Assistant*/
+# ...but not this repository's own project folders
+!BackupAssistant*/
 UpgradeLog*.XML
 UpgradeLog*.htm
 ServiceFabricBackup/

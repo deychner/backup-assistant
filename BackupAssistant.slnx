@@ -1,8 +1,30 @@
 <Solution>
+  <!--
+    WinUI 3 apps cannot build as Any CPU, so the solution platforms are the three architectures
+    the app supports and BackupAssistant.csproj maps to each one directly. BackupAssistant.Core
+    and BackupAssistant.Test are ordinary Any CPU libraries, so every solution platform maps onto
+    their single AnyCPU configuration.
+  -->
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+    <Platform Name="ARM64" />
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+  </Configurations>
   <Folder Name="/src/">
-    <Project Path="src/BackupAssistant.csproj" />
+    <Project Path="src/BackupAssistant.Core/BackupAssistant.Core.csproj">
+      <Platform Solution="*|*" Project="AnyCPU" />
+    </Project>
+    <Project Path="src/BackupAssistant/BackupAssistant.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+    </Project>
   </Folder>
   <Folder Name="/test/">
-    <Project Path="test/BackupAssistant.Test.csproj" />
+    <Project Path="test/BackupAssistant.Test.csproj">
+      <Platform Solution="*|*" Project="AnyCPU" />
+    </Project>
   </Folder>
 </Solution>

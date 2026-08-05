@@ -1,66 +1,106 @@
-﻿using BackupAssistant.DataModels;
 using BackupAssistant.Test.ViewModels.Base;
 using BackupAssistant.ViewModels;
 using Moq;
-using System.Collections.ObjectModel;
 
 namespace BackupAssistant.Test.ViewModels
 {
     public class MainWindowViewModelTestFiltering : MainWindowViewModelTestBase
     {
-        [Fact]
-        public void FilterImageSource()
+        [Theory]
+        [InlineData(0, false, "All folders")]
+        [InlineData(1, true, "1 folder selected")]
+        [InlineData(3, true, "3 folders selected")]
+        public void FilterSummary(int filterCount, bool expectedHasFilters, string expectedSummary)
         {
-            this.ViewModelInstance!.Model.Filters = [];
-            Assert.Equal("/assets/filter_16_regular.png", this.ViewModelInstance.FilterImageSource);
+            this.ViewModelInstance!.Model.Filters = [.. Enumerable.Range(0, filterCount).Select(i => $"...\\dir{i}")];
 
-            this.ViewModelInstance!.Model.Filters = ["test"];
-            Assert.Equal("/assets/filter_16_filled.png", this.ViewModelInstance.FilterImageSource);
+            Assert.Equal(expectedHasFilters, this.ViewModelInstance.HasFilters);
+            Assert.Equal(expectedSummary, this.ViewModelInstance.FilterSummary);
         }
 
         [Fact]
-        public void EditFilters()
+        public async Task EditFilters()
         {
-            _ = this.DialogServiceMock.Setup(s => s.ShowDialog<FilterSelection>(It.IsAny<IDialogViewModel>())).Returns(true);
+            this.InMemoryFileSystem.AddDirectory(@"c:\source\keep");
+            this.InMemoryFileSystem.AddDirectory(@"c:\source\skip");
 
-            Mock<IDialogViewModel> dialogViewModelMock = new(MockBehavior.Strict);
-            dialogViewModelMock.SetupSet(i => i.Input = It.IsAny<FilterSelectionInput>()).Verifiable();
-            _ = dialogViewModelMock.SetupGet(o => o.Output).Returns(new ObservableCollection<string> { "edited_filter" });
+            FilterSelectionViewModel dialogViewModel = new(this.InMemoryFileSystem);
 
-            // Add existing information
-            this.ViewModelInstance!.Model.Source = "original";
-            this.ViewModelInstance.Model.Filters = ["original_filter"];
-            this.SettingsServiceMock.Object.Filters = ["original_filter"];
+            // Stand in for the user ticking one folder and pressing Apply
+            _ = this.DialogServiceMock
+                .Setup(s => s.ShowFilterSelectionDialogAsync(dialogViewModel))
+                .Callback(() => dialogViewModel.FilterItems.First(f => f.Path == @"...\keep").IsChecked = true)
+                .ReturnsAsync(true);
 
-            this.ViewModelInstance.EditFilters(dialogViewModelMock.Object);
+            this.ViewModelInstance!.Model.Source = @"c:\source";
+            this.ViewModelInstance.Model.Filters = ["...\\original"];
+            this.SettingsServiceMock.Object.Filters = ["...\\original"];
 
-            // Verify results
-            _ = Assert.Single(this.ViewModelInstance.Model.Filters);
-            Assert.Equal("edited_filter", this.ViewModelInstance.Model.Filters[0]);
-            _ = Assert.Single(this.SettingsServiceMock.Object.Filters);
-            Assert.Equal("edited_filter", this.SettingsServiceMock.Object.Filters[0]);
+            await this.ViewModelInstance.EditFiltersAsync(dialogViewModel);
+
+            Assert.Equal([@"...\keep"], this.ViewModelInstance.Model.Filters);
+            Assert.Equal([@"...\keep"], this.SettingsServiceMock.Object.Filters);
+            this.SettingsServiceMock.Verify(s => s.Save(), Times.AtLeastOnce);
         }
 
         [Fact]
-        public void EditFilters_NoAction()
+        public async Task EditFilters_Cancelled()
         {
-            _ = this.DialogServiceMock.Setup(s => s.ShowDialog<FilterSelection>(It.IsAny<IDialogViewModel>())).Returns(false);
+            this.InMemoryFileSystem.AddDirectory(@"c:\source\keep");
 
-            Mock<IDialogViewModel> dialogViewModelMock = new(MockBehavior.Strict);
-            dialogViewModelMock.SetupSet(i => i.Input = It.IsAny<FilterSelectionInput>()).Verifiable();
+            FilterSelectionViewModel dialogViewModel = new(this.InMemoryFileSystem);
 
-            // Add existing information
-            this.ViewModelInstance!.Model.Source = "original";
-            this.ViewModelInstance.Model.Filters = ["original_filter"];
-            this.SettingsServiceMock.Object.Filters = ["original_filter"];
+            _ = this.DialogServiceMock
+                .Setup(s => s.ShowFilterSelectionDialogAsync(dialogViewModel))
+                .ReturnsAsync(false);
 
-            this.ViewModelInstance.EditFilters(dialogViewModelMock.Object);
+            this.ViewModelInstance!.Model.Source = @"c:\source";
+            this.ViewModelInstance.Model.Filters = ["...\\original"];
+            this.SettingsServiceMock.Object.Filters = ["...\\original"];
 
-            // Verify results
-            _ = Assert.Single(this.ViewModelInstance.Model.Filters);
-            Assert.Equal("original_filter", this.ViewModelInstance.Model.Filters[0]);
-            _ = Assert.Single(this.SettingsServiceMock.Object.Filters);
-            Assert.Equal("original_filter", this.SettingsServiceMock.Object.Filters[0]);
+            await this.ViewModelInstance.EditFiltersAsync(dialogViewModel);
+
+            Assert.Equal([@"...\original"], this.ViewModelInstance.Model.Filters);
+            Assert.Equal([@"...\original"], this.SettingsServiceMock.Object.Filters);
+        }
+
+        [Fact]
+        public async Task EditFilters_SeedsDialogWithCurrentSelection()
+        {
+            this.InMemoryFileSystem.AddDirectory(@"c:\source\keep");
+            this.InMemoryFileSystem.AddDirectory(@"c:\source\skip");
+
+            FilterSelectionViewModel dialogViewModel = new(this.InMemoryFileSystem);
+
+            _ = this.DialogServiceMock
+                .Setup(s => s.ShowFilterSelectionDialogAsync(dialogViewModel))
+                .ReturnsAsync(false);
+
+            this.ViewModelInstance!.Model.Source = @"c:\source";
+            this.ViewModelInstance.Model.Filters = ["...\\keep"];
+
+            await this.ViewModelInstance.EditFiltersAsync(dialogViewModel);
+
+            // The already-selected folder should arrive at the dialog pre-checked
+            Assert.True(dialogViewModel.FilterItems.First(f => f.Path == @"...\keep").IsChecked);
+            Assert.False(dialogViewModel.FilterItems.First(f => f.Path == @"...\skip").IsChecked);
+        }
+
+        [Fact]
+        public async Task EditFiltersCommand_BuildsItsOwnDialogViewModel()
+        {
+            this.InMemoryFileSystem.AddDirectory(@"c:\source\keep");
+
+            _ = this.DialogServiceMock
+                .Setup(s => s.ShowFilterSelectionDialogAsync(It.IsAny<FilterSelectionViewModel>()))
+                .Callback((FilterSelectionViewModel vm) => vm.FilterItems.First().IsChecked = true)
+                .ReturnsAsync(true);
+
+            this.ViewModelInstance!.Model.Source = @"c:\source";
+
+            await this.ViewModelInstance.EditFiltersCommand.ExecuteAsync(null);
+
+            Assert.Equal([@"...\keep"], this.ViewModelInstance.Model.Filters);
         }
 
         [Fact]

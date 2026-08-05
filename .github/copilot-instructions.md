@@ -4,10 +4,10 @@
 
 ```bash
 # Build the solution
-dotnet build BackupAssistant.sln
+dotnet build BackupAssistant.slnx
 
 # Run all tests
-dotnet test BackupAssistant.sln
+dotnet test BackupAssistant.slnx
 
 # Run a single test class
 dotnet test test/BackupAssistant.Test.csproj --filter "FullyQualifiedName~BackupServiceTest"
@@ -20,15 +20,33 @@ dotnet test test/BackupAssistant.Test.csproj --filter "FullyQualifiedName~Backup
 
 ## Architecture
 
-This is a WPF desktop app targeting `net10.0-windows`. It uses the MVVM pattern via **CommunityToolkit.Mvvm** and **Microsoft.Extensions.DependencyInjection** for the service container (configured in `App.xaml.cs`).
+This is a **WinUI 3** (Windows App SDK) desktop app using the MVVM pattern via
+**CommunityToolkit.Mvvm** and **Microsoft.Extensions.DependencyInjection**.
+
+It is deployed **unpackaged and self-contained** (`WindowsPackageType=None`,
+`WindowsAppSDKSelfContained=true`), so it runs as a plain `.exe` with no runtime prerequisite.
+
+### Two projects, one rule
+
+- **`src/BackupAssistant.Core`** (`net10.0-windows`) — data models, services, view models.
+  **Must never reference WinUI or any other UI framework.** This is what lets the test suite run
+  headless under `dotnet test` with no XAML runtime or STA thread.
+- **`src/BackupAssistant`** (`net10.0-windows10.0.19041.0`) — the WinUI 3 app: XAML, code-behind,
+  and the UI-specific implementations of the Core abstractions. Composition root is `App.xaml.cs`.
+
+If a view model needs something from the UI (a dialog, the app lifetime), add a method to an
+abstraction in `Core/Services` and implement it in the app project. Do not reach for a WinUI type
+from Core.
 
 ### Layer structure
 
-- **`src/DataModels/`** — Plain data types and enums (e.g., `FileListing`, `BackupType`, `BackupAction`). No dependencies on other layers.
-- **`src/Models/`** — Observable model classes that back the ViewModels (e.g., `MainWindowModel`).
-- **`src/Services/`** — Business logic behind interfaces (`IBackupService`, `IDialogService`, `ILogService`, `ISettingsService`). All services are registered as singletons except `BackupService`, which is instantiated directly by the ViewModel.
-- **`src/ViewModels/`** — MVVM ViewModels. `MainWindowViewModel` is split across multiple partial class files by concern (`.Backup.cs`, `.Files.cs`, `.Filtering.cs`, `.Menu.cs`).
-- **`src/Extensions/`** — Internal utility extensions (e.g., `ReplaceFirst` string extension, float `Interlocked.Add`).
+- **`Core/DataModels/`** — Plain data types and enums (`FileListing`, `BackupType`, `BackupAction`, `BackupSettings`). No dependencies on other layers.
+- **`Core/Models/`** — Observable model classes that back the ViewModels (e.g., `MainWindowModel`).
+- **`Core/Services/`** — Business logic behind interfaces (`IBackupService`, `IDialogService`, `ISettingsService`, `IApplicationService`).
+- **`Core/ViewModels/`** — MVVM ViewModels. `MainWindowViewModel` is split across partial class files by concern (`.Backup.cs`, `.Files.cs`, `.Filtering.cs`, `.Menu.cs`).
+- **`Core/Extensions/`** — Internal utility extensions (`ReplaceFirst` string extension, float `Interlocked.Add`).
+- **`BackupAssistant/Views/`** — `ContentDialog` subclasses. WinUI has no modal `Window.ShowDialog()`.
+- **`BackupAssistant/Services/`** — `DialogService`, `ApplicationService`.
 
 ### Backup logic
 
@@ -38,23 +56,85 @@ This is a WPF desktop app targeting `net10.0-windows`. It uses the MVVM pattern 
 
 Concurrency is throttled via `SemaphoreSlim` at `ProcessorCount * 2`.
 
+**Filters are an include list, not an exclude list.** When `filterItems` is non-empty, the backup
+covers files sitting directly in the source root **plus** the listed subfolders recursively.
+An empty filter list means "back up everything".
+
 ## Key Conventions
 
+### Theming: never hard-code a colour
+
+The app must follow the Windows light/dark app theme. That means:
+- Never set `RequestedTheme` anywhere.
+- Brushes come from `{ThemeResource ...}` (e.g. `CardBackgroundFillColorDefaultBrush`,
+  `TextFillColorSecondaryBrush`); text styles from `{StaticResource ...}`.
+- Icons are `FontIcon` glyphs, never bitmaps — glyphs recolour with the theme, PNGs do not.
+- `MainWindow` sets `AppWindow.TitleBar.PreferredTheme = TitleBarTheme.UseDefaultAppMode`, because
+  the default (`Legacy`) leaves the caption light in dark mode.
+
+### Always guard property setters against no-op writes
+
+Compiled two-way `x:Bind` writes the value straight back into the view model. A setter that raises
+`PropertyChanged` unconditionally will therefore loop forever and blow the stack. Use
+`ObservableObject.SetProperty(...)` (or an explicit equality check) in every notifying setter.
+
 ### `System.IO.Abstractions` for testability
-All file system access goes through `IFileSystem` (injected). Tests use `MockFileSystem` from `System.IO.Abstractions.TestingHelpers` instead of touching the real file system.
+
+All file system access goes through `IFileSystem` (injected). Tests use `MockFileSystem` from `System.IO.Abstractions.TestingHelpers` instead of touching the real file system. This includes settings persistence — `JsonSettingsService` reads and writes through `IFileSystem`.
 
 ### Partial ViewModel files
+
 `MainWindowViewModel` is broken into partial class files per concern. New ViewModel behavior should follow this pattern — add a new `MainWindowViewModel.{Concern}.cs` file rather than growing the base file.
 
 ### Test base classes with strict mocks
+
 Each test area has a base class (e.g., `MainWindowViewModelTestBase`, `BackupServiceTestBase`) that:
 - Creates `Mock<T>` with `MockBehavior.Strict`
-- Calls `VerifyAll()` on all mocks in `Dispose()`
+- Calls `Verify()` on all mocks in `Dispose()`
 
-Tests inherit from these bases and only set up what their specific test needs. This catches unexpected calls automatically.
+`MockBehavior.Strict` is what catches unexpected calls. `Dispose` uses `Verify()` rather than
+`VerifyAll()` so that a shared setup in the base class does not have to be exercised by every
+single test; a test that cares about an interaction asserts it explicitly.
 
 ### `[ExcludeFromCodeCoverage]` usage
-Applied to `App.xaml.cs` (UI bootstrap code) and to the test assembly itself via an assembly-level attribute in the `.csproj`. Apply it to any purely UI glue code that cannot be unit tested.
+
+Applied to the UI glue that cannot be unit tested — `App.xaml.cs`, `MainWindow.xaml.cs`, the
+`ContentDialog` classes, `DialogService`, `ApplicationService` — and to the test assembly itself
+via an assembly-level attribute in the `.csproj`.
+
+### Accessibility
+
+Icon-only buttons need `AutomationProperties.Name` in addition to a tooltip, so screen readers and
+UI automation can identify them.
 
 ### Settings persistence
-User settings (source, destination, filters, backup type) are persisted through `ISettingsService`, which wraps `Properties.Settings`. The ViewModel saves settings immediately on every change.
+
+User settings (source, destination, filters, backup type) are persisted as JSON at
+`%LOCALAPPDATA%\Anaheim_Electronics\settings.json` through `ISettingsService`. The ViewModel saves
+settings immediately on every change. Constructing a ViewModel must *not* write settings back out.
+
+### Solution platforms
+
+WinUI 3 cannot build as Any CPU, so `BackupAssistant.slnx` declares `x64`, `x86` and `ARM64` as its
+solution platforms, and `BackupAssistant.csproj` derives its `RuntimeIdentifier` from `$(Platform)`.
+`BackupAssistant.Core` and `BackupAssistant.Test` are Any CPU and are mapped with
+`<Platform Solution="*|*" Project="AnyCPU" />`.
+
+An unqualified `dotnet build` / `dotnet test` still works and falls back to `win-x64`. If you add a
+platform, add it in three places: `<Platforms>` in the csproj, the `RuntimeIdentifier` conditions
+below it, and `<Configurations>` in the `.slnx`.
+
+### Publishing needs the XAML carried over by hand
+
+The Windows App SDK adds compiled XAML (`.xbf`) and the app's resource index (`.pri`) to the build
+output only — its `AddProcessedXamlFilesToCopyLocal` target hooks `GetCopyToOutputDirectoryItems`
+and has no publish counterpart. The `AddWinUIXamlAndResourcesToPublish` target in the app csproj
+re-adds them, without which a published app dies at startup with a stowed WinRT exception. Keep that
+target narrow: globbing every `*.pri` in the output picks up framework files the SDK already
+publishes and trips `NETSDK1152`.
+
+### NuGet
+
+`NuGet.config` pins restore to nuget.org so a clone builds identically anywhere, regardless of
+machine-wide feed configuration. Shared version, company and signing properties live in
+`Directory.Build.props`.

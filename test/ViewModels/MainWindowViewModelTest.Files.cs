@@ -1,101 +1,118 @@
-﻿using BackupAssistant.Test.ViewModels.Base;
+using BackupAssistant.Test.ViewModels.Base;
+using Moq;
 
 namespace BackupAssistant.Test.ViewModels
 {
     public class MainWindowViewModelTestFiles : MainWindowViewModelTestBase
     {
         [Fact]
-        public void AddEditSource()
+        public async Task AddEditSource()
         {
-            this.InMemoryFileSystem.AddDirectory(@"c:\old\source");
+            _ = this.DialogServiceMock.Setup(s => s.ShowFolderPickerAsync()).ReturnsAsync(@"c:\new\source");
 
             this.ViewModelInstance!.Model.Source = @"c:\old\source";
-            // Use c:\old\source as the initial path to ensure that the default path for an existing directory is used
-            _ = this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"c:\old\source")).Returns(() => (true, @"c:\new\source"));
 
-            this.ViewModelInstance.AddEditSource();
+            await this.ViewModelInstance.AddEditSourceAsync();
 
             Assert.Equal(@"c:\new\source", this.ViewModelInstance.Model.Source);
+            Assert.Equal(@"c:\new\source", this.SettingsServiceMock.Object.Source);
+            this.SettingsServiceMock.Verify(s => s.Save(), Times.AtLeastOnce);
         }
 
         [Fact]
-        public void AddEditSource_SourceDirectoryDoesNotExist()
+        public async Task AddEditSource_ResetsFiltersWhenSourceChanges()
         {
+            _ = this.DialogServiceMock.Setup(s => s.ShowFolderPickerAsync()).ReturnsAsync(@"c:\new\source");
+
             this.ViewModelInstance!.Model.Source = @"c:\old\source";
-            // Use C:\ as the initial path to ensure that the default path for a non-existent directory is used
-            _ = this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"C:\")).Returns(() => (true, @"c:\new\source"));
+            this.ViewModelInstance.Model.Filters = ["...\\stale"];
 
-            this.ViewModelInstance.AddEditSource();
+            await this.ViewModelInstance.AddEditSourceAsync();
 
-            Assert.Equal(@"c:\new\source", this.ViewModelInstance.Model.Source);
+            // Filters describe folders under the old source, so they cannot carry over
+            Assert.Empty(this.ViewModelInstance.Model.Filters);
+            Assert.Empty(this.SettingsServiceMock.Object.Filters);
         }
 
         [Fact]
-        public void AddEditSource_NoAction()
+        public async Task AddEditSource_Cancelled()
         {
-            this.ViewModelInstance!.Model.Source = @"c:\old\source";
-            // Use C:\ as the initial path to ensure that the default path for a non-existent directory is used
-            _ = this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"C:\")).Returns(() => (false, @"c:\new\source"));
+            _ = this.DialogServiceMock.Setup(s => s.ShowFolderPickerAsync()).ReturnsAsync((string?)null);
 
-            this.ViewModelInstance.AddEditSource();
+            this.ViewModelInstance!.Model.Source = @"c:\old\source";
+
+            await this.ViewModelInstance.AddEditSourceAsync();
 
             Assert.Equal(@"c:\old\source", this.ViewModelInstance.Model.Source);
         }
 
         [Fact]
-        public void AddEditDestination()
+        public async Task AddEditDestination()
         {
-            this.InMemoryFileSystem.AddDirectory(@"c:\old\destination");
+            _ = this.DialogServiceMock.Setup(s => s.ShowFolderPickerAsync()).ReturnsAsync(@"c:\new\destination");
 
             this.ViewModelInstance!.Model.Destination = @"c:\old\destination";
-            // Use c:\old\destination as the initial path to ensure that the default path for an existing directory is used
-            _ = this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"c:\old\destination")).Returns(() => (true, @"c:\new\destination"));
 
-            this.ViewModelInstance.AddEditDestination();
+            await this.ViewModelInstance.AddEditDestinationAsync();
 
             Assert.Equal(@"c:\new\destination", this.ViewModelInstance.Model.Destination);
+            Assert.Equal(@"c:\new\destination", this.SettingsServiceMock.Object.Destination);
+            this.SettingsServiceMock.Verify(s => s.Save(), Times.AtLeastOnce);
         }
 
         [Fact]
-        public void AddEditDestination_DestinationDirectoryDoesNotExist()
+        public async Task AddEditDestination_Cancelled()
         {
+            _ = this.DialogServiceMock.Setup(s => s.ShowFolderPickerAsync()).ReturnsAsync((string?)null);
+
             this.ViewModelInstance!.Model.Destination = @"c:\old\destination";
-            // Use C:\ as the initial path to ensure that the default path for a non-existent directory is used
-            _ = this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"C:\")).Returns(() => (true, @"c:\new\destination"));
 
-            this.ViewModelInstance.AddEditDestination();
-
-            Assert.Equal(@"c:\new\destination", this.ViewModelInstance.Model.Destination);
-        }
-
-        [Fact]
-        public void AddEditDestination_NoAction()
-        {
-            this.ViewModelInstance!.Model.Destination = @"c:\old\destination";
-            // Use C:\ as the initial path to ensure that the default path for a non-existent directory is used
-            _ = this.DialogServiceMock.Setup(s => s.ShowOpenFolderDialog(@"C:\")).Returns(() => (false, @"c:\new\destination"));
-
-            this.ViewModelInstance.AddEditDestination();
+            await this.ViewModelInstance.AddEditDestinationAsync();
 
             Assert.Equal(@"c:\old\destination", this.ViewModelInstance.Model.Destination);
         }
 
         [Fact]
-        public void GetOpenFolderDialogInitialPath_DirectoryExists()
+        public void Source_SettingTheSameValueKeepsFilters()
         {
-            this.InMemoryFileSystem.AddDirectory(@"c:\test");
+            this.ViewModelInstance!.Model.Source = @"c:\source";
+            this.ViewModelInstance.Model.Filters = ["...\\keep"];
 
-            string result = this.ViewModelInstance!.GetOpenFolderDialogInitialPath(@"c:\test");
+            this.ViewModelInstance.Source = @"c:\source";
 
-            Assert.Equal(@"c:\test", result);
+            _ = Assert.Single(this.ViewModelInstance.Model.Filters);
         }
 
         [Fact]
-        public void GetOpenFolderDialogInitialPath_DirectoryDoesNotExist()
+        public async Task AddEditSourceCommand()
         {
-            string result = this.ViewModelInstance!.GetOpenFolderDialogInitialPath(@"c:\doesNotExist");
+            _ = this.DialogServiceMock.Setup(s => s.ShowFolderPickerAsync()).ReturnsAsync(@"c:\new\source");
 
-            Assert.Equal(Path.GetPathRoot(Environment.SystemDirectory), result);
+            await this.ViewModelInstance!.AddEditSourceCommand.ExecuteAsync(null);
+
+            Assert.Equal(@"c:\new\source", this.ViewModelInstance.Model.Source);
+        }
+
+        [Fact]
+        public async Task AddEditDestinationCommand()
+        {
+            _ = this.DialogServiceMock.Setup(s => s.ShowFolderPickerAsync()).ReturnsAsync(@"c:\new\destination");
+
+            await this.ViewModelInstance!.AddEditDestinationCommand.ExecuteAsync(null);
+
+            Assert.Equal(@"c:\new\destination", this.ViewModelInstance.Model.Destination);
+        }
+
+        [Fact]
+        public async Task AddEditSource_Commands_BecomeExecutable()
+        {
+            _ = this.DialogServiceMock.Setup(s => s.ShowFolderPickerAsync()).ReturnsAsync(@"c:\source");
+
+            Assert.False(this.ViewModelInstance!.EditFiltersCommand.CanExecute(null));
+
+            await this.ViewModelInstance.AddEditSourceAsync();
+
+            Assert.True(this.ViewModelInstance.EditFiltersCommand.CanExecute(null));
         }
     }
 }

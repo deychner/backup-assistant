@@ -1,6 +1,7 @@
-﻿using BackupAssistant.Test.ViewModels.Base;
+using BackupAssistant.DataModels;
+using BackupAssistant.Test.ViewModels.Base;
 using BackupAssistant.ViewModels;
-using System.Collections.Specialized;
+using Moq;
 
 namespace BackupAssistant.Test.ViewModels
 {
@@ -9,76 +10,63 @@ namespace BackupAssistant.Test.ViewModels
         public MainWindowViewModelTest() : base(false) { }
 
         [Fact]
-        public void Constructor_InitializeFilters()
+        public void Constructor_NoSavedFilters()
         {
-            _ = this.SettingsServiceMock.SetupProperty(f => f.Filters, null);
-            _ = this.SettingsServiceMock.SetupProperty(s => s.Source, null);
-            _ = this.SettingsServiceMock.SetupProperty(d => d.Destination, null);
-            _ = this.SettingsServiceMock.SetupProperty(b => b.BackupType, 0);
-            this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
+            SetupSettings([], source: null, destination: null, backupType: 0);
 
-            MainWindowViewModel instance = new(
-                this.BackupServiceMock.Object,
-                this.SettingsServiceMock.Object,
-                this.DialogServiceMock.Object,
-                this.LoggerMock.Object,
-                this.InMemoryFileSystem);
+            MainWindowViewModel instance = CreateViewModel();
 
-            // Verify new collection was created
-            Assert.NotNull(this.SettingsServiceMock.Object.Filters);
             Assert.Empty(instance.Model.Filters);
+            Assert.Equal("All folders", instance.FilterSummary);
+            Assert.False(instance.HasFilters);
         }
 
         [Fact]
         public void Constructor_LoadFilters()
         {
-            StringCollection filters =
-            [
-                "filter1",
-                "filter2",
-                null
-            ];
+            // The blank entry stands in for a settings file that has been hand-edited or
+            // written by an older version; it must not become a filter.
+            SetupSettings(["filter1", "filter2", ""], source: null, destination: null, backupType: 0);
 
-            _ = this.SettingsServiceMock.SetupProperty(f => f.Filters, filters);
-            _ = this.SettingsServiceMock.SetupProperty(s => s.Source, null);
-            _ = this.SettingsServiceMock.SetupProperty(d => d.Destination, null);
-            _ = this.SettingsServiceMock.SetupProperty(b => b.BackupType, 0);
-            this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
+            MainWindowViewModel instance = CreateViewModel();
 
-            MainWindowViewModel instance = new(
-                this.BackupServiceMock.Object,
-                this.SettingsServiceMock.Object,
-                this.DialogServiceMock.Object,
-                this.LoggerMock.Object,
-                this.InMemoryFileSystem);
-
-            // Verify count
             Assert.Equal(2, instance.Model.Filters.Count);
-
-            // Verify contents
-            Assert.Equal(filters[0], instance.Model.Filters[0]);
-            Assert.Equal(filters[1], instance.Model.Filters[1]);
+            Assert.Equal("filter1", instance.Model.Filters[0]);
+            Assert.Equal("filter2", instance.Model.Filters[1]);
+            Assert.True(instance.HasFilters);
+            Assert.Equal("2 folders selected", instance.FilterSummary);
         }
 
         [Fact]
         public void Constructor_Load_BackupSettings()
         {
-            _ = this.SettingsServiceMock.SetupProperty(f => f.Filters, null);
-            _ = this.SettingsServiceMock.SetupProperty(s => s.Source, @"c:\source");
-            _ = this.SettingsServiceMock.SetupProperty(d => d.Destination, @"c:\destination");
-            _ = this.SettingsServiceMock.SetupProperty(b => b.BackupType, 1);
-            this.SettingsServiceMock.Setup(s => s.Save()).Verifiable();
+            SetupSettings([], @"c:\source", @"c:\destination", (int)BackupType.Incremental);
 
-            MainWindowViewModel instance = new(
-                this.BackupServiceMock.Object,
-                this.SettingsServiceMock.Object,
-                this.DialogServiceMock.Object,
-                this.LoggerMock.Object,
-                this.InMemoryFileSystem);
+            MainWindowViewModel instance = CreateViewModel();
 
             Assert.Equal(@"c:\source", instance.Model.Source);
             Assert.Equal(@"c:\destination", instance.Model.Destination);
-            Assert.Equal(1, (int)instance.Model.BackupType);
+            Assert.Equal(BackupType.Incremental, instance.Model.BackupType);
+        }
+
+        [Fact]
+        public void Constructor_DoesNotRewriteSettings()
+        {
+            SetupSettings([], @"c:\source", @"c:\destination", (int)BackupType.Full);
+
+            _ = CreateViewModel();
+
+            // Merely starting up must not touch the settings file.
+            this.SettingsServiceMock.Verify(s => s.Save(), Times.Never);
+        }
+
+        private void SetupSettings(IList<string> filters, string? source, string? destination, int backupType)
+        {
+            _ = this.SettingsServiceMock.SetupProperty(f => f.Filters, filters);
+            _ = this.SettingsServiceMock.SetupProperty(s => s.Source, source);
+            _ = this.SettingsServiceMock.SetupProperty(d => d.Destination, destination);
+            _ = this.SettingsServiceMock.SetupProperty(b => b.BackupType, backupType);
+            this.SettingsServiceMock.Setup(s => s.Save());
         }
     }
 }

@@ -87,6 +87,28 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
+        public void PopulateFilterList_UnreadableRootYieldsNothing()
+        {
+            // The source folder was renamed or unplugged since it was last chosen
+            this.ViewModelInstance.Model.RootPath = @"c:\gone";
+
+            this.ViewModelInstance.PopulateFilterList([]);
+
+            Assert.Empty(this.ViewModelInstance.Model.FilterItems);
+        }
+
+        [Fact]
+        public void FilterItems_CanBeReplaced()
+        {
+            ObservableCollection<FilterItem> replacement = [new FilterItem { Path = "test", IsChecked = true }];
+
+            this.ViewModelInstance.FilterItems = replacement;
+
+            Assert.Same(replacement, this.ViewModelInstance.FilterItems);
+            Assert.Same(replacement, this.ViewModelInstance.Model.FilterItems);
+        }
+
+        [Fact]
         public void PopulateFilterList_IgnoreHidden()
         {
             this.InMemoryFileSystem.AddDirectory(@"c:\Source");

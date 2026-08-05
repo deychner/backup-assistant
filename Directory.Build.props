@@ -1,0 +1,31 @@
+<Project>
+
+  <!-- Properties shared by every project in the repository. -->
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <!-- Product identity and version, declared once. -->
+  <PropertyGroup>
+    <Product>Backup Assistant</Product>
+    <Authors>Darryl Eychner</Authors>
+    <Company>Anaheim Electronics</Company>
+    <Copyright>Copyright © Darryl Eychner 2026</Copyright>
+    <Version>2026.7.2.1</Version>
+    <AssemblyVersion>2026.7.2.1</AssemblyVersion>
+    <FileVersion>2026.7.2.1</FileVersion>
+  </PropertyGroup>
+
+  <!--
+    All assemblies share one strong-name key so that [InternalsVisibleTo] between
+    BackupAssistant.Core and BackupAssistant.Test resolves. The key is not committed;
+    see README.md for generation steps.
+  -->
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)src\Deploy\signingkey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+</Project>

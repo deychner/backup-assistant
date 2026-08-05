@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Everything worth unit testing lives here: data models, services and view models.
+    This project deliberately has no reference to WinUI, WPF or any other UI framework,
+    which is what lets the test project run headless under `dotnet test`.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>BackupAssistant</RootNamespace>
+    <AssemblyName>BackupAssistant.Core</AssemblyName>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.10" />
+    <PackageReference Include="System.IO.Abstractions" Version="22.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="ViewModels\MainWindowViewModel.*.cs">
+      <DependentUpon>MainWindowViewModel.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>
