@@ -19,16 +19,16 @@ namespace BackupAssistant.ViewModels
             get => _model.Filters;
             set
             {
-                _model.Filters = value;
-                OnPropertyChanged(nameof(FilterItems));
+                if (SetProperty(_model.Filters, value, _model, (model, v) => model.Filters = v))
+                {
+                    // Update settings
+                    _settingsService.Filters = [.. _model.Filters];
+                    _settingsService.Save();
 
-                // Update settings
-                _settingsService.Filters = [.. _model.Filters];
-                _settingsService.Save();
-
-                // Update dependencies
-                OnPropertyChanged(nameof(HasFilters));
-                OnPropertyChanged(nameof(FilterSummary));
+                    // Update dependencies
+                    OnPropertyChanged(nameof(HasFilters));
+                    OnPropertyChanged(nameof(FilterSummary));
+                }
             }
         }
 

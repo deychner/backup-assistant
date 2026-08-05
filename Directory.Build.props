@@ -13,9 +13,10 @@
     <Authors>Darryl Eychner</Authors>
     <Company>Anaheim Electronics</Company>
     <Copyright>Copyright © Darryl Eychner 2026</Copyright>
-    <Version>2026.7.2.1</Version>
+    <!-- AssemblyVersion stays put so identity is stable; FileVersion moves with each build. -->
+    <Version>2026.8.5.0</Version>
     <AssemblyVersion>2026.7.2.1</AssemblyVersion>
-    <FileVersion>2026.7.2.1</FileVersion>
+    <FileVersion>2026.8.5.0</FileVersion>
   </PropertyGroup>
 
   <!--

@@ -10,8 +10,12 @@ namespace BackupAssistant.Services
     [ExcludeFromCodeCoverage]
     public class ApplicationService : IApplicationService
     {
-        public string Version => Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "?.?.?.?";
+        public string ApplicationVersion => Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "?.?.?.?";
 
-        public void Exit() => Application.Current.Exit();
+        /// <summary>
+        /// WinUI's equivalent of WPF's <c>Application.Current.Shutdown()</c>. This runs the normal
+        /// shutdown path, so Serilog's <c>AddSerilog(dispose: true)</c> registration still flushes.
+        /// </summary>
+        public void Shutdown() => Application.Current.Exit();
     }
 }

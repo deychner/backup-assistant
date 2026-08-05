@@ -8,6 +8,6 @@ namespace BackupAssistant.ViewModels
         /// <summary>
         /// Gets the version of the running application, for display in the about dialog.
         /// </summary>
-        public string ApplicationVersion { get; } = applicationService.Version;
+        public string ApplicationVersion => applicationService.ApplicationVersion;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using BackupAssistant.Services;
 using BackupAssistant.Test.Services.Base;
+using BackupAssistant.Test.TestHelpers;
 
 namespace BackupAssistant.Test.Services
 {
@@ -93,6 +94,45 @@ namespace BackupAssistant.Test.Services
         {
             var progress = new Progress<BackupProgress>();
             await this.BackupServiceInstance.RunFullBackupAsync(@"c:\Source", @"c:\Destination", [], progress, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task RunFullBackupAsync_NullProgress_DoesNotThrow()
+        {
+            this.InMemoryFileSystem?.AddEmptyFile(@"c:\Source\file1.txt");
+            _ = this.InMemoryFileSystem?.Directory.CreateDirectory(@"c:\Destination");
+
+            await this.BackupServiceInstance.RunFullBackupAsync(@"c:\Source", @"c:\Destination", [], null!, CancellationToken.None);
+
+            Assert.True(this.InMemoryFileSystem?.File.Exists(@"c:\Destination\file1.txt"));
+        }
+
+        [Fact]
+        public async Task RunFullBackup_ProgressReachesOneHundred_DespiteConcurrentWorkers()
+        {
+            for (int i = 0; i < 25; i++)
+            {
+                this.InMemoryFileSystem?.AddEmptyFile($@"c:\Source\file{i}.txt");
+            }
+            _ = this.InMemoryFileSystem?.Directory.CreateDirectory(@"c:\Destination");
+
+            List<BackupProgress> reports = [];
+
+            SynchronizationContext? original = SynchronizationContext.Current;
+            SynchronizationContext.SetSynchronizationContext(new InlineSynchronizationContext());
+            try
+            {
+                IProgress<BackupProgress> progress = new Progress<BackupProgress>(reports.Add);
+                await this.BackupServiceInstance.RunFullBackupAsync(@"c:\Source", @"c:\Destination", [], progress, CancellationToken.None);
+            }
+            finally
+            {
+                SynchronizationContext.SetSynchronizationContext(original);
+            }
+
+            BackupProgress lastProgressReport = reports.Last(r => r.Progress.HasValue);
+            Assert.Equal(100, lastProgressReport.Progress);
+            Assert.Equal("Backup is complete.", reports[^1].Status);
         }
 
         #endregion

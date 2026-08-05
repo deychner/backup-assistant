@@ -7,15 +7,14 @@ namespace BackupAssistant.Test.ViewModels
     public class AboutViewModelTest
     {
         [Fact]
-        public void ApplicationVersion()
+        public void ApplicationVersion_ReturnsValueFromApplicationService()
         {
             Mock<IApplicationService> applicationServiceMock = new(MockBehavior.Strict);
-            _ = applicationServiceMock.SetupGet(a => a.Version).Returns("2026.7.2.1");
+            _ = applicationServiceMock.Setup(a => a.ApplicationVersion).Returns("1.2.3.4");
 
-            AboutViewModel instance = new(applicationServiceMock.Object);
+            AboutViewModel viewModel = new(applicationServiceMock.Object);
 
-            Assert.Equal("2026.7.2.1", instance.ApplicationVersion);
-            applicationServiceMock.VerifyAll();
+            Assert.Equal("1.2.3.4", viewModel.ApplicationVersion);
         }
     }
 }

@@ -50,14 +50,32 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
-        public void Constructor_DoesNotRewriteSettings()
+        public void Constructor_DoesNotResaveExistingSourceDestinationOrBackupType()
         {
-            SetupSettings([], @"c:\source", @"c:\destination", (int)BackupType.Full);
+            SetupSettings([], @"c:\source", @"c:\destination", (int)BackupType.Incremental);
 
             _ = CreateViewModel();
 
-            // Merely starting up must not touch the settings file.
+            // Loading Source, Destination and BackupType from settings must not write them back out,
+            // or opening the app rewrites the settings file on every launch
             this.SettingsServiceMock.Verify(s => s.Save(), Times.Never);
+        }
+
+        [Fact]
+        public void Constructor_ShortOverload_DelegatesToFullConstructor()
+        {
+            SetupSettings([], source: null, destination: null, backupType: 0);
+
+            // The five-argument overload is what dependency injection resolves; it supplies a real
+            // FileSystem, which is safe here because construction only reads settings.
+            MainWindowViewModel instance = new(
+                this.BackupServiceMock.Object,
+                this.SettingsServiceMock.Object,
+                this.DialogServiceMock.Object,
+                this.ApplicationServiceMock.Object,
+                this.LoggerMock.Object);
+
+            Assert.NotNull(instance);
         }
 
         private void SetupSettings(IList<string> filters, string? source, string? destination, int backupType)

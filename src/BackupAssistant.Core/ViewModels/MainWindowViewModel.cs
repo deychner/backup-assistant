@@ -50,7 +50,9 @@ namespace BackupAssistant.ViewModels
             _logger = logger;
             _fileSystem = fileSystem;
 
-            // Load filters from settings, ignoring any blank entry left behind by an older settings file
+            // Load filters from settings, ignoring any blank entry left behind by a hand-edited or
+            // older settings file. Unlike the WPF version there is no "initialize if null" step:
+            // JsonSettingsService always hands back a collection.
             foreach (string filter in _settingsService.Filters)
             {
                 if (!string.IsNullOrEmpty(filter))
@@ -59,10 +61,11 @@ namespace BackupAssistant.ViewModels
                 }
             }
 
-            // Load source and destination from settings, regardless of whether they exist.
-            // Their existence will be checked when the user tries to backup.
-            // These assign the model directly rather than going through the properties, so that
-            // merely starting up does not write the settings straight back out to disk again.
+            // Load source, destination and backup type from settings, regardless of whether the
+            // directories still exist - that is checked when the user actually runs a backup.
+            // These assign the backing model directly rather than going through the public property
+            // setters, whose side effects (notifications, saving settings, clearing filters) should
+            // only fire for a real change, not for loading saved values back in at startup.
             _model.Source = _settingsService.Source;
             _model.Destination = _settingsService.Destination;
             _model.BackupType = (BackupType)_settingsService.BackupType;

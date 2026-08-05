@@ -1,6 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System;
 using System.Threading.Tasks;
 
 namespace BackupAssistant.ViewModels
@@ -18,28 +17,25 @@ namespace BackupAssistant.ViewModels
             get => _model.Source;
             set
             {
-                if (string.Equals(_model.Source, value, StringComparison.Ordinal))
+                string oldValue = _model.Source;
+
+                if (SetProperty(oldValue, value, _model, (model, v) => model.Source = v))
                 {
-                    return;
+                    // Filters name folders beneath the previous source, so they cannot carry over.
+                    // Nothing to clear when the source is only now being set for the first time.
+                    if (!string.IsNullOrEmpty(oldValue))
+                    {
+                        this.FilterItems = [];
+                    }
+
+                    // Update settings
+                    _settingsService.Source = _model.Source;
+                    _settingsService.Save();
+
+                    // Update dependencies
+                    this.EditFiltersCommand.NotifyCanExecuteChanged();
+                    this.RunBackupCommand.NotifyCanExecuteChanged();
                 }
-
-                // Filters name folders beneath the previous source, so they cannot carry over.
-                // Nothing to clear when the source is only now being set for the first time.
-                if (!string.IsNullOrEmpty(_model.Source))
-                {
-                    this.FilterItems = [];
-                }
-
-                _model.Source = value;
-                OnPropertyChanged(nameof(Source));
-
-                // Update settings
-                _settingsService.Source = value;
-                _settingsService.Save();
-
-                // Update dependencies
-                this.EditFiltersCommand.NotifyCanExecuteChanged();
-                this.RunBackupCommand.NotifyCanExecuteChanged();
             }
         }
 

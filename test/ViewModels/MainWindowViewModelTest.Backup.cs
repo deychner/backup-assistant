@@ -1,7 +1,7 @@
 using BackupAssistant.DataModels;
 using BackupAssistant.Services;
+using BackupAssistant.Test.TestHelpers;
 using BackupAssistant.Test.ViewModels.Base;
-using BackupAssistant.ViewModels;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -40,71 +40,80 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
-        public async Task RunBackupAsync_Full()
+        public async Task RunBackupAsync_Full_RunsFullBackup()
         {
-            SetupDirectories();
+            this.InMemoryFileSystem.AddDirectory(@"c:\source");
+            this.InMemoryFileSystem.AddDirectory(@"c:\destination");
+
+            this.ViewModelInstance!.Source = @"c:\source";
+            this.ViewModelInstance.Destination = @"c:\destination";
+            this.ViewModelInstance.BackupType = BackupType.Full;
 
             _ = this.BackupServiceMock
-                .Setup(s => s.RunFullBackupAsync(
-                    @"c:\source",
-                    @"c:\destination",
-                    It.IsAny<ICollection<string>>(),
-                    It.IsAny<IProgress<BackupProgress>>(),
-                    It.IsAny<CancellationToken>()))
+                .Setup(b => b.RunFullBackupAsync(@"c:\source", @"c:\destination", It.IsAny<ICollection<string>>(), It.IsAny<IProgress<BackupProgress>>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
-            this.ViewModelInstance!.BackupType = BackupType.Full;
-
             await this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
+
+            this.BackupServiceMock.Verify(
+                b => b.RunFullBackupAsync(@"c:\source", @"c:\destination", It.IsAny<ICollection<string>>(), It.IsAny<IProgress<BackupProgress>>(), It.IsAny<CancellationToken>()),
+                Times.Once);
         }
 
         [Fact]
-        public async Task RunBackupAsync_Incremental()
+        public async Task RunBackupAsync_Incremental_RunsIncrementalBackup()
         {
-            SetupDirectories();
+            this.InMemoryFileSystem.AddDirectory(@"c:\source");
+            this.InMemoryFileSystem.AddDirectory(@"c:\destination");
+
+            this.ViewModelInstance!.Source = @"c:\source";
+            this.ViewModelInstance.Destination = @"c:\destination";
+            this.ViewModelInstance.BackupType = BackupType.Incremental;
 
             _ = this.BackupServiceMock
-                .Setup(s => s.RunIncrementalBackupAsync(
-                    @"c:\source",
-                    @"c:\destination",
-                    It.IsAny<ICollection<string>>(),
-                    It.IsAny<IProgress<BackupProgress>>(),
-                    It.IsAny<CancellationToken>()))
+                .Setup(b => b.RunIncrementalBackupAsync(@"c:\source", @"c:\destination", It.IsAny<ICollection<string>>(), It.IsAny<IProgress<BackupProgress>>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
-            this.ViewModelInstance!.BackupType = BackupType.Incremental;
-
             await this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
+
+            this.BackupServiceMock.Verify(
+                b => b.RunIncrementalBackupAsync(@"c:\source", @"c:\destination", It.IsAny<ICollection<string>>(), It.IsAny<IProgress<BackupProgress>>(), It.IsAny<CancellationToken>()),
+                Times.Once);
         }
 
         [Fact]
-        public async Task RunBackupAsync_UnknownTypeDoesNothing()
+        public async Task RunBackupAsync_UnknownBackupType_DoesNothing()
         {
-            SetupDirectories();
+            this.InMemoryFileSystem.AddDirectory(@"c:\source");
+            this.InMemoryFileSystem.AddDirectory(@"c:\destination");
 
-            this.ViewModelInstance!.BackupType = (BackupType)99;
+            this.ViewModelInstance!.Source = @"c:\source";
+            this.ViewModelInstance.Destination = @"c:\destination";
+            this.ViewModelInstance.BackupType = (BackupType)99;
 
             await this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
 
-            // Neither backup mode should have been invoked; the strict mock would have thrown
-            Assert.Equal(string.Empty, this.ViewModelInstance.Status);
+            this.BackupServiceMock.Verify(
+                b => b.RunFullBackupAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ICollection<string>>(), It.IsAny<IProgress<BackupProgress>>(), It.IsAny<CancellationToken>()),
+                Times.Never);
+            this.BackupServiceMock.Verify(
+                b => b.RunIncrementalBackupAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ICollection<string>>(), It.IsAny<IProgress<BackupProgress>>(), It.IsAny<CancellationToken>()),
+                Times.Never);
         }
 
         [Fact]
-        public async Task RunBackupAsync_ReportsCancellation()
+        public async Task RunBackupAsync_OperationCanceled_SetsCanceledStatus()
         {
-            SetupDirectories();
+            this.InMemoryFileSystem.AddDirectory(@"c:\source");
+            this.InMemoryFileSystem.AddDirectory(@"c:\destination");
+
+            this.ViewModelInstance!.Source = @"c:\source";
+            this.ViewModelInstance.Destination = @"c:\destination";
+            this.ViewModelInstance.BackupType = BackupType.Full;
 
             _ = this.BackupServiceMock
-                .Setup(s => s.RunIncrementalBackupAsync(
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<ICollection<string>>(),
-                    It.IsAny<IProgress<BackupProgress>>(),
-                    It.IsAny<CancellationToken>()))
+                .Setup(b => b.RunFullBackupAsync(@"c:\source", @"c:\destination", It.IsAny<ICollection<string>>(), It.IsAny<IProgress<BackupProgress>>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new OperationCanceledException());
-
-            this.ViewModelInstance!.BackupType = BackupType.Incremental;
 
             await this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
 
@@ -112,31 +121,30 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
-        public async Task RunBackupAsync_SurfacesProgress()
+        public async Task RunBackupAsync_ProgressReachesOneHundred_DespiteOutOfOrderReports()
         {
-            SetupDirectories();
+            this.InMemoryFileSystem.AddDirectory(@"c:\source");
+            this.InMemoryFileSystem.AddDirectory(@"c:\destination");
+
+            this.ViewModelInstance!.Source = @"c:\source";
+            this.ViewModelInstance.Destination = @"c:\destination";
+            this.ViewModelInstance.BackupType = BackupType.Full;
 
             _ = this.BackupServiceMock
-                .Setup(s => s.RunFullBackupAsync(
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<ICollection<string>>(),
-                    It.IsAny<IProgress<BackupProgress>>(),
-                    It.IsAny<CancellationToken>()))
-                .Returns((string _, string _, ICollection<string> _, IProgress<BackupProgress> progress, CancellationToken _) =>
+                .Setup(b => b.RunFullBackupAsync(@"c:\source", @"c:\destination", It.IsAny<ICollection<string>>(), It.IsAny<IProgress<BackupProgress>>(), It.IsAny<CancellationToken>()))
+                .Returns<string, string, ICollection<string>, IProgress<BackupProgress>, CancellationToken>((s, d, f, progress, token) =>
                 {
-                    progress.Report(new BackupProgress { Progress = 42, IsIndeterminate = true, Status = "Working..." });
+                    // Simulate concurrent workers whose reports are delivered out of order,
+                    // followed by the guaranteed final report the A1 fix adds after Task.WhenAll.
+                    progress.Report(new BackupProgress { Progress = 60 });
+                    progress.Report(new BackupProgress { Progress = 80 });
+                    progress.Report(new BackupProgress { Progress = 40 });
+                    progress.Report(new BackupProgress { Progress = 100, Status = "Backup is complete." });
                     return Task.CompletedTask;
                 });
 
-            this.ViewModelInstance!.BackupType = BackupType.Full;
-
-            // Progress<T> captures SynchronizationContext.Current when the view model constructs it
-            // and dispatches reports through it. Left alone that is asynchronous, which would make
-            // this test a race, so pin a context that invokes callbacks inline.
             SynchronizationContext? original = SynchronizationContext.Current;
             SynchronizationContext.SetSynchronizationContext(new InlineSynchronizationContext());
-
             try
             {
                 await this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
@@ -146,20 +154,41 @@ namespace BackupAssistant.Test.ViewModels
                 SynchronizationContext.SetSynchronizationContext(original);
             }
 
-            Assert.Equal(42, this.ViewModelInstance.Progress);
-            Assert.True(this.ViewModelInstance.ProgressBarIsIndeterminate);
-            Assert.Equal("Working...", this.ViewModelInstance.Status);
+            Assert.Equal(100, this.ViewModelInstance.Progress);
+            Assert.Equal("Backup is complete.", this.ViewModelInstance.Status);
         }
 
-        /// <summary>
-        /// Runs posted callbacks immediately on the calling thread, so that
-        /// <see cref="Progress{T}"/> reports land synchronously.
-        /// </summary>
-        private sealed class InlineSynchronizationContext : SynchronizationContext
+        [Fact]
+        public async Task RunBackupAsync_SurfacesIndeterminateAndStatus()
         {
-            public override void Post(SendOrPostCallback d, object? state) => d(state);
+            this.InMemoryFileSystem.AddDirectory(@"c:\source");
+            this.InMemoryFileSystem.AddDirectory(@"c:\destination");
 
-            public override void Send(SendOrPostCallback d, object? state) => d(state);
+            this.ViewModelInstance!.Source = @"c:\source";
+            this.ViewModelInstance.Destination = @"c:\destination";
+            this.ViewModelInstance.BackupType = BackupType.Full;
+
+            _ = this.BackupServiceMock
+                .Setup(b => b.RunFullBackupAsync(@"c:\source", @"c:\destination", It.IsAny<ICollection<string>>(), It.IsAny<IProgress<BackupProgress>>(), It.IsAny<CancellationToken>()))
+                .Returns<string, string, ICollection<string>, IProgress<BackupProgress>, CancellationToken>((s, d, f, progress, token) =>
+                {
+                    progress.Report(new BackupProgress { IsIndeterminate = true, Status = "Getting source file list..." });
+                    return Task.CompletedTask;
+                });
+
+            SynchronizationContext? original = SynchronizationContext.Current;
+            SynchronizationContext.SetSynchronizationContext(new InlineSynchronizationContext());
+            try
+            {
+                await this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
+            }
+            finally
+            {
+                SynchronizationContext.SetSynchronizationContext(original);
+            }
+
+            Assert.True(this.ViewModelInstance.ProgressBarIsIndeterminate);
+            Assert.Equal("Getting source file list...", this.ViewModelInstance.Status);
         }
 
         [Fact]
@@ -175,66 +204,47 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
-        public void BackupType_PersistsToSettings()
-        {
-            // The view model starts on Full, so switching to Incremental is a real change
-            this.ViewModelInstance!.BackupType = BackupType.Incremental;
-
-            Assert.Equal(BackupType.Incremental, this.ViewModelInstance.Model.BackupType);
-            Assert.Equal((int)BackupType.Incremental, this.SettingsServiceMock.Object.BackupType);
-            this.SettingsServiceMock.Verify(s => s.Save(), Times.AtLeastOnce);
-        }
-
-        [Fact]
-        public void BackupType_SettingTheSameValueRaisesNoChange()
-        {
-            // A compiled two-way x:Bind writes the value straight back to the view model, so an
-            // unchanged assignment must not raise PropertyChanged or the binding loops forever.
-            int notifications = 0;
-            this.ViewModelInstance!.PropertyChanged += (_, e) =>
-            {
-                if (e.PropertyName == nameof(MainWindowViewModel.BackupType)) notifications++;
-            };
-
-            this.ViewModelInstance.BackupType = this.ViewModelInstance.BackupType;
-
-            Assert.Equal(0, notifications);
-            this.SettingsServiceMock.Verify(s => s.Save(), Times.Never);
-        }
-
-        [Fact]
         public void BackupTypes_ListsEveryMode()
         {
             Assert.Equal([BackupType.Full, BackupType.Incremental], this.ViewModelInstance!.BackupTypes);
         }
 
+        [Fact]
+        public void BackupType_Setter_SavesSettings_WhenChanged()
+        {
+            this.ViewModelInstance!.BackupType = BackupType.Incremental;
+
+            this.SettingsServiceMock.VerifySet(s => s.BackupType = (int)BackupType.Incremental, Times.Once);
+            this.SettingsServiceMock.Verify(s => s.Save(), Times.AtLeastOnce);
+        }
+
+        [Fact]
+        public void BackupType_Setter_DoesNotSaveSettings_WhenUnchanged()
+        {
+            this.ViewModelInstance!.Model.BackupType = BackupType.Full;
+
+            this.ViewModelInstance.BackupType = BackupType.Full;
+
+            this.SettingsServiceMock.Verify(s => s.Save(), Times.Never);
+        }
+
+        [Fact]
+        public void CancelRunBackupCommand_ReturnsSameInstanceOnRepeatedReads()
+        {
+            Assert.Same(this.ViewModelInstance!.CancelRunBackupCommand, this.ViewModelInstance.CancelRunBackupCommand);
+        }
+
         [Theory]
-        [InlineData(-5, 0)]
+        [InlineData(-50, 0)]
         [InlineData(0, 0)]
         [InlineData(50, 50)]
         [InlineData(100, 100)]
         [InlineData(150, 100)]
-        public void Progress_IsClampedToRange(int value, int expected)
+        public void Progress_ClampsToValidRange(int input, int expected)
         {
-            this.ViewModelInstance!.Progress = value;
+            this.ViewModelInstance!.Progress = input;
 
             Assert.Equal(expected, this.ViewModelInstance.Progress);
-        }
-
-        [Fact]
-        public void CancelRunBackupCommand_IsStable()
-        {
-            // The view binds to this once, so it must not hand back a new command each read
-            Assert.Same(this.ViewModelInstance!.CancelRunBackupCommand, this.ViewModelInstance.CancelRunBackupCommand);
-        }
-
-        private void SetupDirectories()
-        {
-            this.InMemoryFileSystem.AddDirectory(@"c:\source");
-            this.InMemoryFileSystem.AddDirectory(@"c:\destination");
-
-            this.ViewModelInstance!.Source = @"c:\source";
-            this.ViewModelInstance.Destination = @"c:\destination";
         }
 
         private void SetupLogger(string messageSearchText)

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <!--
+            Generated code, not code this project owns, excluded so the coverage metric reflects only
+            what we wrote. This filter is currently a no-op on the WinUI branch: the test project
+            references BackupAssistant.Core only, so the app assembly - where every generated XAML
+            type lives - is never instrumented in the first place. It is kept so that the documented
+            coverage command is identical to the one on master.
+          -->
+          <Exclude>[BackupAssistant]XamlGeneratedNamespace.*</Exclude>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
