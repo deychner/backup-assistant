@@ -9,6 +9,11 @@ Built with **WinUI 3** (Windows App SDK) using the MVVM pattern.
 - Windows 10 version 1809 (build 17763) or later
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
 
+Nothing else. In particular you do **not** need the Visual Studio C++ workload or a standalone
+Windows SDK install — the `Microsoft.WindowsAppSDK` and `Microsoft.Windows.SDK.BuildTools` NuGet
+packages supply everything, and `src/BackupAssistant/Directory.Build.targets` disables the Windows
+App SDK's spurious MSVC lookup that would otherwise fail a Visual Studio build.
+
 The Windows App SDK ships with the app (self-contained, unpackaged), so there is no separate
 runtime for users to install.
 

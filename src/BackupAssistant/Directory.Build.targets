@@ -1,0 +1,39 @@
+<Project>
+
+  <!--
+    This file exists to override one Windows App SDK target, and is imported after the SDK's own
+    .targets, which is what lets the override win.
+
+    Keep the parent chain alive: MSBuild stops at the first Directory.Build.targets it finds walking
+    up from the project, so without this import a future one at the repository root would be ignored.
+  -->
+  <PropertyGroup>
+    <_ParentDirectoryBuildTargets>$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))</_ParentDirectoryBuildTargets>
+  </PropertyGroup>
+  <Import Project="$(_ParentDirectoryBuildTargets)" Condition="'$(_ParentDirectoryBuildTargets)' != ''" />
+
+  <!--
+    The Windows App SDK adds GetVCInstallPath to the XAML compiler's DependsOn lists for every
+    project, C++ or not. That target runs a GetLatestMSVCVersion task which enumerates
+    "$(VsInstallRoot)\VC\Tools\MSVC" and throws DirectoryNotFoundException when the MSVC toolset is
+    not installed. VsInstallRoot is only set when building inside Visual Studio, which is why command
+    line builds succeed while Visual Studio builds fail with:
+
+        The "GetLatestMSVCVersion" task failed unexpectedly.
+        System.IO.DirectoryNotFoundException: Could not find a part of the path
+        '...\VC\Tools\MSVC'.
+
+    BackupAssistant is a C#-only app and has no use for the MSVC toolset. The paths that target
+    computes are only ever passed to the XAML compiler for reading C++ metadata, and the sibling
+    GetXamlCppIncludeDirectories target is already correctly skipped for managed projects. Replacing
+    it with an empty target leaves VCInstallPath32/64 unset - exactly the state of a working command
+    line build - and spares every developer a multi-gigabyte C++ workload install.
+
+    Note this is a full replacement, not a conditional fallback: when two targets share a name the
+    last definition wins outright. Only do this in a folder that holds no C++ projects.
+
+    Remove once the Windows App SDK guards GetVCInstallPath on '$(ManagedAssembly)'.
+  -->
+  <Target Name="GetVCInstallPath" />
+
+</Project>

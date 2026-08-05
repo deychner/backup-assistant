@@ -124,6 +124,17 @@ An unqualified `dotnet build` / `dotnet test` still works and falls back to `win
 platform, add it in three places: `<Platforms>` in the csproj, the `RuntimeIdentifier` conditions
 below it, and `<Configurations>` in the `.slnx`.
 
+### No C++ workload required
+
+`src/BackupAssistant/Directory.Build.targets` overrides the Windows App SDK's `GetVCInstallPath`
+target with an empty one. The SDK adds that target to the XAML compiler's DependsOn lists for every
+project regardless of language, and it throws `DirectoryNotFoundException` on
+`$(VsInstallRoot)\VC\Tools\MSVC` when the MSVC toolset is absent. Because `VsInstallRoot` is only set
+inside Visual Studio, command line builds pass while Visual Studio builds fail — so verify build
+changes with `-p:VsInstallRoot=<VS install path>` to simulate a Visual Studio build.
+
+Do not "fix" this by installing the C++ workload; this is a C#-only app and does not need it.
+
 ### Publishing needs the XAML carried over by hand
 
 The Windows App SDK adds compiled XAML (`.xbf`) and the app's resource index (`.pri`) to the build
