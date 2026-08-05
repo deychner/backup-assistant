@@ -57,8 +57,7 @@ namespace BackupAssistant.ViewModels
                 _settingsService.Save();
             }
 
-            // Load filters from settings directly into the backing model. Avoid the FilterItems
-            // setter here, since it re-saves settings and would rewrite user.config on every launch.
+            // Load filters from settings directly into the backing model
             foreach (string? filter in _settingsService.Filters)
             {
                 if (filter != null)
@@ -67,8 +66,7 @@ namespace BackupAssistant.ViewModels
                 }
             }
 
-            // Load source, destination, and backup type directly into the backing model for the
-            // same reason. Their existence will be checked when the user tries to backup.
+            // Load source, destination, and backup type directly into the backing model
             _model.Source = _settingsService.Source;
             _model.Destination = _settingsService.Destination;
             _model.BackupType = (BackupType)_settingsService.BackupType;
