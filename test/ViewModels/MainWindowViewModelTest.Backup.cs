@@ -131,14 +131,35 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.BackupType = BackupType.Full;
 
-            await this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
+            // Progress<T> captures SynchronizationContext.Current when the view model constructs it
+            // and dispatches reports through it. Left alone that is asynchronous, which would make
+            // this test a race, so pin a context that invokes callbacks inline.
+            SynchronizationContext? original = SynchronizationContext.Current;
+            SynchronizationContext.SetSynchronizationContext(new InlineSynchronizationContext());
 
-            // Progress<T> marshals through the captured context, so give it a moment to drain
-            await WaitForAsync(() => this.ViewModelInstance.Progress == 42);
+            try
+            {
+                await this.ViewModelInstance.RunBackupAsync(CancellationToken.None);
+            }
+            finally
+            {
+                SynchronizationContext.SetSynchronizationContext(original);
+            }
 
             Assert.Equal(42, this.ViewModelInstance.Progress);
             Assert.True(this.ViewModelInstance.ProgressBarIsIndeterminate);
             Assert.Equal("Working...", this.ViewModelInstance.Status);
+        }
+
+        /// <summary>
+        /// Runs posted callbacks immediately on the calling thread, so that
+        /// <see cref="Progress{T}"/> reports land synchronously.
+        /// </summary>
+        private sealed class InlineSynchronizationContext : SynchronizationContext
+        {
+            public override void Post(SendOrPostCallback d, object? state) => d(state);
+
+            public override void Send(SendOrPostCallback d, object? state) => d(state);
         }
 
         [Fact]
@@ -214,14 +235,6 @@ namespace BackupAssistant.Test.ViewModels
 
             this.ViewModelInstance!.Source = @"c:\source";
             this.ViewModelInstance.Destination = @"c:\destination";
-        }
-
-        private static async Task WaitForAsync(Func<bool> condition)
-        {
-            for (int i = 0; i < 100 && !condition(); i++)
-            {
-                await Task.Delay(10);
-            }
         }
 
         private void SetupLogger(string messageSearchText)

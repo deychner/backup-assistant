@@ -19,6 +19,15 @@
     <WindowsPackageType>None</WindowsPackageType>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <EnableMsixTooling>false</EnableMsixTooling>
+    <!--
+      Required by C#/WinRT (CsWinRT1030). Types that cross the WinRT ABI and implement generic
+      interfaces - the view models bound with x:Bind, and the ObservableCollection<FilterItem> behind
+      the dialog's ListView - need generated vtable marshalling stubs, and those stubs use unsafe.
+      Without this the generator falls back to a reflection path that breaks under trimming or AOT.
+      This only permits unsafe in generated code; none is hand-written. Scoped to this project, so
+      BackupAssistant.Core and the test project stay unsafe-free.
+    -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <!--
