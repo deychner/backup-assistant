@@ -1,5 +1,6 @@
 ﻿using BackupAssistant.DataModels;
 using BackupAssistant.Test.ViewModels.Base;
+using BackupAssistant.ViewModels;
 using System.Collections.ObjectModel;
 
 namespace BackupAssistant.Test.ViewModels
@@ -31,6 +32,36 @@ namespace BackupAssistant.Test.ViewModels
             Assert.Contains(this.ViewModelInstance.Model.FilterItems, (f) => f.Path.Equals(@"...\dir1") && !f.IsChecked);
             Assert.Contains(this.ViewModelInstance.Model.FilterItems, (f) => f.Path.Equals(@"...\dir2") && !f.IsChecked);
             Assert.DoesNotContain(this.ViewModelInstance.Model.FilterItems, (f) => f.Path.Equals(@"...\dir3"));
+        }
+
+        [Fact]
+        public void FilterItems_SetterUpdatesModelAndNotifies()
+        {
+            bool propertyChangedRaised = false;
+            this.ViewModelInstance.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(FilterSelectionViewModel.FilterItems))
+                {
+                    propertyChangedRaised = true;
+                }
+            };
+
+            ObservableCollection<FilterItem> newItems = [new FilterItem { Path = "...\\dir1", IsChecked = true }];
+
+            this.ViewModelInstance.FilterItems = newItems;
+
+            Assert.Same(newItems, this.ViewModelInstance.Model.FilterItems);
+            Assert.True(propertyChangedRaised);
+        }
+
+        [Fact]
+        public void PopulateFilterList_RootPathDoesNotExist_ReturnsEmpty()
+        {
+            this.ViewModelInstance.Model.RootPath = @"c:\DoesNotExist";
+
+            this.ViewModelInstance.PopulateFilterList([]);
+
+            Assert.Empty(this.ViewModelInstance.Model.FilterItems);
         }
 
         [Fact]

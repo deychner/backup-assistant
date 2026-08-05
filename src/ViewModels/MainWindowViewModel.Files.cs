@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
 
@@ -17,22 +17,24 @@ namespace BackupAssistant.ViewModels
             get => _model.Source;
             set
             {
-                // Do not reset filters when Source is being initialized or set to the same value
-                if (!(string.IsNullOrEmpty(_model.Source) || _model.Source.Equals(value)))
+                string oldValue = _model.Source;
+
+                if (SetProperty(oldValue, value, _model, (m, v) => m.Source = v))
                 {
-                    this.FilterItems = [];
+                    // Do not reset filters when Source is being initialized (previously empty)
+                    if (!string.IsNullOrEmpty(oldValue))
+                    {
+                        this.FilterItems = [];
+                    }
+
+                    // Update settings
+                    _settingsService.Source = _model.Source;
+                    _settingsService.Save();
+
+                    // Update dependencies
+                    this.EditFiltersCommand.NotifyCanExecuteChanged();
+                    this.RunBackupCommand.NotifyCanExecuteChanged();
                 }
-
-                _model.Source = value;
-                OnPropertyChanged(nameof(Source));
-
-                // Update settings
-                _settingsService.Source = _model.Source;
-                _settingsService.Save();
-
-                // Update dependencies
-                this.EditFiltersCommand.NotifyCanExecuteChanged();
-                this.RunBackupCommand.NotifyCanExecuteChanged();
             }
         }
 
@@ -41,15 +43,15 @@ namespace BackupAssistant.ViewModels
             get => _model.Destination;
             set
             {
-                _model.Destination = value;
-                OnPropertyChanged(nameof(Destination));
+                if (SetProperty(_model.Destination, value, _model, (m, v) => m.Destination = v))
+                {
+                    // Update settings
+                    _settingsService.Destination = _model.Destination;
+                    _settingsService.Save();
 
-                // Update settings
-                _settingsService.Destination = _model.Destination;
-                _settingsService.Save();
-
-                // Update dependencies
-                this.RunBackupCommand.NotifyCanExecuteChanged();
+                    // Update dependencies
+                    this.RunBackupCommand.NotifyCanExecuteChanged();
+                }
             }
         }
 

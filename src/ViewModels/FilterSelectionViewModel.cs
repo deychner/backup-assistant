@@ -40,8 +40,6 @@ namespace BackupAssistant.ViewModels
 
         public object Output => new ObservableCollection<string>(from f in _model.FilterItems where f.IsChecked select f.Path);
 
-        public FilterSelectionViewModel() : this(new FileSystem()) { }
-
         public void PopulateFilterList(IEnumerable<string> existingFilters)
         {
             _model.FilterItems.Clear();

@@ -64,6 +64,15 @@ namespace BackupAssistant.Test.ViewModels
         }
 
         [Fact]
+        public void FilterItems_Setter_SavesSettings_WhenChanged()
+        {
+            this.ViewModelInstance!.FilterItems = ["new_filter"];
+
+            _ = Assert.Single(this.SettingsServiceMock.Object.Filters);
+            Assert.Equal("new_filter", this.SettingsServiceMock.Object.Filters[0]);
+        }
+
+        [Fact]
         public void CanEditFilters()
         {
             this.ViewModelInstance!.Model.Source = string.Empty;

@@ -3,14 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:viewmodels="clr-namespace:BackupAssistant.ViewModels"
         mc:Ignorable="d"
-        Title="Filter selection" Icon="/assets/icon.ico"
+        Title="Choose folders to back up" Icon="/assets/icon.ico"
         WindowStartupLocation="CenterScreen"
         Height="450" Width="500">
-    <Window.DataContext>
-        <viewmodels:FilterSelectionViewModel/>
-    </Window.DataContext>
     <Window.Background>
         <SolidColorBrush Color="WhiteSmoke"/>
     </Window.Background>
@@ -19,11 +15,16 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <ListBox Grid.Row="0" Grid.Column="0"
+        <TextBlock Grid.Row="0" Grid.Column="0" Margin="10"
+                   TextWrapping="Wrap"
+                   Text="Check the subfolders you want to include in the backup. Unchecked subfolders will not be backed up."/>
+
+        <ListBox Grid.Row="1" Grid.Column="0"
                  ItemsSource="{Binding FilterItems}"
                  ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox.ItemTemplate>
@@ -36,7 +37,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <StackPanel Grid.Row="1" Grid.Column="0"
+        <StackPanel Grid.Row="2" Grid.Column="0"
                     Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Apply" Width="85" Click="Apply_Click"/>
             <Button Content="Cancel" Width="85" Click="Cancel_Click"/>
