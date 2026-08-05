@@ -1,5 +1,4 @@
-﻿using BackupAssistant.ViewModels;
-using System.Windows;
+﻿using System.Windows;
 
 namespace BackupAssistant.Services
 {
@@ -7,6 +6,6 @@ namespace BackupAssistant.Services
     {
         (bool?, string) ShowOpenFolderDialog(string selectedPath = "");
 
-        bool? ShowDialog<T>(IDialogViewModel viewModel) where T : Window, new();
+        bool? ShowDialog<T>(object viewModel) where T : Window, new();
     }
 }

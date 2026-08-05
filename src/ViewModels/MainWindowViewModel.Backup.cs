@@ -1,4 +1,4 @@
-﻿using BackupAssistant.DataModels;
+using BackupAssistant.DataModels;
 using BackupAssistant.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -15,7 +15,8 @@ namespace BackupAssistant.ViewModels
         private AsyncRelayCommand? _runBackupCommand;
         public IAsyncRelayCommand RunBackupCommand => _runBackupCommand ??= new AsyncRelayCommand(async token => await RunBackupAsync(token), CanRunBackup);
 
-        public ICommand CancelRunBackupCommand => this.RunBackupCommand.CreateCancelCommand();
+        private ICommand? _cancelRunBackupCommand;
+        public ICommand CancelRunBackupCommand => _cancelRunBackupCommand ??= this.RunBackupCommand.CreateCancelCommand();
 
         public async Task RunBackupAsync(CancellationToken token)
         {
@@ -78,12 +79,12 @@ namespace BackupAssistant.ViewModels
             get => _model.BackupType;
             set
             {
-                _model.BackupType = value;
-                OnPropertyChanged(nameof(BackupType));
-
-                // Update settings
-                _settingsService.BackupType = (int)_model.BackupType;
-                _settingsService.Save();
+                if (SetProperty(_model.BackupType, value, _model, (m, v) => m.BackupType = v))
+                {
+                    // Update settings
+                    _settingsService.BackupType = (int)_model.BackupType;
+                    _settingsService.Save();
+                }
             }
         }
 
@@ -92,30 +93,21 @@ namespace BackupAssistant.ViewModels
             get { return _model.Progress; }
             set
             {
-                _model.Progress = value < 0 ? 0 : value > 100 ? 100 : value;
-
-                OnPropertyChanged(nameof(Progress));
+                int clamped = Math.Clamp(value, 0, 100);
+                _ = SetProperty(_model.Progress, clamped, _model, (m, v) => m.Progress = v);
             }
         }
 
         public bool ProgressBarIsIndeterminate
         {
             get { return _model.ProgressBarIsIndeterminate; }
-            set
-            {
-                _model.ProgressBarIsIndeterminate = value;
-                OnPropertyChanged(nameof(ProgressBarIsIndeterminate));
-            }
+            set => SetProperty(_model.ProgressBarIsIndeterminate, value, _model, (m, v) => m.ProgressBarIsIndeterminate = v);
         }
 
         public string Status
         {
             get { return _model.Status; }
-            set
-            {
-                _model.Status = value;
-                OnPropertyChanged(nameof(Status));
-            }
+            set => SetProperty(_model.Status, value, _model, (m, v) => m.Status = v);
         }
     }
 }

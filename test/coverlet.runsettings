@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <!-- WPF-generated noise, not application code: excluded so the coverage metric
+               reflects only code this project owns. -->
+          <Exclude>[BackupAssistant]XamlGeneratedNamespace.*</Exclude>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

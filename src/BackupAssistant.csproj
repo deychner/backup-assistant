@@ -12,7 +12,7 @@
     <Authors>Darryl Eychner</Authors>
     <Company>Anaheim Electronics</Company>
     <Copyright>Copyright © Darryl Eychner 2026</Copyright>
-    <FileVersion>2026.7.2.1</FileVersion>
+    <FileVersion>2026.8.5.0</FileVersion>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>Deploy\signingkey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>

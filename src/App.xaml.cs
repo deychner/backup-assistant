@@ -42,6 +42,7 @@ namespace BackupAssistant
             ServiceCollection services = new();
 
             // Services
+            _ = services.AddSingleton<IApplicationService, ApplicationService>();
             _ = services.AddSingleton<IBackupService, BackupService>();
             _ = services.AddSingleton<IDialogService, DialogService>();
             _ = services.AddSingleton<IFileSystem, FileSystem>();

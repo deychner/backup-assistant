@@ -1,16 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Reflection;
+using BackupAssistant.Services;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace BackupAssistant.ViewModels
 {
-    internal class AboutViewModel : ObservableObject
+    public class AboutViewModel(IApplicationService applicationService) : ObservableObject
     {
-        public static string ApplicationVersion
-        {
-            get
-            {
-                return Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "?.?.?.?";
-            }
-        }
+        public string ApplicationVersion => applicationService.ApplicationVersion;
     }
 }

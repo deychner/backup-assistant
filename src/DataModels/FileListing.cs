@@ -29,30 +29,14 @@ namespace BackupAssistant.DataModels
 
         public BackupAction GetBackupAction()
         {
-            if (!this.IsInSource && !this.IsInDestination)
+            return (this.IsInSource, this.IsInDestination) switch
             {
-                return BackupAction.None;
-            }
-            else if (this.IsInSource && !this.IsInDestination)
-            {
-                return BackupAction.Copy;
-            }
-            else if (!this.IsInSource && this.IsInDestination)
-            {
-                return BackupAction.Delete;
-            }
-            else if (this.IsInSource && this.IsInDestination && this.SourceLastModified > this.DestinationLastModified)
-            {
-                return BackupAction.Overwrite;
-            }
-            else if (this.IsInSource && this.IsInDestination && this.SourceLastModified <= this.DestinationLastModified)
-            {
-                return BackupAction.None;
-            }
-            else
-            {
-                return BackupAction.None;
-            }
+                (false, false) => BackupAction.None,
+                (true, false) => BackupAction.Copy,
+                (false, true) => BackupAction.Delete,
+                (true, true) when this.SourceLastModified > this.DestinationLastModified => BackupAction.Overwrite,
+                (true, true) => BackupAction.None,
+            };
         }
     }
 }

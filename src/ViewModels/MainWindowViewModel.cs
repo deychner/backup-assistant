@@ -13,6 +13,7 @@ namespace BackupAssistant.ViewModels
         private readonly IFileSystem _fileSystem;
         private readonly ISettingsService _settingsService;
         private readonly IDialogService _dialogService;
+        private readonly IApplicationService _applicationService;
         private readonly ILogger<MainWindowViewModel> _logger;
         private readonly IBackupService _backupService;
 
@@ -22,10 +23,12 @@ namespace BackupAssistant.ViewModels
             IBackupService backupService,
             ISettingsService settingsService,
             IDialogService dialogService,
+            IApplicationService applicationService,
             ILogger<MainWindowViewModel> logger) : this(
                 backupService,
                 settingsService,
                 dialogService,
+                applicationService,
                 logger,
                 new FileSystem())
         { }
@@ -34,6 +37,7 @@ namespace BackupAssistant.ViewModels
             IBackupService backupService,
             ISettingsService settingsService,
             IDialogService dialogService,
+            IApplicationService applicationService,
             ILogger<MainWindowViewModel> logger,
             IFileSystem fileSystem)
         {
@@ -42,6 +46,7 @@ namespace BackupAssistant.ViewModels
             _backupService = backupService;
             _settingsService = settingsService;
             _dialogService = dialogService;
+            _applicationService = applicationService;
             _logger = logger;
             _fileSystem = fileSystem;
 
@@ -52,21 +57,19 @@ namespace BackupAssistant.ViewModels
                 _settingsService.Save();
             }
 
-            // Load filters from settings
+            // Load filters from settings directly into the backing model
             foreach (string? filter in _settingsService.Filters)
             {
                 if (filter != null)
                 {
-                    this.FilterItems.Add(filter);
+                    _model.Filters.Add(filter);
                 }
             }
 
-            // Load source and destination from settings, regardless of whether they exist.
-            // Their existence will be checked when the user tries to backup.
-            this.Source = _settingsService.Source;
-            this.Destination = _settingsService.Destination;
-
-            this.BackupType = (BackupType)_settingsService.BackupType;
+            // Load source, destination, and backup type directly into the backing model
+            _model.Source = _settingsService.Source;
+            _model.Destination = _settingsService.Destination;
+            _model.BackupType = (BackupType)_settingsService.BackupType;
         }
     }
 }
