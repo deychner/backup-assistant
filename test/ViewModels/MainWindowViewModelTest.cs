@@ -95,7 +95,7 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public void Constructor_ShortOverload_DelegatesToFullConstructor()
         {
-            _ = this.SettingsServiceMock.SetupProperty(f => f.Filters, new StringCollection());
+            _ = this.SettingsServiceMock.SetupProperty(f => f.Filters, []);
             _ = this.SettingsServiceMock.SetupProperty(s => s.Source, null);
             _ = this.SettingsServiceMock.SetupProperty(d => d.Destination, null);
             _ = this.SettingsServiceMock.SetupProperty(b => b.BackupType, 0);
@@ -114,7 +114,7 @@ namespace BackupAssistant.Test.ViewModels
         [Fact]
         public void Constructor_DoesNotResaveExistingSourceDestinationOrBackupType()
         {
-            _ = this.SettingsServiceMock.SetupProperty(f => f.Filters, new StringCollection());
+            _ = this.SettingsServiceMock.SetupProperty(f => f.Filters, []);
             _ = this.SettingsServiceMock.SetupProperty(s => s.Source, @"c:\source");
             _ = this.SettingsServiceMock.SetupProperty(d => d.Destination, @"c:\destination");
             _ = this.SettingsServiceMock.SetupProperty(b => b.BackupType, 1);
