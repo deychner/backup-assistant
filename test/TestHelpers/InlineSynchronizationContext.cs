@@ -1,5 +1,3 @@
-using System.Threading;
-
 namespace BackupAssistant.Test.TestHelpers
 {
     /// <summary>
