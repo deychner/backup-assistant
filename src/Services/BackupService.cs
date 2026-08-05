@@ -21,6 +21,10 @@ namespace BackupAssistant.Services
         private readonly IFileSystem _fileSystem = fileSystem;
         private readonly ILogger<BackupService> _logger = logger;
 
+        // Reset at the start of each RunFullBackupAsync call and incremented from SafeEnumerateFiles/
+        // SafeEnumerateDirectories, so a swallowed enumeration failure can be detected afterwards.
+        private int _enumerationErrorCount;
+
         public async Task RunFullBackupAsync(
             string source,
             string destination,
@@ -28,10 +32,23 @@ namespace BackupAssistant.Services
             IProgress<BackupProgress> progress,
             CancellationToken token)
         {
+            _ = System.Threading.Interlocked.Exchange(ref _enumerationErrorCount, 0);
+
             progress?.Report(new BackupProgress { Progress = 0, IsIndeterminate = true, Status = "Getting source file list..." });
 
             // Get file list
             ICollection<string> sourceFiles = await GetFileListAsync(source, filterItems, token);
+
+            // If the source listing came back empty because enumeration failed (rather than
+            // because the source is genuinely empty), abort instead of deleting the existing
+            // backup and replacing it with a partial (or empty) copy.
+            if (sourceFiles.Count == 0 && System.Threading.Interlocked.CompareExchange(ref _enumerationErrorCount, 0, 0) > 0)
+            {
+                _logger.LogError("Backup aborted. The source directory '{source}' could not be fully read, and its file listing came back empty. The existing backup was left untouched.", source);
+
+                progress?.Report(new BackupProgress { Progress = 100, IsIndeterminate = false, Status = "Backup aborted: unable to read the source directory. The existing backup was not modified." });
+                return;
+            }
 
             // Delete destination directory
             progress?.Report(new BackupProgress { Status = "Deleting destination directory..." });
@@ -74,7 +91,10 @@ namespace BackupAssistant.Services
 
             await Task.WhenAll(tasks);
 
-            progress?.Report(new BackupProgress { Status = "Backup is complete." });
+            // Report completion with a guaranteed final Progress of 100. Individual workers'
+            // progress reports can be delivered out of order relative to one another, so this is
+            // the only report guaranteed to run after every worker has finished.
+            progress?.Report(new BackupProgress { Progress = 100, Status = "Backup is complete." });
         }
 
         public async Task RunIncrementalBackupAsync(
@@ -152,7 +172,10 @@ namespace BackupAssistant.Services
 
             await Task.WhenAll(tasks);
 
-            progress?.Report(new BackupProgress { Status = "Backup is complete." });
+            // Report completion with a guaranteed final Progress of 100. Individual workers'
+            // progress reports can be delivered out of order relative to one another, so this is
+            // the only report guaranteed to run after every worker has finished.
+            progress?.Report(new BackupProgress { Progress = 100, Status = "Backup is complete." });
         }
 
         internal async Task<ICollection<string>> GetFileListAsync(string rootDirectory, ICollection<string> filterItems, CancellationToken token)
@@ -430,6 +453,7 @@ namespace BackupAssistant.Services
             }
             catch (Exception e)
             {
+                _ = System.Threading.Interlocked.Increment(ref _enumerationErrorCount);
                 _logger.LogWarning("Failed to get files in directory '{directory}', Exception: {exception}", directory, e.Message);
                 return [];
             }
@@ -443,6 +467,7 @@ namespace BackupAssistant.Services
             }
             catch (Exception e)
             {
+                _ = System.Threading.Interlocked.Increment(ref _enumerationErrorCount);
                 _logger.LogWarning("Failed to get directories in directory '{directory}', Exception: {exception}", directory, e.Message);
                 return [];
             }

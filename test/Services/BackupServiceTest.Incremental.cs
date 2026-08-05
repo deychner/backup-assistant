@@ -1,5 +1,6 @@
 ﻿using BackupAssistant.DataModels;
 using BackupAssistant.Test.Services.Base;
+using BackupAssistant.Test.TestHelpers;
 using System.IO.Abstractions.TestingHelpers;
 
 namespace BackupAssistant.Test.Services
@@ -183,6 +184,45 @@ namespace BackupAssistant.Test.Services
         {
             var progress = new Progress<BackupAssistant.Services.BackupProgress>();
             await this.BackupServiceInstance.RunIncrementalBackupAsync(@"c:\Source", @"c:\Destination", [], progress, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task RunIncrementalBackupAsync_NullProgress_DoesNotThrow()
+        {
+            this.InMemoryFileSystem?.AddEmptyFile(@"c:\Source\file.txt");
+            _ = this.InMemoryFileSystem?.Directory.CreateDirectory(@"c:\Destination");
+
+            await this.BackupServiceInstance.RunIncrementalBackupAsync(@"c:\Source", @"c:\Destination", [], null!, CancellationToken.None);
+
+            Assert.True(this.InMemoryFileSystem?.FileExists(@"c:\Destination\file.txt"));
+        }
+
+        [Fact]
+        public async Task RunIncrementalBackup_ProgressReachesOneHundred_DespiteConcurrentWorkers()
+        {
+            for (int i = 0; i < 25; i++)
+            {
+                this.InMemoryFileSystem?.AddEmptyFile($@"c:\Source\file{i}.txt");
+            }
+            _ = this.InMemoryFileSystem?.Directory.CreateDirectory(@"c:\Destination");
+
+            List<BackupAssistant.Services.BackupProgress> reports = [];
+
+            SynchronizationContext? original = SynchronizationContext.Current;
+            SynchronizationContext.SetSynchronizationContext(new InlineSynchronizationContext());
+            try
+            {
+                IProgress<BackupAssistant.Services.BackupProgress> progress = new Progress<BackupAssistant.Services.BackupProgress>(reports.Add);
+                await this.BackupServiceInstance.RunIncrementalBackupAsync(@"c:\Source", @"c:\Destination", [], progress, CancellationToken.None);
+            }
+            finally
+            {
+                SynchronizationContext.SetSynchronizationContext(original);
+            }
+
+            BackupAssistant.Services.BackupProgress lastProgressReport = reports.Last(r => r.Progress.HasValue);
+            Assert.Equal(100, lastProgressReport.Progress);
+            Assert.Equal("Backup is complete.", reports[^1].Status);
         }
 
         #endregion
